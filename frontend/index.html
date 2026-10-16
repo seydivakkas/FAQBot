@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#13243b">
+    <title>FAQBot | Akıllı SSS Asistanı</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/app.js" defer></script>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Uygulama bilgisi">
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.0</small></span></div>
+            <div class="sidebar-content">
+                <span class="eyebrow">E-TİCARET DESTEK</span>
+                <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
+                <p>Günlük müşteri destek sorularını kayıtlı bilgilerle eşleştiren, yerel çalışan bir demo.</p>
+                <div class="feature"><span>01</span> TF-IDF soru benzerliği</div>
+                <div class="feature"><span>02</span> Doğrulanmış SSS yanıtları</div>
+                <div class="feature"><span>03</span> Güvenli fallback</div>
+            </div>
+            <div class="sidebar-bottom">Python · FastAPI · SQLite · scikit-learn</div>
+        </aside>
+        <main class="chat-panel" aria-label="FAQBot sohbet arayüzü">
+            <header class="chat-header">
+                <div class="avatar">F</div>
+                <div>
+                    <h2>FAQBot Asistan</h2>
+                    <p><span class="online-dot"></span> Yerel demo · SSS yardımcısı</p>
+                </div>
+                <span class="tag">DEMO</span>
+            </header>
+            <div id="chatMessages" class="messages" role="log" aria-live="polite" aria-label="Sohbet mesajları">
+                <div class="message-row bot">
+                    <div class="bubble">
+                        <p>Merhaba! Kargo, iade, ödeme ve sipariş konularında yardımcı olabilirim. Bir soru yazarak başlayın.</p>
+                    </div>
+                </div>
+            </div>
+            <section class="suggestions" aria-label="Örnek sorular">
+                <span>ÖRNEK SORULAR</span>
+                <div class="chips">
+                    <button type="button" data-question="Kargom ne zaman gelir?">Kargo süresi</button>
+                    <button type="button" data-question="Ürünümü nasıl iade ederim?">Ürün iadesi</button>
+                    <button type="button" data-question="Kapıda ödeme var mı?">Ödeme seçenekleri</button>
+                </div>
+            </section>
+            <form id="chatForm" class="composer">
+                <label class="sr-only" for="messageInput">Mesajınız</label>
+                <input id="messageInput" type="text" maxlength="500" required autocomplete="off" placeholder="Bir soru sorun...">
+                <button id="sendButton" type="submit" aria-label="Mesajı gönder">Gönder <span aria-hidden="true">↗</span></button>
+            </form>
+            <p id="status" class="sr-only" role="status"></p>
+            <footer class="disclaimer">Örnek mağaza verileri kullanılır. Gerçek sipariş veya müşteri hesabı bulunmaz.</footer>
+        </main>
+    </div>
+</body>
+</html>

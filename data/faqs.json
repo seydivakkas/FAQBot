@@ -1,0 +1,180 @@
+[
+  {
+    "question": "Kargom ne zaman gelir?",
+    "answer": "Örnek mağazamızda siparişler genellikle 1-3 iş günü içinde teslim edilir.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Siparişim kaç günde gelir?",
+      "Kargo kaç günde gelir?",
+      "Teslimat ne kadar sürer?",
+      "Kargom kaç günde ulaşır?"
+    ]
+  },
+  {
+    "question": "Kargo ücreti ne kadar?",
+    "answer": "Örnek mağazamızda 500 TL ve üzeri siparişlerde kargo ücretsizdir; diğer siparişlerde 49 TL'dir.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Ücretsiz kargo var mı?",
+      "Kargo kaç lira?"
+    ]
+  },
+  {
+    "question": "Siparişimi nasıl takip ederim?",
+    "answer": "Siparişlerim sayfasındaki kargo takip bağlantısından gönderi durumunu görebilirsiniz.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Kargo takip numaram nerede?",
+      "Kargom nerede?"
+    ]
+  },
+  {
+    "question": "Yurt dışına gönderim yapıyor musunuz?",
+    "answer": "Örnek mağazamız şu anda yalnızca Türkiye içindeki adreslere gönderim yapmaktadır.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Yurtdışına kargo gönderiyor musunuz?"
+    ]
+  },
+  {
+    "question": "Teslimat adresimi değiştirebilir miyim?",
+    "answer": "Siparişiniz kargoya verilmediyse destek ekibiyle iletişime geçerek adres değişikliği isteyebilirsiniz.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Kargo adresimi değiştirmek istiyorum.",
+      "Adres yanlış yazılmış."
+    ]
+  },
+  {
+    "question": "Ürünümü nasıl iade ederim?",
+    "answer": "Siparişlerim bölümünden ilgili siparişi seçerek iade talebi oluşturabilirsiniz.",
+    "category": "iade",
+    "alternative_questions": [
+      "Ürünü geri göndermek istiyorum.",
+      "İade işlemi nasıl yapılır?",
+      "Ürünü nasıl geri verebilirim?"
+    ]
+  },
+  {
+    "question": "İade süresi kaç gün?",
+    "answer": "Örnek mağazamızın demo politikasında teslimattan sonra 14 gün içinde iade talebi açılabilir. Bu bilgi gerçek mağaza koşulu veya hukuki tavsiye değildir.",
+    "category": "iade",
+    "alternative_questions": [
+      "Kaç gün içinde iade edebilirim?",
+      "İade için kaç günüm var?"
+    ]
+  },
+  {
+    "question": "İade kargosu ücretli mi?",
+    "answer": "Örnek mağazamızda onaylanan iadeler için sağlanan anlaşmalı kargo kodu ücretsizdir.",
+    "category": "iade",
+    "alternative_questions": [
+      "İadede kargo parası öder miyim?"
+    ]
+  },
+  {
+    "question": "İade param ne zaman yatar?",
+    "answer": "Örnek mağazamızda iade incelemesi tamamlandıktan sonra ödeme sağlayıcısının işlem süresine göre geri ödeme yapılır.",
+    "category": "iade",
+    "alternative_questions": [
+      "Para iadesi kaç günde olur?",
+      "İade ücretim ne zaman gelir?"
+    ]
+  },
+  {
+    "question": "Kullanılmış ürünü iade edebilir miyim?",
+    "answer": "Ürünün durumuna ve ürün türüne göre koşullar değişebileceğinden destek ekibiyle görüşmeniz gerekir.",
+    "category": "iade",
+    "alternative_questions": [
+      "Kullandığım ürünü geri verebilir miyim?"
+    ]
+  },
+  {
+    "question": "Hangi ödeme yöntemleri var?",
+    "answer": "Örnek mağazamızda kredi kartı ve banka kartıyla ödeme yapılabilir.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Nasıl ödeme yapabilirim?",
+      "Ödeme seçenekleri nelerdir?"
+    ]
+  },
+  {
+    "question": "Kapıda ödeme var mı?",
+    "answer": "Örnek mağazamızda kapıda ödeme seçeneği bulunmamaktadır.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Ürün gelince ödeme yapabilir miyim?",
+      "Kapıda nakit ödeme kabul ediliyor mu?"
+    ]
+  },
+  {
+    "question": "Taksit yapılıyor mu?",
+    "answer": "Örnek mağazamızda taksit seçenekleri, ödeme ekranındaki kart ve ürün koşullarına göre gösterilir.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Taksitle alışveriş yapabilir miyim?"
+    ]
+  },
+  {
+    "question": "Faturamı nereden alabilirim?",
+    "answer": "Siparişlerim sayfasından ilgili siparişin fatura bağlantısına ulaşabilirsiniz.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Fatura nasıl indirilir?",
+      "Faturama nasıl ulaşırım?"
+    ]
+  },
+  {
+    "question": "Ödemem başarısız oldu, ne yapmalıyım?",
+    "answer": "Kart bilgilerinizi ve limitinizi kontrol edip yeniden deneyebilirsiniz. Sorun devam ederse bankanızla görüşün.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Ödeme hatası alıyorum.",
+      "Kartımdan ödeme alınmıyor."
+    ]
+  },
+  {
+    "question": "Nasıl hesap oluştururum?",
+    "answer": "Kayıt Ol sayfasından e-posta adresiniz ve parolanızla örnek mağaza hesabı oluşturabilirsiniz.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Nasıl üye olabilirim?",
+      "Hesap açmak istiyorum."
+    ]
+  },
+  {
+    "question": "Şifremi unuttum, ne yapmalıyım?",
+    "answer": "Giriş ekranındaki Şifremi Unuttum bağlantısından parola sıfırlama isteği gönderebilirsiniz.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Şifremi nasıl sıfırlarım?",
+      "Parolamı unuttum."
+    ]
+  },
+  {
+    "question": "Siparişimi iptal edebilir miyim?",
+    "answer": "Siparişiniz kargoya verilmediyse Siparişlerim bölümünden iptal isteğinde bulunabilirsiniz.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Siparişi iptal etmek istiyorum.",
+      "Siparişimi nasıl iptal ederim?"
+    ]
+  },
+  {
+    "question": "Üye olmadan alışveriş yapabilir miyim?",
+    "answer": "Örnek mağazamızda misafir alışverişi desteklenmektedir.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Hesap açmadan sipariş verebilir miyim?"
+    ]
+  },
+  {
+    "question": "Müşteri hizmetlerine nasıl ulaşırım?",
+    "answer": "Bu demo gerçek bir mağazaya bağlı değildir. Örnek destek kanalı: destek@ornek-magaza.invalid.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Destek ekibine nasıl ulaşabilirim?",
+      "Müşteri temsilcisiyle görüşmek istiyorum."
+    ]
+  }
+]
