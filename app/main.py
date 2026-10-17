@@ -6,11 +6,12 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Literal
 
-from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
+from fastapi import Depends, FastAPI, File, HTTPException, Request, Response, UploadFile, status
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, analyze, commit_records, parse_file, summarize
 from app.database import add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq
 from app.matching import find_best_match, normalize
 
@@ -31,7 +32,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="TF-IDF tabanlı SSS ve yerel kayıt yönetimi",
-    version="1.3.0",
+    version="1.3.1",
     lifespan=lifespan,
 )
 
@@ -146,6 +147,40 @@ def export_faqs(_: LocalEditor):
         content={"total": len(cleaned), "faqs": cleaned},
         headers={"Content-Disposition": 'attachment; filename="faqbot-sss-yedek.json"'},
     )
+
+
+class FAQImportCommit(BaseModel):
+    records: list[FAQInput] = Field(min_length=1, max_length=500)
+
+
+@app.post("/faqs/import/preview")
+async def preview_faq_import(_: LocalEditor, file: UploadFile = File(...)):
+    """Önizleme veritabanına hiçbir kayıt yazmaz."""
+    try:
+        content = await file.read(MAX_FILE_BYTES + 1)
+        source_rows = parse_file(file.filename, content)
+    except ImportFormatError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+    finally:
+        await file.close()
+    return summarize(analyze(source_rows, load_faqs(), FAQInput))
+
+
+@app.post("/faqs/import/commit")
+def commit_faq_import(request: FAQImportCommit, _: LocalEditor):
+    """Tamamı uygunsa ekle; önizlemeden beri oluşan çakışmada 409 ve sıfır INSERT."""
+    try:
+        count = commit_records([record.model_dump() for record in request.records], FAQInput)
+    except ImportConflict as error:
+        raise HTTPException(
+            status_code=409, detail={
+                "message": "Kayıtlar değişmiş veya çakışıyor. Yeniden önizleyin.",
+                "result": error.details,
+            }
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+    return {"inserted": count}
 
 
 @app.post("/faqs", status_code=status.HTTP_201_CREATED)
