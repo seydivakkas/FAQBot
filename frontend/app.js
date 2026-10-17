@@ -805,11 +805,12 @@ async function mergeDuplicatePair(item, keep, remove) {
                 result.detail : "Birleştirme başarısız oldu.");
         }
         await loadFaqs();
-        duplicateFeedback("Birleştirildi. Tutulan kayıt #" + result.kept.id +
-            ", arşiv kaydı #" + result.archive_id + ". Liste yenilendi.");
+        duplicateWorking = false;
         await scanDuplicatePairs();
+        duplicateFeedback("Birleştirme kaydedildi. Tutulan kayıt #" + result.kept.id +
+            ", arşiv kaydı #" + result.archive_id + ". Adaylar yeniden tarandı.");
     } catch(error) {
-        duplicateFeedback(error.message + " Kayıtlar değiştirilmedi.", true);
+        duplicateFeedback(error.message, true);
     } finally {
         duplicateWorking = false;
     }
