@@ -20,6 +20,17 @@ def test_faq_list(client):
     assert isinstance(data["faqs"][0]["alternative_questions"], list)
 
 
+def test_faq_list_categories(client):
+    """Arayüzde gösterilecek 20 soru, 4 kategoriye eşit dağılmalı."""
+    data = client.get("/faqs").json()
+    categories = {}
+    for faq in data["faqs"]:
+        categories[faq["category"]] = categories.get(faq["category"], 0) + 1
+        assert faq["question"].strip()
+        assert faq["answer"].strip()
+    assert categories == {"kargo": 5, "iade": 5, "odeme": 5, "hesap": 5}
+
+
 def test_exact_question(client):
     response = client.post("/chat", json={"message": "Kargom ne zaman gelir?"})
     assert response.status_code == 200
@@ -67,3 +78,16 @@ def test_frontend_is_served(client):
     assert "FAQBot" in response.text
     assert client.get("/static/style.css").status_code == 200
     assert client.get("/static/app.js").status_code == 200
+
+
+def test_faq_panel_wired_to_api(client):
+    """Soru panelinin DOM elemanları ve gerçek /faqs çağrısı mevcut."""
+    html = client.get("/app").text
+    js = client.get("/static/app.js").text
+    for element_id in ("faqToggle", "faqPanel", "faqList", "faqSearch", "faqClose"):
+        assert 'id="' + element_id + '"' in html
+    for category in ("kargo", "iade", "odeme", "hesap"):
+        assert 'data-category="' + category + '"' in html
+    assert 'fetch("/faqs")' in js
+    assert "faq.question" in js
+    assert "sendMessage(faq.question)" in js

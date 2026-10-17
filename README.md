@@ -8,7 +8,8 @@
 
 ## Neler yapıyor?
 
-- 4 kategoride toplam 20 örnek soru-cevap, alternatif soru ifadeleri
+- 4 kategoride toplam 20 örnek soru-cevap ve alternatif ifadeler
+- **Arayüzde “20 Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
 - SQLite depolama ve tekrarlanabilir başlangıç veri ekleme
 - Türkçe metin normalizasyonu; önce birebir eşleşme
 - scikit-learn ile karakter n-gram TF-IDF + cosine similarity
@@ -40,6 +41,22 @@ Backend ve statik arayüz aynı origin üzerinden sunulur; ücretli API anahtar�
 
 - Python 3.11 veya üstü (Python 3.12 önerilir)
 - Git (klonlamak için)
+
+## Windows tek tıkla otomatik kurulum (.bat)
+
+Windows 10/11 bilgisayarınızda **Git for Windows** ve **Python 3.12 (py launcher dahil)** yüklüyse şu dosyayı çalıştırın:
+
+[`setup_windows.bat`](setup_windows.bat)
+
+Dosya `%USERPROFILE%\Projects\FAQBot` klasörünü oluşturur veya günceller (`git pull --ff-only`), `.venv` kurar, bağımlılıkları yükler, SQLite'a 20 soruyu aktarır ve **pytest testlerini** çalıştırır. Testler geçerse sunucuyu açar ve `/health` hazır olduğunda tarayıcıda `/app` sayfasını gösterir. Sunucuyu kapatmak için BAT penceresinde **Ctrl+C** kullanabilirsiniz.
+
+**Önemli:** Yerel Git değişiklikleriniz otomatik silinmez; `git pull --ff-only` güncellemeyi reddederse değişiklikleri kendiniz değerlendirin. İnternete ilk kurulumda Git klonlamak ve Python paketlerini yüklemek için ihtiyaç vardır; sohbet işlevleri yerel çalışır.
+
+Sadece kurulum ve testleri yapmak (sunucu/tarayıcı açmadan):
+
+~~~bat
+setup_windows.bat --check-only
+~~~
 
 ## Windows kurulumu (PowerShell)
 
@@ -73,7 +90,7 @@ Veritabanı, sunucu başlangıcında da otomatik hazırlanır. JSON örneklerini
 
 | URL | Açıklama |
 | --- | --- |
-| http://127.0.0.1:8000/app | Sohbet ekranı |
+| http://127.0.0.1:8000/app | Sohbet ekranı; sağ üstte **20 Soruyu Gör** düğmesi |
 | http://127.0.0.1:8000/docs | Etkileşimli API belgeleri |
 | http://127.0.0.1:8000/health | Servis sağlık kontrolü |
 | http://127.0.0.1:8000/faqs | JSON soru listesi |
@@ -112,7 +129,9 @@ Pytest, her API testinde geçici SQLite kullanır ve gerçek faqbot.db dosyasın
 
 ### Manuel arayüz kabulü
 
-- /app adresini aç; örnek Kargo butonuna bas.
+- /app adresini aç; **20 Soruyu Gör** butonuna basıp toplam 20 sorunun (her kategoride 5) listelendiğini doğrula.
+- Kategori filtreleri ve arama kutusunu dene, sorunun **Yanıtı önizle** bağlantısını aç, soruya tıklayarak sohbette cevabı gör.
+- Örnek Kargo butonuna bas.
 - Alternatif bir iade sorusu yaz; kayıtlı cevapla eşleşmeyi incele.
 - Alakasız bir soru gönder; fallback çıktısını kontrol et.
 - Enter ve Gönder butonlarının çalıştığını doğrula.
@@ -132,7 +151,7 @@ data/
 frontend/
   index.html       sohbet arayüzünün yapısı
   style.css        responsive tasarım
-  app.js           POST /chat iletişimi
+  app.js           POST /chat iletişimi + /faqs paneli
 tests/
   conftest.py      izole geçici veritabanı
   test_api.py      HTTP sözleşmesi testleri
@@ -140,7 +159,8 @@ tests/
 scripts/
   compare.py       eski yöntem / TF-IDF karşılaştırması
 .github/workflows/
-  ci.yml           otomatik pytest
+  ci.yml           Linux pytest + Windows BAT smoke
+setup_windows.bat  Windows tek tıkla kurulum
 ~~~
 
 ## Tasarım kararları ve sınırlamalar

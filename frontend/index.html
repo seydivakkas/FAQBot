@@ -11,49 +11,91 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.0</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.1</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
-                <p>Günlük müşteri destek sorularını kayıtlı bilgilerle eşleştiren, yerel çalışan bir demo.</p>
+                <p>Kayıtlı müşteri destek sorularını eşleştiren, bilgisayarınızda çalışan bir demo. Tüm örnek sorulara üstteki "20 Soruyu Gör" düğmesinden ulaşabilirsiniz.</p>
                 <div class="feature"><span>01</span> TF-IDF soru benzerliği</div>
-                <div class="feature"><span>02</span> Doğrulanmış SSS yanıtları</div>
-                <div class="feature"><span>03</span> Güvenli fallback</div>
+                <div class="feature"><span>02</span> 20 erişilebilir örnek soru</div>
+                <div class="feature"><span>03</span> Eşleşme yoksa fallback</div>
             </div>
             <div class="sidebar-bottom">Python · FastAPI · SQLite · scikit-learn</div>
         </aside>
+
         <main class="chat-panel" aria-label="FAQBot sohbet arayüzü">
             <header class="chat-header">
                 <div class="avatar">F</div>
-                <div>
+                <div class="chat-heading">
                     <h2>FAQBot Asistan</h2>
                     <p><span class="online-dot"></span> Yerel demo · SSS yardımcısı</p>
                 </div>
+                <button id="faqToggle" type="button" class="faq-toggle"
+                        aria-controls="faqPanel" aria-expanded="false">
+                    <span id="faqTotal">20</span> Soruyu Gör
+                </button>
                 <span class="tag">DEMO</span>
             </header>
-            <div id="chatMessages" class="messages" role="log" aria-live="polite" aria-label="Sohbet mesajları">
+
+            <div id="chatMessages" class="messages" role="log" aria-live="polite"
+                 aria-label="Sohbet mesajları">
                 <div class="message-row bot">
                     <div class="bubble">
-                        <p>Merhaba! Kargo, iade, ödeme ve sipariş konularında yardımcı olabilirim. Bir soru yazarak başlayın.</p>
+                        <p>Merhaba! Kargo, iade, ödeme ve sipariş konularında yardımcı olabilirim. Yukarıdaki "20 Soruyu Gör" düğmesine basarak tüm örnek soruları seçebilirsiniz.</p>
                     </div>
                 </div>
             </div>
-            <section class="suggestions" aria-label="Örnek sorular">
-                <span>ÖRNEK SORULAR</span>
+
+            <section class="suggestions" aria-label="Hızlı örnek sorular">
+                <span>HIZLI SORULAR</span>
                 <div class="chips">
                     <button type="button" data-question="Kargom ne zaman gelir?">Kargo süresi</button>
                     <button type="button" data-question="Ürünümü nasıl iade ederim?">Ürün iadesi</button>
                     <button type="button" data-question="Kapıda ödeme var mı?">Ödeme seçenekleri</button>
                 </div>
             </section>
+
             <form id="chatForm" class="composer">
                 <label class="sr-only" for="messageInput">Mesajınız</label>
-                <input id="messageInput" type="text" maxlength="500" required autocomplete="off" placeholder="Bir soru sorun...">
-                <button id="sendButton" type="submit" aria-label="Mesajı gönder">Gönder <span aria-hidden="true">↗</span></button>
+                <input id="messageInput" type="text" maxlength="500" required autocomplete="off"
+                       placeholder="Bir soru sorun...">
+                <button id="sendButton" type="submit" aria-label="Mesajı gönder">Gönder ↗</button>
             </form>
             <p id="status" class="sr-only" role="status"></p>
-            <footer class="disclaimer">Örnek mağaza verileri kullanılır. Gerçek sipariş veya müşteri hesabı bulunmaz.</footer>
+            <footer class="disclaimer">Kurgusal mağaza verileri kullanılır; gerçek sipariş veya müşteri hesabı bulunmaz.</footer>
         </main>
+
+        <!-- SSS paneli /faqs uç noktasından gerçek soru-cevap kayıtlarını okur. -->
+        <div id="faqOverlay" class="faq-overlay" hidden></div>
+        <section id="faqPanel" class="faq-panel" role="dialog" aria-modal="true"
+                 aria-labelledby="faqTitle" tabindex="-1" hidden>
+            <div class="faq-panel-header">
+                <div>
+                    <span class="eyebrow faq-eyebrow">BİLGİ BANKASI</span>
+                    <h2 id="faqTitle">Sık Sorulan Sorular</h2>
+                    <p id="faqMeta">20 soru · 4 kategori</p>
+                </div>
+                <button id="faqClose" class="faq-close" type="button"
+                        aria-label="Soru listesini kapat">✕</button>
+            </div>
+            <div class="faq-toolbar">
+                <label class="sr-only" for="faqSearch">Sorular arasında ara</label>
+                <input id="faqSearch" type="search" placeholder="Sorular arasında ara..."
+                       autocomplete="off">
+                <div id="faqFilters" class="faq-filters" role="group"
+                     aria-label="SSS kategorisi">
+                    <button type="button" data-category="all" aria-pressed="true">Tümü</button>
+                    <button type="button" data-category="kargo" aria-pressed="false">Kargo</button>
+                    <button type="button" data-category="iade" aria-pressed="false">İade</button>
+                    <button type="button" data-category="odeme" aria-pressed="false">Ödeme</button>
+                    <button type="button" data-category="hesap" aria-pressed="false">Hesap</button>
+                </div>
+            </div>
+            <div id="faqList" class="faq-list" aria-live="polite">
+                <p class="faq-notice">Sorular yükleniyor...</p>
+            </div>
+            <div class="faq-panel-footer">Bir soruya tıklayın: soruyu sohbette gönderip cevabı görün.</div>
+        </section>
     </div>
 </body>
 </html>
