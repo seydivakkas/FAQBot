@@ -57,6 +57,19 @@ def init_db() -> int:
             )
             """
         )
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS faq_merge_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                keep_id INTEGER NOT NULL,
+                removed_id INTEGER NOT NULL,
+                keep_before TEXT NOT NULL,
+                removed_before TEXT NOT NULL,
+                keep_after TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
         seeded = conn.execute(
             "SELECT value FROM app_metadata WHERE key = 'initial_seed_done'"
         ).fetchone()

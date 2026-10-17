@@ -14,6 +14,11 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, analyze, commit_records, parse_file, summarize
 from app.database import add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq
 from app.matching import find_best_match, normalize
+from app.duplicates import (
+    DEFAULT_DUPLICATE_THRESHOLD, MIN_DUPLICATE_THRESHOLD,
+    MAX_DUPLICATE_THRESHOLD, MergeConflict, detect,
+    get_threshold, set_threshold, merge_records,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 FRONTEND_DIR = ROOT / "frontend"
@@ -32,7 +37,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="TF-IDF tabanlı SSS ve yerel kayıt yönetimi",
-    version="1.3.1",
+    version="1.3.2",
     lifespan=lifespan,
 )
 
@@ -181,6 +186,62 @@ def commit_faq_import(request: FAQImportCommit, _: LocalEditor):
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error))
     return {"inserted": count}
+
+
+class DuplicateSettings(BaseModel):
+    # 0.70 ekranda %70 olarak gösterilir; sohbet eşik değerinden bağımsızdır.
+    threshold: float = Field(
+        ge=MIN_DUPLICATE_THRESHOLD, le=MAX_DUPLICATE_THRESHOLD
+    )
+
+    @field_validator("threshold")
+    @classmethod
+    def one_percent_steps(cls, value: float) -> float:
+        if abs(value * 100 - round(value * 100)) > 1e-7:
+            raise ValueError("Eşik değeri yüzde 1 adımlarla değiştirilmelidir.")
+        return round(value, 2)
+
+
+class DuplicateMergeRequest(BaseModel):
+    keep_id: int = Field(gt=0)
+    remove_id: int = Field(gt=0)
+    expected_keep: str = Field(min_length=64, max_length=64)
+    expected_remove: str = Field(min_length=64, max_length=64)
+    confirm: Literal[True]
+
+
+@app.get("/settings/duplicates")
+def read_duplicate_settings(_: LocalEditor):
+    return {"threshold": get_threshold(), "default": DEFAULT_DUPLICATE_THRESHOLD,
+            "minimum": MIN_DUPLICATE_THRESHOLD, "maximum": MAX_DUPLICATE_THRESHOLD}
+
+
+@app.put("/settings/duplicates")
+def save_duplicate_settings(payload: DuplicateSettings, _: LocalEditor):
+    return {"threshold": set_threshold(payload.threshold)}
+
+
+@app.get("/faqs/duplicates")
+def find_duplicate_faqs(_: LocalEditor):
+    """Yalnızca aday önerir; hiç kayıt değiştirmez."""
+    cutoff = get_threshold()
+    all_faqs = load_faqs()
+    suggestions = detect(all_faqs, cutoff, max_results=150)
+    return {"threshold": cutoff, "total": len(suggestions), "candidates": suggestions,
+            "method": "char_word_tfidf", "truncated": len(suggestions) == 150}
+
+
+@app.post("/faqs/duplicates/merge")
+def apply_duplicate_merge(payload: DuplicateMergeRequest, _: LocalEditor):
+    try:
+        return merge_records(
+            payload.keep_id, payload.remove_id,
+            payload.expected_keep, payload.expected_remove, payload.confirm,
+        )
+    except MergeConflict as error:
+        raise HTTPException(status_code=409, detail=str(error))
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error))
 
 
 @app.post("/faqs", status_code=status.HTTP_201_CREATED)

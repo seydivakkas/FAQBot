@@ -150,7 +150,11 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
             raise MergeConflict("Farklı kategorideki kayıtlar otomatik birleştirilemez.")
 
         # Birleştirme sırasında eşik tekrar doğrulanmalı.
-        score_rows = detect([keep, other], get_threshold(), max_results=1)
+        all_rows = conn.execute(
+            "SELECT id, question, answer, category, alternative_questions FROM faqs"
+        ).fetchall()
+        score_rows = detect([_parse(row) for row in all_rows], get_threshold(), max_results=50000)
+        score_rows = [row for row in score_rows if {row["left"]["id"], row["right"]["id"]} == {keep_id, other_id}]
         if not score_rows:
             raise MergeConflict("Bu çift kayıtlı benzerlik eşiğinin altında kaldı.")
 
