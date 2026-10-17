@@ -40,9 +40,13 @@ const categoryNames = {
     kargo: "Kargo",
     iade: "İade",
     odeme: "Ödeme",
-    hesap: "Hesap / Sipariş"
+    hesap: "Hesap",
+    siparis: "Sipariş",
+    urun: "Ürün ve stok",
+    kampanya: "Kampanya",
+    destek: "Teknik destek"
 };
-const categoryOrder = ["kargo", "iade", "odeme", "hesap"];
+const categoryOrder = ["kargo", "iade", "odeme", "hesap", "siparis", "urun", "kampanya", "destek"];
 
 let busy = false;
 let faqs = [];
@@ -185,7 +189,7 @@ async function loadFaqs() {
         );
         faqsLoaded = true;
         faqTotal.textContent = String(faqs.length);
-        faqMeta.textContent = faqs.length + " soru · 4 kategori";
+        faqMeta.textContent = faqs.length + " soru · 8 kategori";
         renderFaqs();
         renderManageList();
     } catch (error) {

@@ -8,10 +8,10 @@
 
 ## Neler yapıyor?
 
-- 4 kategoride toplam 20 örnek soru-cevap ve alternatif ifadeler
+- 8 kategoride toplam **110 farklı demo müşteri ihtiyacı**, 2 veya daha fazla alternatif soru ifadesi
 - **Arayüzde “Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
 - **Ayarlar / SSS Yönetimi**: yeni soru-cevap ekleme, mevcut kayıtları düzenleme/silme, alternatif soru tanımlama ve güncel JSON yedeğini dışa aktarma
-- SQLite depolama: örnek SSS'ler yalnızca ilk kurulumda eklenir; düzenlemeler yeniden başlatmada korunur
+- SQLite depolama: ilk 20 kayıt korunur, v1.3 için 90 yeni aday kayıt bir kerelik eklenir; kullanıcı düzenlemeleri yeniden başlatmada korunur
 - Türkçe metin normalizasyonu; önce birebir eşleşme
 - scikit-learn ile karakter n-gram TF-IDF + cosine similarity
 - Düşük benzerlikte **uydurma cevap yerine fallback**
@@ -49,7 +49,7 @@ Windows 10/11 bilgisayarınızda **Git for Windows** ve **Python 3.12 (py launch
 
 [`setup_windows.bat`](setup_windows.bat)
 
-Dosya `%USERPROFILE%\Projects\FAQBot` klasörünü oluşturur veya günceller (`git pull --ff-only`), `.venv` kurar, bağımlılıkları yükler, SQLite'a 20 soruyu aktarır ve **pytest testlerini** çalıştırır. Testler geçerse sunucuyu açar ve `/health` hazır olduğunda tarayıcıda `/app` sayfasını gösterir. Sunucuyu kapatmak için BAT penceresinde **Ctrl+C** kullanabilirsiniz.
+Dosya `%USERPROFILE%\Projects\FAQBot` klasörünü oluşturur veya günceller (`git pull --ff-only`), `.venv` kurar, bağımlılıkları yükler, SQLite'a başlangıçta 110 demo soruyu aktarır ve **pytest testlerini** çalıştırır. Testler geçerse sunucuyu açar ve `/health` hazır olduğunda tarayıcıda `/app` sayfasını gösterir. Sunucuyu kapatmak için BAT penceresinde **Ctrl+C** kullanabilirsiniz.
 
 **Önemli:** Yerel Git değişiklikleriniz otomatik silinmez; `git pull --ff-only` güncellemeyi reddederse değişiklikleri kendiniz değerlendirin. İnternete ilk kurulumda Git klonlamak ve Python paketlerini yüklemek için ihtiyaç vardır; sohbet işlevleri yerel çalışır.
 
@@ -85,7 +85,9 @@ python -m app.database
 python -m uvicorn app.main:app --reload
 ~~~
 
-Veritabanı, sunucu başlangıcında da otomatik hazırlanır. **20 JSON örneği yalnızca ilk kurulumda eklenir.** Ayarlardan yapılan ekleme, düzenleme ve silmeler SQLite içinde korunur. Sonradan `data/faqs.json` dosyasını değiştirmek, mevcut veritabanını otomatik güncellemez. Silinen kayıtlar tekrar oluşturulmaz.
+Veritabanı sunucu açılırken hazırlanır. `data/faqs.json` içindeki ilk 20 örnek yalnızca ilk kurulumda eklenir. **v1.3 yükseltmesinde `data/faqs_v13_additions.json` dosyasındaki 90 yeni soru mevcut veritabanına bir kez eklenir.** Bu ekleme, mevcut kayıtların soru veya cevaplarını değiştirmez; aynı ana soruya sahip kayıtlar atlanır. Bir kez eklenip sonradan silinen sorular tekrar oluşmaz. İçe aktarma yapılmadan önce `faqbot.db` dosyanızın yedeğini alın.
+
+110 sayısı temiz ilk kurulum için geçerlidir. Mevcut veritabanında silinen/düzenlenen kayıtlar veya aynı soru başlığı bulunuyorsa sayı farklı olabilir. Güncellemeler eski kayıtların silinmesini veya zorla yeniden yazılmasını amaçlamaz. **Yeni 90 cevaplar gerçek mağaza politikası değil, kurgu demo senaryolarıdır**; canlı kullanıcıya yönelik doğrulanmış kaynak olarak sunulamaz.
 
 ### SSS kayıtlarını yönetme
 
@@ -144,7 +146,7 @@ Pytest, her API testinde geçici SQLite kullanır ve gerçek faqbot.db dosyasın
 
 ### Manuel arayüz kabulü
 
-- /app adresini aç; **Soruyu Gör** butonuna basıp başlangıçtaki 20 sorunun (her kategoride 5) listelendiğini doğrula.
+- /app adresini aç; **Soruyu Gör** butonuna basıp temiz kurulumda 8 kategoride toplam 110 sorunun listelendiğini doğrula.
 - Kategori filtreleri ve arama kutusunu dene, sorunun **Yanıtı önizle** bağlantısını aç, soruya tıklayarak sohbette cevabı gör.
 - **Ayarlar** bölümünden yeni soru ekle, yanıtı değiştir, alternatif soru ekle ve sil. Uygulamayı yeniden açıp kalıcılığı kontrol et.
 - Örnek Kargo butonuna bas.
@@ -163,7 +165,8 @@ app/
   database.py      SQLite + JSON veri kaynağı
   matching.py      normalizasyon, exact ve TF-IDF
 data/
-  faqs.json        20 kurgu SSS
+  faqs.json                  İlk 20 kurgu SSS
+  faqs_v13_additions.json    90 yeni kurgu SSS, her biri 2 alternatif ifadeli
 frontend/
   index.html       sohbet arayüzünün yapısı
   style.css        responsive tasarım
@@ -172,6 +175,7 @@ tests/
   conftest.py      izole geçici veritabanı
   test_api.py      HTTP sözleşmesi testleri
   test_settings.py SSS CRUD / kalıcılık / erişim testleri
+  test_v13_seed.py  110 örnek / sürümlü veri geçişi
   test_matching.py benzerlik motoru testleri
 scripts/
   compare.py       eski yöntem / TF-IDF karşılaştırması

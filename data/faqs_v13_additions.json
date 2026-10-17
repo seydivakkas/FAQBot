@@ -1,0 +1,812 @@
+[
+  {
+    "question": "Kargom dağıtıma çıktı ama gelmedi, ne yapabilirim?",
+    "answer": "Kargo takip ekranındaki son hareketi ve tahmini teslim gününü kontrol edin. Dağıtım tamamlanmadıysa taşıyıcıyla görüşün; bu demo gerçek paketin yerini göremez.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Dağıtımda görünen paket neden gelmedi?",
+      "Kargom dağıtımda ama teslim edilmedi."
+    ]
+  },
+  {
+    "question": "Kargo takip numaramı bulamıyorum, ne yapmalıyım?",
+    "answer": "Sipariş ayrıntıları ve gönderi e-postasındaki takip bağlantısını kontrol edin. Kod henüz oluşmadıysa sipariş hazırlanıyor olabilir; destekten teyit isteyin.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Takip kodum nerede?",
+      "Kargo takip numarası görünmüyor."
+    ]
+  },
+  {
+    "question": "Kargom yanlış adrese gidiyor, nasıl düzeltebilirim?",
+    "answer": "Kargoya verilen siparişlerde adres değişikliği taşıyıcının kurallarına bağlıdır. Takip kaydı ve doğru adresle taşıyıcı veya mağaza desteğine başvurun.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Paket yanlış adrese yönlendi.",
+      "Kargo adresi hatalı."
+    ]
+  },
+  {
+    "question": "Paketim teslim edilmiş görünüyor ama almadım, ne yapmalıyım?",
+    "answer": "Teslim alan kişi ve varsa teslim kanıtını kargo firmasından doğrulayın. Size teslim edilmediyse inceleme kaydı açtırın.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Teslim edildi yazıyor ama bana gelmedi.",
+      "Kargo başkasına teslim edilmiş olabilir mi?"
+    ]
+  },
+  {
+    "question": "Kargom kaybolmuş olabilir, nasıl araştırılır?",
+    "answer": "Takip hareketleri uzun süre değişmiyorsa kargo firmasına araştırma kaydı açtırın. Kayıt numarasını saklayıp mağazaya bildirin; bu demo takip işlemi başlatamaz.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Paketim kayboldu galiba.",
+      "Kargomu bulamıyorlar."
+    ]
+  },
+  {
+    "question": "Kargo paketim hasarlı geldi, ne yapmalıyım?",
+    "answer": "Paketin ve ürünün fotoğraflarını saklayın; mümkünse teslim sırasında tutanak isteyin. Sipariş bilgileriyle hasar başvurusu yapın.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Kutu ezilmiş geldi.",
+      "Hasarlı kargo teslim aldım."
+    ]
+  },
+  {
+    "question": "Siparişim iki ayrı kargoyla gelebilir mi?",
+    "answer": "Ürünler farklı depolardan gönderiliyorsa bir siparişte birden fazla paket oluşabilir. Sipariş ayrıntılarında ayrı takip numaraları olup olmadığını kontrol edin.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Aynı sipariş neden iki pakete bölündü?",
+      "Ürünler ayrı ayrı mı gönderilir?"
+    ]
+  },
+  {
+    "question": "Kargom şubede bekliyor, nasıl teslim alırım?",
+    "answer": "Takip sayfasında görünen şubeyi ve bekleme süresini kontrol edin. Gitmeden önce kimlik ve teslim yetkisi şartlarını taşıyıcıdan öğrenin.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Kargoyu şubeden alabilir miyim?",
+      "Şubedeki paketi nasıl alırım?"
+    ]
+  },
+  {
+    "question": "Resmî tatillerde kargo teslimatı yapılır mı?",
+    "answer": "Dağıtım takvimi kargo firmasına ve tatil gününe göre değişir. Taşıyıcının duyurularını ve takipteki güncel teslim tarihini kontrol edin.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Bayramda kargo dağıtılır mı?",
+      "Tatilde kargo gelir mi?"
+    ]
+  },
+  {
+    "question": "Teslimat için belirli bir saat seçebilir miyim?",
+    "answer": "Her taşıyıcı randevulu teslimat sunmaz. Takip ekranında saat aralığı seçme seçeneği varsa kullanın; demo teslimat saati ayarlamaz.",
+    "category": "kargo",
+    "alternative_questions": [
+      "Kargom öğleden sonra gelsin.",
+      "Kargo teslim saati ayarlanabilir mi?"
+    ]
+  },
+  {
+    "question": "Siparişim alındı mı, nasıl anlayabilirim?",
+    "answer": "Siparişlerim bölümünde sipariş numarası ve durumunu kontrol edin. Onay görünmüyorsa mükerrer sipariş oluşturmadan önce ödeme kaydını inceleyin.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Siparişim onaylandı mı?",
+      "Sipariş onayı gelmedi."
+    ]
+  },
+  {
+    "question": "Siparişime ürün ekleyebilir miyim?",
+    "answer": "Verilmiş siparişe ürün ekleme her mağazada desteklenmez. Sipariş hazırlanmadıysa destekten değişiklik imkânını öğrenin; ayrı sipariş gerekebilir.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Siparişime başka ürün ilave edeceğim.",
+      "Siparişe sonradan ürün eklenir mi?"
+    ]
+  },
+  {
+    "question": "Siparişimdeki bir ürünü çıkarmak istiyorum, ne yapmalıyım?",
+    "answer": "Kısmi iptal seçeneği sipariş durumuna bağlıdır. Siparişlerim ekranında ürün bazlı iptal olup olmadığını kontrol edin.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Siparişten tek ürün çıkarmak istiyorum.",
+      "Bir kalemi iptal edebilir miyim?"
+    ]
+  },
+  {
+    "question": "Yanlış ürün sipariş ettim, nasıl düzeltebilirim?",
+    "answer": "Sipariş kargoya verilmediyse iptal veya değişiklik seçeneklerini kontrol edin. Gönderildiyse iade süreci gerekebilir; satıcı koşullarını doğrulayın.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Hatalı ürün seçtim.",
+      "Yanlış ürünü satın aldım."
+    ]
+  },
+  {
+    "question": "Sipariş durumunda hazırlanıyor yazıyor, ne demek?",
+    "answer": "Hazırlanıyor, siparişin stok ayırma veya paketleme aşamasında olabileceğini belirtir. Kesin gönderim tarihi anlamına gelmez.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Hazırlanıyor aşaması nedir?",
+      "Siparişim neden hazırlanıyor?"
+    ]
+  },
+  {
+    "question": "Ön sipariş verdiğim ürün ne zaman gönderilir?",
+    "answer": "Ön siparişin tahmini gönderim tarihi ürün açıklamasında veya onayda belirtilmiş olabilir. Değişiklikler için güncel satıcı duyurularını kontrol edin.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Ön siparişim ne zaman çıkar?",
+      "Preorder ürün ne zaman gelir?"
+    ]
+  },
+  {
+    "question": "Sipariş numaramı unuttum, nereden bulurum?",
+    "answer": "Siparişlerim bölümüne ve onay e-postasına bakın. Kayıt bulunamıyorsa hassas bilgilerinizi sohbete yazmadan destekten yardım isteyin.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Sipariş kodum kayıp.",
+      "Sipariş numaram nerede yazıyor?"
+    ]
+  },
+  {
+    "question": "Aynı siparişi iki kez verdim, nasıl iptal ederim?",
+    "answer": "Siparişlerim bölümünde iki kayıt oluşup oluşmadığını kontrol edin. Mükerrer olan için iptal seçeneğini kullanın; çift ödeme varsa destekten inceleme isteyin.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Yanlışlıkla iki sipariş oluşturdum.",
+      "Çift sipariş verdim."
+    ]
+  },
+  {
+    "question": "Misafir siparişimi nasıl görüntülerim?",
+    "answer": "Misafir alışverişinin takip bağlantısı genellikle onay e-postasında bulunur. Bulamıyorsanız satıcının resmî doğrulama kanalını kullanın.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Üye olmadan verdiğim sipariş nerede?",
+      "Misafir siparişimi bulamıyorum."
+    ]
+  },
+  {
+    "question": "Sipariş açıklamasına not ekleyebilir miyim?",
+    "answer": "Not alanı varsa ödeme öncesi kullanılabilir. Sipariş verildikten sonra ekleme için destek onayı gerekebilir.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Siparişe hediye notu eklemek istiyorum.",
+      "Siparişe özel not yazılır mı?"
+    ]
+  },
+  {
+    "question": "Siparişimde eksik ürün var, ne yapmalıyım?",
+    "answer": "Önce siparişin farklı paketlere bölünüp bölünmediğini kontrol edin. Tüm paketler geldiyse kutu ve teslim belgesini saklayarak eksik ürün başvurusu yapın.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Kutudan bir ürün çıkmadı.",
+      "Eksik ürün gönderildi."
+    ]
+  },
+  {
+    "question": "Siparişimde fazla ürün çıktı, ne yapmalıyım?",
+    "answer": "Sipariş kaydıyla gelen ürünleri karşılaştırın. Fazladan gelen ürünü kullanmadan önce satıcının destek kanalına bildirin.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Fazla ürün göndermişler.",
+      "Paketten sipariş dışı ürün çıktı."
+    ]
+  },
+  {
+    "question": "Siparişimi başka bir kişi teslim alabilir mi?",
+    "answer": "Teslim alacak kişiyle ilgili şartlar kargo firması ve gönderi tipine göre değişir. Kimlik ya da yetki belgesi gerekip gerekmediğini taşıyıcıya sorun.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Kargoyu ailem alabilir mi?",
+      "Benim yerime başkası teslim alabilir mi?"
+    ]
+  },
+  {
+    "question": "Siparişlerimi toplu olarak indirebilir miyim?",
+    "answer": "Bazı platformlar sipariş geçmişini dışa aktarmayı destekler. Bu demo gerçek sipariş geçmişine erişmediğinden yalnızca mağazanın hesap seçeneklerini kontrol edebilirsiniz.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Sipariş dökümü indirebilir miyim?",
+      "Geçmiş siparişleri dosya yapabilir miyim?"
+    ]
+  },
+  {
+    "question": "Siparişimin durumunu kim güncelliyor?",
+    "answer": "Sipariş durumu mağazanın operasyon ve taşıyıcı sistemlerindeki hareketlerle güncellenir. FAQBot demo ortamı gerçek sipariş kaydını değiştiremez.",
+    "category": "siparis",
+    "alternative_questions": [
+      "Sipariş durumu otomatik mi değişir?",
+      "Sipariş kaydını kim günceller?"
+    ]
+  },
+  {
+    "question": "Yanlış beden seçtim, değişim nasıl yapılır?",
+    "answer": "Sipariş ayrıntılarında değişim seçeneği olup olmadığını kontrol edin. Doğrudan değişim yoksa satıcının koşullarına göre iade ve yeni sipariş gerekebilir.",
+    "category": "iade",
+    "alternative_questions": [
+      "Beden değiştirmek istiyorum.",
+      "Yanlış beden aldım."
+    ]
+  },
+  {
+    "question": "Yanlış renk geldi, ne yapmalıyım?",
+    "answer": "Siparişte seçilen renk ile gelen ürün etiketini karşılaştırın. Fotoğraflarla yanlış ürün bildirimi yapın; çözüm satıcının koşullarına bağlıdır.",
+    "category": "iade",
+    "alternative_questions": [
+      "Sipariş ettiğim renkten farklı geldi.",
+      "Ürünün rengi yanlış."
+    ]
+  },
+  {
+    "question": "Eksik parçası olan ürünü iade edebilir miyim?",
+    "answer": "Eksik parçaları ve ambalajı fotoğraflayın. Satıcıdan parça temini, değişim veya iade seçenekleri hakkında yazılı bilgi isteyin.",
+    "category": "iade",
+    "alternative_questions": [
+      "Ürünün aparatı eksik.",
+      "Eksik parçalı ürün için iade olur mu?"
+    ]
+  },
+  {
+    "question": "Ayıplı ürün bildirimi nasıl yapılır?",
+    "answer": "Sorunu gösteren fotoğraf veya videoyu ve satın alma belgesini saklayın. Satıcıya durum bildirimi yapın; uygulanacak haklar somut olaya bağlıdır.",
+    "category": "iade",
+    "alternative_questions": [
+      "Bozuk ürün geldi.",
+      "Kusurlu ürün için nereye başvurulur?"
+    ]
+  },
+  {
+    "question": "İade talebimi nasıl takip ederim?",
+    "answer": "Siparişlerim bölümünde iade takip ekranı varsa kullanın. Kargo takip numarasıyla teslimatı da kontrol edip gerekirse destekten teyit isteyin.",
+    "category": "iade",
+    "alternative_questions": [
+      "İadem hangi aşamada?",
+      "İade kargosu ulaştı mı?"
+    ]
+  },
+  {
+    "question": "İade talebimi iptal edebilir miyim?",
+    "answer": "İade tamamlanmadıysa talebi geri çekme seçeneği bulunabilir. Seçenek yoksa destekle görüşün; gönderilmiş kargoyu kendiliğinizden yönlendirmeyin.",
+    "category": "iade",
+    "alternative_questions": [
+      "İadeden vazgeçtim.",
+      "İade talebimi silmek istiyorum."
+    ]
+  },
+  {
+    "question": "İade kodumun süresi doldu, ne yapmalıyım?",
+    "answer": "Başvurunuz hâlâ geçerliyse yeni gönderi kodu alma seçeneğini kontrol edin. Bulunmuyorsa destekten yönlendirme isteyin.",
+    "category": "iade",
+    "alternative_questions": [
+      "İade kargo kodu geçersiz.",
+      "İade kodumu yenileyebilir miyim?"
+    ]
+  },
+  {
+    "question": "İade paketi satıcıya ulaşmadı, ne yapmalıyım?",
+    "answer": "Gönderi takip hareketlerini ve teslim fişini kontrol edin. Kayıp ya da gecikme varsa taşıyıcıya; inceleme bekliyorsa satıcıya başvurun.",
+    "category": "iade",
+    "alternative_questions": [
+      "İadem kargoda kayboldu.",
+      "İade gönderisi teslim olmadı."
+    ]
+  },
+  {
+    "question": "İade talebim neden reddedildi?",
+    "answer": "Red gerekçesini yazılı isteyin; ürün durumu ve başvuru belgelerini inceleyin. Uyuşmazlık varsa geçerli başvuru yollarını araştırın.",
+    "category": "iade",
+    "alternative_questions": [
+      "İadem kabul edilmedi.",
+      "İade reddine itiraz edebilir miyim?"
+    ]
+  },
+  {
+    "question": "İade ücretim eksik yatırıldı, ne yapmalıyım?",
+    "answer": "İade onayındaki tutarla banka hareketlerini karşılaştırın. Farkın hangi kalemden kaynaklandığını satıcıya sorun.",
+    "category": "iade",
+    "alternative_questions": [
+      "İade param eksik geldi.",
+      "Eksik para iadesi yapılmış."
+    ]
+  },
+  {
+    "question": "İade tutarı farklı karta yatırılabilir mi?",
+    "answer": "Geri ödeme yöntemi genellikle ilk ödeme kanalıyla ilişkilidir. Kart kapandıysa banka ve satıcıyla görüşün; bu demo para transferi yapmaz.",
+    "category": "iade",
+    "alternative_questions": [
+      "Para iadesi başka karta olur mu?",
+      "İadem farklı hesaba yatabilir mi?"
+    ]
+  },
+  {
+    "question": "Hediye olarak gelen ürünü değiştirebilir miyim?",
+    "answer": "Hediye ürün için değişim şartları sipariş ve satıcı politikasına bağlıdır. Sipariş referansıyla destekten seçenekleri öğrenin.",
+    "category": "iade",
+    "alternative_questions": [
+      "Hediye ürünü iade etmek istiyorum.",
+      "Hediye bedenini değiştirebilir miyim?"
+    ]
+  },
+  {
+    "question": "İndirimli ürünü iade edebilir miyim?",
+    "answer": "İndirim tek başına tüm ürünlerin iade dışı olduğu anlamına gelmez. Ürün türünü, sözleşme koşullarını ve geçerli hakları kontrol edin.",
+    "category": "iade",
+    "alternative_questions": [
+      "Kampanyadan aldığım ürün iade olur mu?",
+      "İndirimli ürünü geri verebilir miyim?"
+    ]
+  },
+  {
+    "question": "İade ederken orijinal kutu gerekli mi?",
+    "answer": "Ambalaj şartları ürün türüne ve işlem gerekçesine göre değişebilir. Ürünü güvenli paketleyin ve satıcının iade talimatlarını inceleyin.",
+    "category": "iade",
+    "alternative_questions": [
+      "Kutuyu attım iade olur mu?",
+      "Kutusu olmayan ürün iade edilebilir mi?"
+    ]
+  },
+  {
+    "question": "Bir siparişin sadece bir ürününü iade edebilir miyim?",
+    "answer": "Sipariş ayrıntılarında ürün bazlı iade seçeneği varsa ilgili ürünü seçin. Yoksa satıcıdan kısmi iade prosedürünü öğrenin.",
+    "category": "iade",
+    "alternative_questions": [
+      "Tek ürünü geri göndereceğim.",
+      "Kısmi iade nasıl yapılır?"
+    ]
+  },
+  {
+    "question": "Ödeme alındı ama sipariş görünmüyor, ne yapmalıyım?",
+    "answer": "Banka işlemiyle sipariş onayını karşılaştırın; ödeme provizyonda olabilir. Yeni sipariş vermeden önce satıcıdan işlem teyidi isteyin.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Karttan para çekildi sipariş oluşmadı.",
+      "Ödedim ama sipariş yok."
+    ]
+  },
+  {
+    "question": "Kartımdan iki kere para çekildi, nasıl çözülür?",
+    "answer": "İki kesinleşmiş çekim mi yoksa provizyon mu olduğunu bankadan kontrol edin. Tarih ve işlem referanslarıyla satıcıdan inceleme isteyin.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Mükerrer ödeme yaptım.",
+      "Çift çekim yapıldı."
+    ]
+  },
+  {
+    "question": "3D Secure kodu gelmiyor, ne yapmalıyım?",
+    "answer": "Telefon şebekesi ve bankanın bildirim yöntemlerini kontrol edin. Sorun sürerse bankayla görüşün ve doğrulama kodunu kimseye söylemeyin.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Doğrulama SMS'i gelmedi.",
+      "3D ödeme kodu alamıyorum."
+    ]
+  },
+  {
+    "question": "Hediye kartı ile ödeme yapabilir miyim?",
+    "answer": "Hediye kartı desteği mağazanın ödeme seçeneklerine bağlıdır. Bu demo hediye kartı bakiyesi sorgulayamaz veya ödeme alamaz.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Gift card ile ödeme olur mu?",
+      "Hediye çekini ödeme için kullanabilir miyim?"
+    ]
+  },
+  {
+    "question": "Kart bilgilerimi değiştirebilir miyim?",
+    "answer": "Kayıtlı kart özelliği varsa hesabınızın ödeme ayarlarını kontrol edin. Kart numarası ve güvenlik kodunu chatbot mesajına yazmayın.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Kayıtlı kartı değiştirmek istiyorum.",
+      "Ödeme kartı ayarları nerede?"
+    ]
+  },
+  {
+    "question": "Fatura bilgilerimi nasıl değiştiririm?",
+    "answer": "Sipariş öncesinde fatura alanlarını düzenleyebilirsiniz. Kesilmiş belgede değişiklik gerekiyorsa satıcının muhasebe desteğiyle görüşün.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Fatura adresim yanlış.",
+      "Fatura unvanı nasıl güncellenir?"
+    ]
+  },
+  {
+    "question": "Şirket adına fatura alabilir miyim?",
+    "answer": "Kurumsal fatura alanları bulunuyorsa şirket bilgilerinizi doğru girin. Fatura kesildikten sonra düzeltme için satıcıya başvurun.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Kurumsal fatura mümkün mü?",
+      "Şirket faturası istiyorum."
+    ]
+  },
+  {
+    "question": "Havale veya EFT ile ödeme var mı?",
+    "answer": "Banka transferi kabulü mağazaya göre değişir. Sadece resmî ödeme ekranındaki hesap bilgilerini kullanın; sohbetten IBAN göndermeyin.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Havale kabul ediliyor mu?",
+      "EFT ile alışveriş var mı?"
+    ]
+  },
+  {
+    "question": "Para iadesi banka hesabıma neden geç yansıyor?",
+    "answer": "Satıcının iade talimatı ve bankanın yansıtma süresi farklı aşamalardır. Önce satıcının işlem referansını, sonra bankanızdaki durumu doğrulayın.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Banka iadeyi geç gösteriyor.",
+      "İade onaylandı hesaba geçmedi."
+    ]
+  },
+  {
+    "question": "Faturadaki KDV bilgisini nereden görebilirim?",
+    "answer": "Belgedeki vergi oranı ve tutarı satır ya da toplam alanlarında bulunur. Emin değilseniz satıcının muhasebe birimiyle kontrol edin.",
+    "category": "odeme",
+    "alternative_questions": [
+      "Faturada vergi nerede?",
+      "KDV tutarı nerede yazıyor?"
+    ]
+  },
+  {
+    "question": "Ürün stokta var mı nasıl öğrenirim?",
+    "answer": "Ürün sayfasında seçtiğiniz renk ve bedenin stok durumunu kontrol edin. Sepete eklemek stok ayrıldığı anlamına gelmeyebilir; demo canlı envanter görmez.",
+    "category": "urun",
+    "alternative_questions": [
+      "Stok durumuna nasıl bakılır?",
+      "Bu ürün mevcut mu?"
+    ]
+  },
+  {
+    "question": "Tükenen ürün yeniden ne zaman gelir?",
+    "answer": "Varsa stok bildirimi ve tahmini tedarik tarihine bakın. Kesin tarih yoksa satıcıdan bilgi isteyin.",
+    "category": "urun",
+    "alternative_questions": [
+      "Stok ne zaman yenilenir?",
+      "Tükenen ürün tekrar gelir mi?"
+    ]
+  },
+  {
+    "question": "Ürün beden tablosunu nereden bulabilirim?",
+    "answer": "Ürün sayfasındaki ölçü tablosunu kendi ölçülerinizle karşılaştırın. Marka kalıpları farklı olabilir; yalnızca beden numarasına dayanmayın.",
+    "category": "urun",
+    "alternative_questions": [
+      "Beden ölçülerini nerede görürüm?",
+      "Hangi beden almalıyım?"
+    ]
+  },
+  {
+    "question": "Ürün ölçüleri nelerdir?",
+    "answer": "Teknik özellikler bölümündeki en, boy ve derinlik ölçülerini inceleyin. Eksikse model koduyla satıcıdan teyit isteyin.",
+    "category": "urun",
+    "alternative_questions": [
+      "Ürünün en boy ölçüsü?",
+      "Boyutlarını nereden öğrenirim?"
+    ]
+  },
+  {
+    "question": "Ürünün malzemesi nedir?",
+    "answer": "Kumaş içeriği veya malzeme bilgisini etiket ve ürün açıklamasından kontrol edin. Bilgi eksikse satıcıya ürün koduyla sorun.",
+    "category": "urun",
+    "alternative_questions": [
+      "Ürün hangi malzemeden?",
+      "Kumaş içeriği ne?"
+    ]
+  },
+  {
+    "question": "Ürün orijinal mi, nasıl doğrulayabilirim?",
+    "answer": "Satıcının yetkili kanalını, ürün etiketini ve varsa seri numarası doğrulamasını kontrol edin. Demo belgesiz orijinallik teyidi veremez.",
+    "category": "urun",
+    "alternative_questions": [
+      "Ürün sahte mi?",
+      "Orijinal olduğunu nasıl anlarım?"
+    ]
+  },
+  {
+    "question": "Ürünün garanti süresi nedir?",
+    "answer": "Garanti koşulları ürün türü ve üretici belgesine bağlıdır. Garanti belgesiyle resmî satıcı bilgisini kontrol edin.",
+    "category": "urun",
+    "alternative_questions": [
+      "Kaç yıl garantili?",
+      "Garanti belgesini nerede bulurum?"
+    ]
+  },
+  {
+    "question": "Ürünün kullanım kılavuzunu nereden indirebilirim?",
+    "answer": "Ürün detay sayfasında kılavuz bağlantısı varsa kullanın. Yoksa model numarasıyla üreticinin resmî destek sitesine bakın.",
+    "category": "urun",
+    "alternative_questions": [
+      "Kullanma kılavuzu PDF var mı?",
+      "Kullanım talimatı nerede?"
+    ]
+  },
+  {
+    "question": "Ürün suya dayanıklı mı?",
+    "answer": "Resmî teknik özellikteki dayanıklılık derecesini ve koşullarını inceleyin. Doğrulanmış değer yoksa su geçirmez olduğunu varsaymayın.",
+    "category": "urun",
+    "alternative_questions": [
+      "Su geçirmez mi?",
+      "Islanırsa bozulur mu?"
+    ]
+  },
+  {
+    "question": "Ürün uyumluluğunu nasıl kontrol ederim?",
+    "answer": "Cihaz ve aksesuar model numaralarını, boyutlarını ve bağlantı standartlarını karşılaştırın. Belirsizlik varsa üreticiye danışın.",
+    "category": "urun",
+    "alternative_questions": [
+      "Bu aksesuar uyar mı?",
+      "Ürün başka modelle çalışır mı?"
+    ]
+  },
+  {
+    "question": "Üründe hangi renk seçenekleri var?",
+    "answer": "Ürün detayındaki renk varyantlarını kontrol edin. Her rengin stok durumu farklı olabilir; demo canlı seçenekleri göstermez.",
+    "category": "urun",
+    "alternative_questions": [
+      "Başka rengi var mı?",
+      "Bu ürünün siyahı mevcut mu?"
+    ]
+  },
+  {
+    "question": "Ürün fotoğrafları gerçeği yansıtıyor mu?",
+    "answer": "Ekran ve ışık koşulları nedeniyle renkler değişebilir. Karar verirken yazılı teknik özelliklere ve ölçülere de bakın.",
+    "category": "urun",
+    "alternative_questions": [
+      "Resimdeki renk aynı mı?",
+      "Ürün görseldeki gibi mi?"
+    ]
+  },
+  {
+    "question": "Ürünün üretim yeri nerede yazar?",
+    "answer": "Etiket, ambalaj veya resmî ürün açıklamasında menşe bilgisini arayın. Kaynağı doğrulanmamış menşe iddialarını kesin kabul etmeyin.",
+    "category": "urun",
+    "alternative_questions": [
+      "Hangi ülkede üretiliyor?",
+      "Üretim yeri bilgisi nerede?"
+    ]
+  },
+  {
+    "question": "Üründe yedek parça bulunuyor mu?",
+    "answer": "Yedek parça ve yetkili servis durumu ürün modeline bağlıdır. Model koduyla üreticinin resmî servis kanalına sorun.",
+    "category": "urun",
+    "alternative_questions": [
+      "Yedek parça satılıyor mu?",
+      "Ürün aparatı bulunur mu?"
+    ]
+  },
+  {
+    "question": "Ürün için teknik destek alabilir miyim?",
+    "answer": "Model kodu ve sorun açıklamasıyla satıcı veya üretici desteğine başvurun. Parola, doğrulama kodu ve kart bilgilerini sohbetten göndermeyin.",
+    "category": "urun",
+    "alternative_questions": [
+      "Ürünüm çalışmıyor.",
+      "Ürünle ilgili teknik yardım istiyorum."
+    ]
+  },
+  {
+    "question": "E-posta adresimi nasıl değiştirebilirim?",
+    "answer": "Hesabınızdaki iletişim bilgileri bölümünü kontrol edin. E-posta değişiminde doğrulama istenebilir; bu demo hesabınıza erişmez.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Hesap epostam değişti.",
+      "Üyelik mailimi güncellemek istiyorum."
+    ]
+  },
+  {
+    "question": "Hesabımı nasıl silebilirim?",
+    "answer": "Hesap veya kişisel veri ayarlarında kapatma seçeneğini inceleyin. Yoksa satıcının resmî destek kanalından silme sürecini öğrenin.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Üyeliğimi silmek istiyorum.",
+      "Hesabı kalıcı kapatma nerede?"
+    ]
+  },
+  {
+    "question": "Giriş yapamıyorum, ne yapmalıyım?",
+    "answer": "E-posta ve parolanızı kontrol edip parola sıfırlama seçeneğini deneyin. Sorun sürerse resmî destekten yardım alın.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Hesabım açılmıyor.",
+      "Üye girişi başarısız."
+    ]
+  },
+  {
+    "question": "Telefon numaramı nasıl güncellerim?",
+    "answer": "Hesap ayarlarında telefon alanı varsa güncelleyin. Güvenlik kodlarını başka kişilerle paylaşmayın.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Üyelik telefonum değişti.",
+      "Hesaptaki numarayı değiştirmek istiyorum."
+    ]
+  },
+  {
+    "question": "Hesabım kilitlendi, nasıl açılır?",
+    "answer": "Güvenlik kilidi tekrarlanan giriş hatalarından kaynaklanabilir. Resmî kurtarma veya destek yolunu kullanın; şifrenizi kimseye göndermeyin.",
+    "category": "hesap",
+    "alternative_questions": [
+      "Hesabım bloke oldu.",
+      "Giriş kilidini kaldırmak istiyorum."
+    ]
+  },
+  {
+    "question": "İndirim kuponunu nasıl kullanırım?",
+    "answer": "Ödeme ekranındaki kupon alanına kodu girerek indirimi kontrol edin. Geçerlilik ve ürün kapsamı koşullarını okuyun; demo kod doğrulamaz.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "Promosyon kodu nereye yazılır?",
+      "Kupon nasıl uygulanır?"
+    ]
+  },
+  {
+    "question": "Kupon kodum neden çalışmıyor?",
+    "answer": "Kodun yazımını, bitiş tarihini ve alt sepet tutarı koşullarını kontrol edin. Hâlâ sorun varsa destekten teyit isteyin.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "İndirim kodu geçersiz.",
+      "Kuponu kabul etmiyor."
+    ]
+  },
+  {
+    "question": "Bir siparişte iki kupon kullanabilir miyim?",
+    "answer": "Kuponların birleştirilmesi kampanya şartlarına bağlıdır. Ödeme adımında toplam indirimi kontrol edin.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "İki kupon birlikte geçer mi?",
+      "İndirim kodları üst üste olur mu?"
+    ]
+  },
+  {
+    "question": "Kampanya ne zaman bitiyor?",
+    "answer": "Kampanyanın resmî duyurusundaki bitiş tarihini kontrol edin. Bu demo canlı kampanya takvimi sunmadığından kesin zaman veremez.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "İndirim ne zaman sona erer?",
+      "Kampanya son günü ne?"
+    ]
+  },
+  {
+    "question": "Yeni üyeye özel indirim var mı?",
+    "answer": "Varsa yeni üyelik promosyonunun koşulları kampanya sayfasında yayımlanır. Demo aktif promosyon doğrulayamaz.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "İlk alışveriş indirimi var mı?",
+      "Yeni üye kuponu veriliyor mu?"
+    ]
+  },
+  {
+    "question": "Ücretsiz kargo kampanyasının koşulları nedir?",
+    "answer": "Sepet tutarı ve ürün/bölge istisnaları kampanyaya göre değişebilir. Ödeme ekranındaki kargo toplamını kontrol edin.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "Bedava kargo kampanyası?",
+      "Kampanyalı ücretsiz kargo nasıl olur?"
+    ]
+  },
+  {
+    "question": "Kupon iptal ettiğim siparişe geri gelir mi?",
+    "answer": "Kuponun yeniden kullanılabilmesi kampanya koşullarına bağlıdır. İptalden sonra kupon hesabınıza dönmediyse satıcıya sorun.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "İptal sonrası kupon geri mi gelir?",
+      "Kupon tekrar aktif olur mu?"
+    ]
+  },
+  {
+    "question": "Hediye ürün kampanyası nasıl çalışır?",
+    "answer": "Hediye kazanma koşulları ürün, adet veya sepet tutarına bağlı olabilir. Siparişi tamamlamadan hediyenin sepette göründüğünü doğrulayın.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "Hediye ürün nasıl kazanılır?",
+      "Kampanya hediyesi sepette yok."
+    ]
+  },
+  {
+    "question": "Kampanya fiyatı kasada neden değişiyor?",
+    "answer": "Varyantı, kupon şartını ve ek ücretleri kontrol edin. Tutar uyuşmuyorsa ödeme yapmadan destekten açıklama isteyin.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "İndirimli fiyat kasada farklı.",
+      "Sepette kampanya uygulanmıyor."
+    ]
+  },
+  {
+    "question": "Sadakat puanlarımı nasıl kullanırım?",
+    "answer": "Sadakat programı varsa bakiyenizi ve kullanım koşullarını hesap ekranında görebilirsiniz. Demo gerçek puan hesabı sorgulamaz.",
+    "category": "kampanya",
+    "alternative_questions": [
+      "Puanla ödeme yapılır mı?",
+      "Ödül puanları nerede harcanır?"
+    ]
+  },
+  {
+    "question": "Canlı müşteri temsilcisine nasıl bağlanırım?",
+    "answer": "Resmî destek sayfasındaki canlı sohbet veya iletişim seçeneğini kullanın. FAQBot yalnızca örnek kayıtlı cevapları döndüren demodur; temsilciye bağlamaz.",
+    "category": "destek",
+    "alternative_questions": [
+      "İnsanla görüşmek istiyorum.",
+      "Canlı destek var mı?"
+    ]
+  },
+  {
+    "question": "Destek talebi açmak için hangi bilgiler gerekli?",
+    "answer": "Sorunu, ürün ya da sipariş referansını ve varsa ekran görüntüsünü hazırlayın. Parola, OTP ve tam kart bilgisini paylaşmayın.",
+    "category": "destek",
+    "alternative_questions": [
+      "Destek kaydı nasıl açılır?",
+      "Arıza bildirimi için ne lazım?"
+    ]
+  },
+  {
+    "question": "Destek talebimin durumunu nasıl öğrenirim?",
+    "answer": "Resmî destek sistemindeki talep numarasıyla durumu takip edin. Bu demo harici destek kaydını görüntüleyemez.",
+    "category": "destek",
+    "alternative_questions": [
+      "Açtığım destek kaydı nerede?",
+      "Destek başvurum sonuçlandı mı?"
+    ]
+  },
+  {
+    "question": "Şikâyetimi nasıl iletebilirim?",
+    "answer": "Olayı tarih, ilgili ürün ve belgelerle özetleyip satıcının resmî şikâyet kanalına iletin. Başvuru referansını saklayın.",
+    "category": "destek",
+    "alternative_questions": [
+      "Şikâyet göndermek istiyorum.",
+      "Mağaza şikâyet formu nerede?"
+    ]
+  },
+  {
+    "question": "Yanlış bilgi veren chatbotu nasıl bildirebilirim?",
+    "answer": "Hatalı soruyu ve yanıtı not edin. Bu demoda otomatik yanlış cevap inceleme özelliği henüz bulunmaz; sonraki sürüm için planlanmıştır.",
+    "category": "destek",
+    "alternative_questions": [
+      "Bot yanlış cevap verdi.",
+      "Chatbot cevabı hatalı."
+    ]
+  },
+  {
+    "question": "Uygulama sayfası açılmıyor, ne yapmalıyım?",
+    "answer": "Yerel FAQBot sunucusunun açık ve adresin http://127.0.0.1:8000/app olduğundan emin olun. Gerekirse tarayıcı konsolunu ve sunucu hata kaydını kontrol edin.",
+    "category": "destek",
+    "alternative_questions": [
+      "Sohbet ekranı yüklenmiyor.",
+      "FAQBot açılmıyor."
+    ]
+  },
+  {
+    "question": "Sohbet mesajım gönderilemiyor, nedeni ne olabilir?",
+    "answer": "Sunucu terminalini ve bağlantıyı kontrol edin. Geliştirici araçlarında POST /chat isteğinin durumuna bakarak hatayı inceleyin.",
+    "category": "destek",
+    "alternative_questions": [
+      "Mesajım gitmiyor.",
+      "Chatbot yanıt vermiyor."
+    ]
+  },
+  {
+    "question": "Kişisel verilerimi sohbet mesajına yazmalı mıyım?",
+    "answer": "Hayır. Demo için adres, kart numarası, parola veya doğrulama kodu gerekli değil. Hassas işlemleri kurumun güvenli kanallarından yürütün.",
+    "category": "destek",
+    "alternative_questions": [
+      "Kredi kartımı bota yazabilir miyim?",
+      "Şifremi sohbete göndereyim mi?"
+    ]
+  },
+  {
+    "question": "FAQBot internet olmadan çalışır mı?",
+    "answer": "Paketler ve proje ilk kez kurulduktan sonra sohbet ve SQLite işlemleri yerelde çalışır. GitHub güncellemeleri ve ilk paket kurulumu internet gerektirir.",
+    "category": "destek",
+    "alternative_questions": [
+      "Bot çevrimdışı çalışır mı?",
+      "Chatbot API anahtarı ister mi?"
+    ]
+  },
+  {
+    "question": "Sistem hangi konuları yanıtlayamaz?",
+    "answer": "FAQBot yalnızca kayıtlı demo SSS'leriyle eşleşir. Gerçek sipariş durumu, canlı stok/fiyat, hesap işlemleri ve kesin hukuki değerlendirme sağlayamaz.",
+    "category": "destek",
+    "alternative_questions": [
+      "Botun bilmediği konular neler?",
+      "Gerçek siparişi sorgular mı?"
+    ]
+  }
+]

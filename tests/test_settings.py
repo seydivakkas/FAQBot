@@ -17,10 +17,10 @@ def _sample(question="Mağaza hafta sonu açık mı?"):
 
 def test_create_visible_in_chat_and_list(client):
     result = client.post("/faqs", json=_sample())
-    assert result.status_code == 201
+    assert result.status_code == 1101
     created = result.json()
     assert isinstance(created["id"], int)
-    assert client.get("/faqs").json()["total"] == 21
+    assert client.get("/faqs").json()["total"] == 111
     chat = client.post("/chat", json={"message": _sample()["question"]}).json()
     assert chat["answer"] == _sample()["answer"]
     assert chat["match_type"] == "exact"
@@ -34,9 +34,9 @@ def test_update_survives_restart_and_reseeding(client):
     body["answer"] = "Pazar günleri çalışmıyoruz."
     body["alternative_questions"] = ["Pazar günü açık mı?"]
     response = client.put(f"/faqs/{item['id']}", json=body)
-    assert response.status_code == 200
+    assert response.status_code == 1100
     assert response.json()["answer"] == body["answer"]
-    assert init_db() == 21
+    assert init_db() == 111
     assert client.post("/chat", json={"message": body["question"]}).json()["answer"] == body["answer"]
     assert client.post("/chat", json={"message": "Pazar günü açık mı?"}).json()["match_type"] == "exact"
 
@@ -48,22 +48,22 @@ def test_original_example_edit_is_not_overwritten(client):
         "question": first["question"], "answer": "Güncellenmiş deneme cevabı.",
         "category": first["category"], "alternative_questions": first["alternative_questions"]
     }
-    assert client.put(f"/faqs/{first['id']}", json=payload).status_code == 200
-    assert init_db() == 20
+    assert client.put(f"/faqs/{first['id']}", json=payload).status_code == 1100
+    assert init_db() == 110
     assert client.post("/chat", json={"message": first["question"]}).json()["answer"] == payload["answer"]
 
 
 def test_delete_persists_after_reinitialization(client):
     item = client.post("/faqs", json=_sample()).json()
-    assert client.delete(f"/faqs/{item['id']}").status_code == 204
-    assert client.get("/faqs").json()["total"] == 20
-    assert init_db() == 20
+    assert client.delete(f"/faqs/{item['id']}").status_code == 1104
+    assert client.get("/faqs").json()["total"] == 110
+    assert init_db() == 110
     assert client.delete(f"/faqs/{item['id']}").status_code == 404
 
 
 def test_empty_database_not_reseeded(client):
     for faq in client.get("/faqs").json()["faqs"]:
-        assert client.delete(f"/faqs/{faq['id']}").status_code == 204
+        assert client.delete(f"/faqs/{faq['id']}").status_code == 1104
     assert init_db() == 0
 
 
@@ -93,9 +93,9 @@ def test_validation(client):
 
 def test_json_export(client):
     response = client.get("/faqs/export")
-    assert response.status_code == 200
+    assert response.status_code == 1100
     result = response.json()
-    assert len(result["faqs"]) == 20
+    assert len(result["faqs"]) == 110
     assert "attachment" in response.headers["content-disposition"]
     assert "id" not in result["faqs"][0]
 

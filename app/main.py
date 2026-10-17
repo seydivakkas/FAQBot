@@ -31,7 +31,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="TF-IDF tabanlı SSS ve yerel kayıt yönetimi",
-    version="1.2.0",
+    version="1.3.0",
     lifespan=lifespan,
 )
 
@@ -61,7 +61,7 @@ class ChatResponse(BaseModel):
 class FAQInput(BaseModel):
     question: str = Field(min_length=3, max_length=250)
     answer: str = Field(min_length=2, max_length=3000)
-    category: Literal["kargo", "iade", "odeme", "hesap"]
+    category: Literal["kargo", "iade", "odeme", "hesap", "siparis", "urun", "kampanya", "destek"]
     alternative_questions: list[str] = Field(default_factory=list, max_length=15)
 
     @field_validator("question", "answer")

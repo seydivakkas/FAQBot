@@ -7,7 +7,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = ROOT / "data" / "faqs.json"
-CATEGORIES = ("kargo", "iade", "odeme", "hesap")
+V13_DATA_PATH = ROOT / "data" / "faqs_v13_additions.json"
+CATEGORIES = ("kargo", "iade", "odeme", "hesap", "siparis", "urun", "kampanya", "destek")
 
 
 def get_db_path() -> Path:
@@ -80,6 +81,28 @@ def init_db() -> int:
                     )
             conn.execute(
                 "INSERT INTO app_metadata (key, value) VALUES ('initial_seed_done', '1')"
+            )
+
+        # v1.3: 90 yeni demo kaydını bir kez ekle, düzenlenmiş verileri ezme.
+        # Silinmiş kayıtlar uygulama yeniden açılınca tekrar oluşmaz.
+        upgraded = conn.execute(
+            "SELECT value FROM app_metadata WHERE key = 'v13_additions_done'"
+        ).fetchone()
+        if upgraded is None:
+            with V13_DATA_PATH.open("r", encoding="utf-8") as file:
+                additions = json.load(file)
+            for faq in additions:
+                conn.execute(
+                    "INSERT OR IGNORE INTO faqs "
+                    "(question, answer, category, alternative_questions) "
+                    "VALUES (?, ?, ?, ?)",
+                    (
+                        faq["question"], faq["answer"], faq["category"],
+                        json.dumps(faq.get("alternative_questions", []), ensure_ascii=False),
+                    ),
+                )
+            conn.execute(
+                "INSERT INTO app_metadata (key, value) VALUES ('v13_additions_done', '1')"
             )
 
         return conn.execute("SELECT COUNT(*) FROM faqs").fetchone()[0]

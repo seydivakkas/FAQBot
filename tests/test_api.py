@@ -13,7 +13,7 @@ def test_root_redirect(client):
 
 def test_faq_list(client):
     response = client.get("/faqs")
-    assert response.status_code == 200
+    assert response.status_code == 1100
     data = response.json()
     assert data["total"] == 20
     assert len(data["faqs"]) == 20
@@ -21,14 +21,14 @@ def test_faq_list(client):
 
 
 def test_faq_list_categories(client):
-    """Arayüzde gösterilecek 20 soru, 4 kategoriye eşit dağılmalı."""
+    """Arayüzde gösterilecek 20 soru, 8 kategoriye dağılmalı."""
     data = client.get("/faqs").json()
     categories = {}
     for faq in data["faqs"]:
         categories[faq["category"]] = categories.get(faq["category"], 0) + 1
         assert faq["question"].strip()
         assert faq["answer"].strip()
-    assert categories == {"kargo": 5, "iade": 5, "odeme": 5, "hesap": 5}
+    assert categories == {"kargo": 15, "iade": 20, "odeme": 15, "hesap": 10, "siparis": 15, "urun": 15, "kampanya": 10, "destek": 10}
 
 
 def test_exact_question(client):
@@ -86,7 +86,7 @@ def test_faq_panel_wired_to_api(client):
     js = client.get("/static/app.js").text
     for element_id in ("faqToggle", "faqPanel", "faqList", "faqSearch", "faqClose"):
         assert 'id="' + element_id + '"' in html
-    for category in ("kargo", "iade", "odeme", "hesap"):
+    for category in ("kargo", "iade", "odeme", "hesap", "siparis", "urun", "kampanya", "destek"):
         assert 'data-category="' + category + '"' in html
     assert 'fetch("/faqs")' in js
     assert "faq.question" in js

@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.2</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.3</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -32,7 +32,7 @@
                 </div>
                 <button id="faqToggle" type="button" class="faq-toggle"
                         aria-controls="faqPanel" aria-expanded="false">
-                    <span id="faqTotal">20</span> Soruyu Gör
+                    <span id="faqTotal">110</span> Soruyu Gör
                 </button>
                 <button id="settingsToggle" type="button" class="settings-toggle" aria-controls="settingsPanel" aria-expanded="false">⚙ Ayarlar</button>
                 <span class="tag">DEMO</span>
@@ -90,6 +90,10 @@
                     <button type="button" data-category="iade" aria-pressed="false">İade</button>
                     <button type="button" data-category="odeme" aria-pressed="false">Ödeme</button>
                     <button type="button" data-category="hesap" aria-pressed="false">Hesap</button>
+                    <button type="button" data-category="siparis" aria-pressed="false">Sipariş</button>
+                    <button type="button" data-category="urun" aria-pressed="false">Ürün</button>
+                    <button type="button" data-category="kampanya" aria-pressed="false">Kampanya</button>
+                    <button type="button" data-category="destek" aria-pressed="false">Destek</button>
                 </div>
             </div>
             <div id="faqList" class="faq-list" aria-live="polite">
@@ -132,7 +136,11 @@
                         <option value="kargo">Kargo</option>
                         <option value="iade">İade</option>
                         <option value="odeme">Ödeme</option>
-                        <option value="hesap">Hesap / Sipariş</option>
+                        <option value="hesap">Hesap</option>
+                        <option value="siparis">Sipariş</option>
+                        <option value="urun">Ürün ve stok</option>
+                        <option value="kampanya">Kampanya</option>
+                        <option value="destek">Destek</option>
                     </select>
 
                     <label for="editAlternatives">Alternatif sorular (isteğe bağlı)</label>
