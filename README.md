@@ -10,7 +10,7 @@
 
 - 8 kategoride toplam **110 farklı demo müşteri ihtiyacı**, 2 veya daha fazla alternatif soru ifadesi
 - **Arayüzde “Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
-- **Ayarlar / SSS Yönetimi**: yeni soru-cevap ekleme, mevcut kayıtları düzenleme/silme, alternatif soru tanımlama ve güncel JSON yedeğini dışa aktarma
+- **Ayarlar / SSS Yönetimi**: soru-cevap CRUD, yedek alma, CSV/XLSX toplu aktarım, eşik kontrollü benzer soru önerileri ve açık onayla kayıt birleştirme
 - SQLite depolama: ilk 20 kayıt korunur, v1.3 için 90 yeni aday kayıt bir kerelik eklenir; kullanıcı düzenlemeleri yeniden başlatmada korunur
 - Türkçe metin normalizasyonu; önce birebir eşleşme
 - scikit-learn ile karakter n-gram TF-IDF + cosine similarity
@@ -88,6 +88,22 @@ python -m uvicorn app.main:app --reload
 Veritabanı sunucu açılırken hazırlanır. `data/faqs.json` içindeki ilk 20 örnek yalnızca ilk kurulumda eklenir. **v1.3 yükseltmesinde `data/faqs_v13_additions.json` dosyasındaki 90 yeni soru mevcut veritabanına bir kez eklenir.** Bu ekleme, mevcut kayıtların soru veya cevaplarını değiştirmez; aynı ana soruya sahip kayıtlar atlanır. Bir kez eklenip sonradan silinen sorular tekrar oluşmaz. İçe aktarma yapılmadan önce `faqbot.db` dosyanızın yedeğini alın.
 
 110 sayısı temiz ilk kurulum için geçerlidir. Mevcut veritabanında silinen/düzenlenen kayıtlar veya aynı soru başlığı bulunuyorsa sayı farklı olabilir. Güncellemeler eski kayıtların silinmesini veya zorla yeniden yazılmasını amaçlamaz. **Yeni 90 cevaplar gerçek mağaza politikası değil, kurgu demo senaryolarıdır**; canlı kullanıcıya yönelik doğrulanmış kaynak olarak sunulamaz.
+
+### Benzer soru tespiti ve ayarlanabilir eşik (v1.3.2)
+
+**Ayarlar → Benzer Soruları İncele** alanında eşik değeri hem **kaydırıcı** hem **sayısal yüzde alanı** ile %40–95 arasında, %1 adımlarla seçilebilir. **Başlangıç eşiği %70'tir.** Önce **Eşiği kaydet**, ardından **Benzerleri tara** düğmesine basın. Seçim SQLite'ın `app_metadata` tablosunda saklandığından uygulama yeniden açıldığında korunur.
+
+Önemli sınırlar:
+
+- Ayarladığınız oran yalnızca **yönetim ekranındaki tekrar adaylarını** etkiler. Sohbet motorunun `app/matching.py` dosyasındaki **0.40 cevap eşleştirme eşiği değişmez**.
+- Yöntem, Türkçe normalize edilmiş ana ve alternatif sorular arasında **karakter TF-IDF (%70 ağırlık) + kelime TF-IDF (%30 ağırlık)** kosinüs benzerliğidir. Skor, aynı anlama gelme olasılığı veya doğrulanmış semantik eşdeğerlik değildir.
+- Her adayda **sorular, cevaplar, kategoriler ve eşleşen ifadeler** karşılaştırılır. Farklı kategorilerdeki çiftler gösterilebilir fakat birleştirilemez.
+- **Birleştirme kendiliğinden yapılmaz.** Yönetici hangi kaydın korunacağını seçip ayrı onay verir. Korunan cevabın üzerine yazılmaz; kaldırılan kaydın sorusu/alternatifleri korunan kayda eklenir.
+- Cevaplar farklıysa arayüz uyarı verir. Birleştirilen her çiftin öncesi/sonrası `faq_merge_history` tablosunda saklanır; fakat geçmişten otomatik **geri yükleme arayüzü henüz yoktur**.
+- Başka kayıtla ifade çakışması, %70 gibi kaydedilmiş eşiğin altında kalma, 15 alternatif ifade sınırının aşılması veya işlem sırasında kayıt değişikliği varsa birleştirme yapılmaz.
+- API: `GET /settings/duplicates`, `PUT /settings/duplicates`, `GET /faqs/duplicates`, `POST /faqs/duplicates/merge`. Tamamı yerel erişim kontrolüne tabidir.
+
+**Uyarı:** Benzerlik sonuçlarını insan incelemesi olmadan kesin tekrar saymayın; şu an yerel embedding/LLM tabanlı semantik arama bulunmuyor. Kalibrasyon için gerçek sorulardan ayrı değerlendirme kümesi oluşturulmalıdır.
 
 ### Excel / CSV toplu aktarımı (v1.3.1)
 
