@@ -28,6 +28,12 @@ const cancelFaqButton = document.getElementById("cancelFaqButton");
 const newFaqButton = document.getElementById("newFaqButton");
 const exportFaqButton = document.getElementById("exportFaqButton");
 const editFormTitle = document.getElementById("editFormTitle");
+const faqImportFile = document.getElementById("faqImportFile");
+const previewFaqImportButton = document.getElementById("previewFaqImport");
+const commitFaqImportButton = document.getElementById("commitFaqImport");
+const faqImportStatus = document.getElementById("faqImportStatus");
+const faqImportPreview = document.getElementById("faqImportPreview");
+let previewReadyRecords = [];
 const faqPanel = document.getElementById("faqPanel");
 const faqOverlay = document.getElementById("faqOverlay");
 const faqClose = document.getElementById("faqClose");
@@ -329,7 +335,16 @@ function renderManageList() {
         button.type = "button";
         button.textContent = "Düzenle";
         button.addEventListener("click", () => editExistingFaq(faq));
-        row.append(copy, button);
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "manage-delete";
+        del.textContent = "Sil";
+        del.setAttribute("aria-label", faq.question + " kaydını sil");
+        del.addEventListener("click", () => deleteFaqRecord(faq.id));
+        const actions = document.createElement("div");
+        actions.className = "manage-item-actions";
+        actions.append(button, del);
+        row.append(copy, actions);
         fragment.appendChild(row);
     }
     manageFaqList.replaceChildren(fragment);
@@ -429,23 +444,24 @@ faqEditForm.addEventListener("submit", async (event) => {
     }
 });
 
-deleteFaqButton.addEventListener("click", async () => {
-    const id = editingFaqId.value;
+async function deleteFaqRecord(id) {
     if (!id || settingsBusy) return;
-    if (!window.confirm("Bu soruyu ve cevabını kalıcı olarak silmek istiyor musunuz?")) return;
+    if (!window.confirm("Bu soru ve cevap silinsin mi? (Geri yükleme daha sonraki aşamada eklenecek.)")) return;
     setSettingsBusy(true);
     editFeedback("Siliniyor...");
     try {
         await apiWrite("/faqs/" + encodeURIComponent(id), "DELETE");
         await loadFaqs();
-        resetFaqForm();
+        if (editingFaqId.value === String(id)) resetFaqForm();
         editFeedback("Kayıt silindi.");
     } catch (error) {
         editFeedback(error.message, true);
     } finally {
         setSettingsBusy(false);
     }
-});
+}
+
+deleteFaqButton.addEventListener("click", () => deleteFaqRecord(editingFaqId.value));
 
 exportFaqButton.addEventListener("click", async () => {
     if (settingsBusy) return;
@@ -477,3 +493,90 @@ settingsOverlay.addEventListener("click", closeSettings);
 newFaqButton.addEventListener("click", () => { resetFaqForm(); editQuestion.focus(); });
 cancelFaqButton.addEventListener("click", resetFaqForm);
 manageFaqSearch.addEventListener("input", renderManageList);
+
+
+/* Toplu SSS aktarımı: sunucuda denetle, kullanıcı onayından sonra ekle. */
+function resetImportPreview() {
+    previewReadyRecords = [];
+    commitFaqImportButton.disabled = true;
+    faqImportPreview.replaceChildren();
+    faqImportStatus.textContent = "";
+    faqImportStatus.classList.remove("error");
+}
+function showImportMessage(message, error = false) {
+    faqImportStatus.textContent = message;
+    faqImportStatus.classList.toggle("error", error);
+}
+function showImportRows(result) {
+    const fragment = document.createDocumentFragment();
+    const heading = document.createElement("div");
+    heading.className = "import-summary";
+    heading.textContent = "Toplam " + result.total + " · Uygun " + result.ready +
+        " · Çakışan " + result.duplicate + " · Hatalı " + result.invalid;
+    fragment.appendChild(heading);
+    const labels = {ready:"Eklenebilir",duplicate:"Çakışan",invalid:"Hatalı"};
+    for (const item of result.rows) {
+        const row = document.createElement("div");
+        row.className = "import-row";
+        row.dataset.state = item.status;
+        const title = document.createElement("strong");
+        title.textContent = "Satır " + item.row_number + " · " +
+            (labels[item.status] || item.status) + " · " + (item.question || "Soru yok");
+        row.appendChild(title);
+        if (item.reason) {
+            const reason = document.createElement("small");
+            reason.textContent = item.reason;
+            row.appendChild(reason);
+        }
+        fragment.appendChild(row);
+    }
+    faqImportPreview.replaceChildren(fragment);
+}
+faqImportFile.addEventListener("change", resetImportPreview);
+previewFaqImportButton.addEventListener("click", async () => {
+    const file = faqImportFile.files[0];
+    resetImportPreview();
+    if (!file) return showImportMessage("Önce dosya seçin.", true);
+    if (file.size > 2 * 1024 * 1024) return showImportMessage("En fazla 2 MB dosya.", true);
+    previewFaqImportButton.disabled = true;
+    showImportMessage("Dosya kontrol ediliyor...");
+    try {
+        const body = new FormData();
+        body.append("file", file);
+        const response = await fetch("/faqs/import/preview", {method:"POST", body});
+        const result = await response.json();
+        if (!response.ok) throw new Error(typeof result.detail === "string" ? result.detail : "Önizleme başarısız.");
+        showImportRows(result);
+        previewReadyRecords = result.rows.filter(item => item.status === "ready").map(item => item.data);
+        commitFaqImportButton.disabled = previewReadyRecords.length === 0;
+        showImportMessage(result.ready + " satır aktarılabilir. Onaylamak için aktar düğmesine basın.");
+    } catch (error) {
+        showImportMessage(error.message, true);
+    } finally {
+        previewFaqImportButton.disabled = false;
+    }
+});
+commitFaqImportButton.addEventListener("click", async () => {
+    if (!previewReadyRecords.length || settingsBusy) return;
+    if (!window.confirm(previewReadyRecords.length + " yeni SSS kaydı eklensin mi? Eski kayıtlar korunacak.")) return;
+    commitFaqImportButton.disabled = true;
+    showImportMessage("Yeni kayıtlar ekleniyor...");
+    try {
+        const response = await fetch("/faqs/import/commit", {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({records:previewReadyRecords})
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            const message = typeof data.detail === "string" ? data.detail :
+                data.detail?.message || "Aktarım başarısız.";
+            throw new Error(message);
+        }
+        resetImportPreview();
+        faqImportFile.value = "";
+        await loadFaqs();
+        showImportMessage(data.inserted + " yeni soru kaydedildi.");
+    } catch (error) {
+        showImportMessage(error.message + " Dosyayı yeniden önizleyebilirsiniz.", true);
+    }
+});

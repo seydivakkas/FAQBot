@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.3</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.3.1</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -119,6 +119,21 @@
                     <button type="button" id="newFaqButton" class="settings-primary">+ Yeni soru</button>
                     <button type="button" id="exportFaqButton" class="settings-secondary">JSON yedeği indir</button>
                 </div>
+
+                <section class="import-box" aria-labelledby="importHeading">
+                    <h3 id="importHeading">Excel / CSV toplu aktarım</h3>
+                    <p class="import-description">Önce önizle, sonra onayla. Mevcut soruların veya cevapların üzerine yazılmaz.</p>
+                    <a href="/static/faq_import_template.csv" download="faq_import_template.csv" class="import-template">Örnek CSV şablonunu indir</a>
+                    <label for="faqImportFile">Dosya (.csv veya .xlsx, en fazla 2 MB)</label>
+                    <input id="faqImportFile" type="file" accept=".csv,.xlsx">
+                    <div class="settings-actions">
+                        <button type="button" id="previewFaqImport" class="settings-secondary">Dosyayı önizle</button>
+                        <button type="button" id="commitFaqImport" class="settings-primary" disabled>Uygun satırları aktar</button>
+                    </div>
+                    <p id="faqImportStatus" class="edit-status" role="status"></p>
+                    <div id="faqImportPreview" class="import-preview" aria-live="polite"></div>
+                    <small>Zorunlu sütunlar: question, answer, category. İsteğe bağlı: alternative_questions (ifadeleri | ile ayırın). En fazla 500 veri satırı; kategoriler kargo, iade, odeme, hesap, siparis, urun, kampanya, destek.</small>
+                </section>
 
                 <form id="faqEditForm" class="faq-edit-form">
                     <input id="editingFaqId" type="hidden">
