@@ -1,6 +1,9 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
 chcp 65001 >nul
+rem Python ciktisi Windows CI konsolunda cp1252 olabilecegi icin UTF-8 zorla.
+set "PYTHONUTF8=1"
+set "PYTHONIOENCODING=utf-8"
 title FAQBot - Windows Kurulum ve Calistirma
 
 set "REPO_URL=https://github.com/seydivakkas/FAQBot.git"
