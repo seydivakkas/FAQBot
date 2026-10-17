@@ -28,6 +28,14 @@ const cancelFaqButton = document.getElementById("cancelFaqButton");
 const newFaqButton = document.getElementById("newFaqButton");
 const exportFaqButton = document.getElementById("exportFaqButton");
 const editFormTitle = document.getElementById("editFormTitle");
+const dupThresholdRange = document.getElementById("dupThresholdRange");
+const dupThresholdNumber = document.getElementById("dupThresholdNumber");
+const dupThresholdLabel = document.getElementById("dupThresholdLabel");
+const dupThresholdSave = document.getElementById("dupThresholdSave");
+const dupScan = document.getElementById("dupScan");
+const duplicateStatus = document.getElementById("duplicateStatus");
+const duplicateCandidates = document.getElementById("duplicateCandidates");
+let duplicateWorking = false;
 const faqImportFile = document.getElementById("faqImportFile");
 const previewFaqImportButton = document.getElementById("previewFaqImport");
 const commitFaqImportButton = document.getElementById("commitFaqImport");
@@ -359,6 +367,7 @@ function openSettings() {
     document.body.classList.add("faq-open");
     if (!faqsLoaded) loadFaqs();
     renderManageList();
+    loadDuplicateThreshold();
     editQuestion.focus();
 }
 
@@ -580,3 +589,228 @@ commitFaqImportButton.addEventListener("click", async () => {
         showImportMessage(error.message + " Dosyayı yeniden önizleyebilirsiniz.", true);
     }
 });
+
+
+/* Ayarlar > Benzer Sorular. Yüzde eşiği sohbet motorundan bağımsızdır. */
+function duplicateFeedback(message, isError = false) {
+    duplicateStatus.textContent = message;
+    duplicateStatus.classList.toggle("error", isError);
+}
+
+function setThresholdControls(value) {
+    const percent = Math.min(95, Math.max(40, Math.round(Number(value))));
+    dupThresholdRange.value = String(percent);
+    dupThresholdNumber.value = String(percent);
+    dupThresholdLabel.textContent = "%" + percent;
+}
+
+dupThresholdRange.addEventListener("input", () => {
+    setThresholdControls(dupThresholdRange.value);
+    duplicateCandidates.replaceChildren();
+    duplicateFeedback("Eşik değişti. Kaydedin ve tekrar tarayın.");
+});
+dupThresholdNumber.addEventListener("input", () => {
+    const n = Number(dupThresholdNumber.value);
+    if (Number.isInteger(n) && n >= 40 && n <= 95) {
+        dupThresholdRange.value = String(n);
+        dupThresholdLabel.textContent = "%" + n;
+        duplicateCandidates.replaceChildren();
+        duplicateFeedback("Eşik değişti. Kaydedin ve tekrar tarayın.");
+    }
+});
+
+async function loadDuplicateThreshold() {
+    try {
+        const res = await fetch("/settings/duplicates");
+        if (!res.ok) throw new Error("Ayarlar okunamadı");
+        const data = await res.json();
+        setThresholdControls(data.threshold * 100);
+    } catch (error) {
+        duplicateFeedback(error.message, true);
+    }
+}
+
+async function saveDuplicateThreshold() {
+    if (duplicateWorking) return false;
+    const percent = Number(dupThresholdNumber.value);
+    if (!Number.isInteger(percent) || percent < 40 || percent > 95) {
+        duplicateFeedback("Benzerlik eşiği %40 ile %95 arasında tam sayı olmalıdır.", true);
+        return false;
+    }
+    duplicateWorking = true;
+    dupThresholdSave.disabled = true;
+    try {
+        const res = await fetch("/settings/duplicates", {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({threshold: percent / 100})
+        });
+        if (!res.ok) throw new Error("Eşik kaydedilemedi (HTTP " + res.status + ").");
+        const data = await res.json();
+        setThresholdControls(data.threshold * 100);
+        duplicateCandidates.replaceChildren();
+        duplicateFeedback("Eşik %" + percent + " olarak kaydedildi. Tarama yapabilirsiniz.");
+        return true;
+    } catch(error) {
+        duplicateFeedback(error.message, true);
+        return false;
+    } finally {
+        duplicateWorking = false;
+        dupThresholdSave.disabled = false;
+    }
+}
+
+dupThresholdSave.addEventListener("click", saveDuplicateThreshold);
+
+function makeDuplicateCard(item) {
+    const card = document.createElement("article");
+    card.className = "duplicate-card";
+    const header = document.createElement("div");
+    header.className = "duplicate-card-header";
+    const score = document.createElement("strong");
+    score.textContent = "%" + (item.score * 100).toFixed(1) + " benzerlik";
+    const note = document.createElement("span");
+    note.textContent = item.same_category ? "Aynı kategori" : "Farklı kategoriler · Birleştirme kapalı";
+    header.append(score, note);
+    card.appendChild(header);
+
+    const details = document.createElement("div");
+    details.className = "duplicate-compare";
+    for (const [side, faq] of [["Sol", item.left], ["Sağ", item.right]]) {
+        const column = document.createElement("div");
+        column.className = "duplicate-record";
+        const title = document.createElement("strong");
+        title.textContent = side + " #" + faq.id + " · " + faq.category;
+        const question = document.createElement("p");
+        question.textContent = faq.question;
+        const answerTitle = document.createElement("small");
+        answerTitle.textContent = "Kayıtlı cevap";
+        const answer = document.createElement("p");
+        answer.className = "duplicate-answer";
+        answer.textContent = faq.answer;
+        const alternatives = document.createElement("small");
+        alternatives.textContent = faq.alternative_questions.length + " alternatif ifade";
+        column.append(title, question, answerTitle, answer, alternatives);
+        details.appendChild(column);
+    }
+    card.appendChild(details);
+    const example = document.createElement("p");
+    example.className = "duplicate-example";
+    example.textContent = "Eşleşen ifadeler: " + item.example_left + " / " + item.example_right;
+    card.appendChild(example);
+    if (item.answers_differ) {
+        const warning = document.createElement("p");
+        warning.className = "duplicate-warning";
+        warning.textContent = "Cevaplar farklı. Birleştirirseniz seçtiğiniz tarafın cevabı korunacak; diğer cevap birleştirme arşivine kaydedilecek.";
+        card.appendChild(warning);
+    }
+    const actions = document.createElement("div");
+    actions.className = "duplicate-actions";
+    for (const [keep, remove, keptSide] of [
+        [item.left, item.right, "Sol"],
+        [item.right, item.left, "Sağ"]
+    ]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "settings-secondary";
+        button.textContent = keptSide + " kaydı tut";
+        button.disabled = !item.can_merge;
+        button.addEventListener("click", () => mergeDuplicatePair(item, keep, remove));
+        actions.appendChild(button);
+    }
+    card.appendChild(actions);
+    return card;
+}
+
+function renderDuplicateList(data) {
+    const wrapper = document.createDocumentFragment();
+    const intro = document.createElement("p");
+    intro.className = "duplicate-result-count";
+    intro.textContent = data.total + " aday çift · Kayıtlı eşik %" +
+        Math.round(data.threshold * 100) + (data.truncated ? " · İlk 150 aday" : "");
+    wrapper.appendChild(intro);
+    if (!data.candidates.length) {
+        const empty = document.createElement("p");
+        empty.className = "faq-notice";
+        empty.textContent = "Bu eşikte benzer soru adayı bulunamadı. Eşiği düşürüp yeniden tarayabilirsiniz.";
+        wrapper.appendChild(empty);
+    }
+    for (const item of data.candidates) wrapper.appendChild(makeDuplicateCard(item));
+    duplicateCandidates.replaceChildren(wrapper);
+}
+
+async function scanDuplicatePairs() {
+    if (duplicateWorking) return;
+    const percent = Number(dupThresholdNumber.value);
+    if (!Number.isInteger(percent) || percent < 40 || percent > 95) {
+        duplicateFeedback("Önce %40–95 arasında bir eşik girin.", true);
+        return;
+    }
+    duplicateWorking = true;
+    dupScan.disabled = true;
+    duplicateFeedback("Kayıtlar karşılaştırılıyor...");
+    try {
+        const settings = await fetch("/settings/duplicates");
+        if (!settings.ok) throw new Error("Kayıtlı eşik okunamadı.");
+        const saved = await settings.json();
+        if (Math.round(saved.threshold * 100) !== percent) {
+            duplicateCandidates.replaceChildren();
+            throw new Error("Eşik henüz kaydedilmedi. Önce 'Eşiği kaydet' düğmesini kullanın.");
+        }
+        const res = await fetch("/faqs/duplicates");
+        if (!res.ok) throw new Error("Benzer soru taraması başarısız.");
+        const data = await res.json();
+        renderDuplicateList(data);
+        duplicateFeedback(data.total + " aday karşılaştırma incelemeye hazır.");
+    } catch(error) {
+        duplicateFeedback(error.message, true);
+    } finally {
+        dupScan.disabled = false;
+        duplicateWorking = false;
+    }
+}
+
+dupScan.addEventListener("click", scanDuplicatePairs);
+
+async function mergeDuplicatePair(item, keep, remove) {
+    if (duplicateWorking || !item.can_merge) return;
+    const contentDiff = item.answers_differ ?
+        "\n\nCevaplar farklı. Korunan cevabı seçtiğiniz taraf belirleyecek; diğer kayıt arşivlenecek." : "";
+    const approved = window.confirm(
+        "Birleştirme işlemini onaylıyor musunuz?\n\n" +
+        "KORUNACAK: " + keep.question + "\n" +
+        "AKTARILACAK: " + remove.question + "\n\n" +
+        "Diğer soru, korunan kaydın alternatif ifadelerine eklenecek." +
+        contentDiff + "\n\nBu işlem otomatik geri alınamaz."
+    );
+    if (!approved) return;
+    duplicateWorking = true;
+    duplicateFeedback("Birleştirme kontrol ediliyor...");
+    try {
+        const response = await fetch("/faqs/duplicates/merge", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                keep_id: keep.id, remove_id: remove.id,
+                expected_keep: keep.id === item.left.id ?
+                    item.left_fingerprint : item.right_fingerprint,
+                expected_remove: remove.id === item.left.id ?
+                    item.left_fingerprint : item.right_fingerprint,
+                confirm: true
+            })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(typeof result.detail === "string" ?
+                result.detail : "Birleştirme başarısız oldu.");
+        }
+        await loadFaqs();
+        duplicateFeedback("Birleştirildi. Tutulan kayıt #" + result.kept.id +
+            ", arşiv kaydı #" + result.archive_id + ". Liste yenilendi.");
+        await scanDuplicatePairs();
+    } catch(error) {
+        duplicateFeedback(error.message + " Kayıtlar değiştirilmedi.", true);
+    } finally {
+        duplicateWorking = false;
+    }
+}

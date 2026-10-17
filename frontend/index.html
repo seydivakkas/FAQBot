@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.3.1</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.3.2</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -119,6 +119,24 @@
                     <button type="button" id="newFaqButton" class="settings-primary">+ Yeni soru</button>
                     <button type="button" id="exportFaqButton" class="settings-secondary">JSON yedeği indir</button>
                 </div>
+
+                <section id="duplicatesSection" class="duplicates-section" aria-labelledby="duplicatesHeading">
+                    <div class="duplicates-heading">
+                        <h3 id="duplicatesHeading">Benzer Soruları İncele</h3>
+                        <p>Benzerlik eşiğini kendiniz belirleyin. Sonuçlar yalnızca öneridir; hiçbir kayıt otomatik birleştirilmez.</p>
+                    </div>
+                    <label for="dupThresholdRange">Benzerlik eşiği <strong id="dupThresholdLabel">%70</strong></label>
+                    <input id="dupThresholdRange" type="range" min="40" max="95" step="1" value="70">
+                    <div class="duplicates-controls">
+                        <label for="dupThresholdNumber">Yüzde (%)</label>
+                        <input id="dupThresholdNumber" type="number" min="40" max="95" step="1" value="70">
+                        <button id="dupThresholdSave" class="settings-secondary" type="button">Eşiği kaydet</button>
+                        <button id="dupScan" class="settings-primary" type="button">Benzerleri tara</button>
+                    </div>
+                    <small>%40–95 arasında seçim yapabilirsiniz. %70 varsayılandır. Bu skor aynı anlam ihtimali değildir; TF-IDF metin benzerliğidir. Sohbet yanıt eşiğinden bağımsızdır.</small>
+                    <p id="duplicateStatus" class="edit-status" role="status"></p>
+                    <div id="duplicateCandidates" class="duplicate-candidates" aria-live="polite"></div>
+                </section>
 
                 <section class="import-box" aria-labelledby="importHeading">
                     <h3 id="importHeading">Excel / CSV toplu aktarım</h3>
