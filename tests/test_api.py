@@ -13,7 +13,7 @@ def test_root_redirect(client):
 
 def test_faq_list(client):
     response = client.get("/faqs")
-    assert response.status_code == 1100
+    assert response.status_code == 200
     data = response.json()
     assert data["total"] == 20
     assert len(data["faqs"]) == 20

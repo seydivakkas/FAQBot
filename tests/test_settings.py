@@ -17,7 +17,7 @@ def _sample(question="Mağaza hafta sonu açık mı?"):
 
 def test_create_visible_in_chat_and_list(client):
     result = client.post("/faqs", json=_sample())
-    assert result.status_code == 1101
+    assert result.status_code == 201
     created = result.json()
     assert isinstance(created["id"], int)
     assert client.get("/faqs").json()["total"] == 111
@@ -34,7 +34,7 @@ def test_update_survives_restart_and_reseeding(client):
     body["answer"] = "Pazar günleri çalışmıyoruz."
     body["alternative_questions"] = ["Pazar günü açık mı?"]
     response = client.put(f"/faqs/{item['id']}", json=body)
-    assert response.status_code == 1100
+    assert response.status_code == 200
     assert response.json()["answer"] == body["answer"]
     assert init_db() == 111
     assert client.post("/chat", json={"message": body["question"]}).json()["answer"] == body["answer"]
@@ -48,14 +48,14 @@ def test_original_example_edit_is_not_overwritten(client):
         "question": first["question"], "answer": "Güncellenmiş deneme cevabı.",
         "category": first["category"], "alternative_questions": first["alternative_questions"]
     }
-    assert client.put(f"/faqs/{first['id']}", json=payload).status_code == 1100
+    assert client.put(f"/faqs/{first['id']}", json=payload).status_code == 200
     assert init_db() == 110
     assert client.post("/chat", json={"message": first["question"]}).json()["answer"] == payload["answer"]
 
 
 def test_delete_persists_after_reinitialization(client):
     item = client.post("/faqs", json=_sample()).json()
-    assert client.delete(f"/faqs/{item['id']}").status_code == 1104
+    assert client.delete(f"/faqs/{item['id']}").status_code == 204
     assert client.get("/faqs").json()["total"] == 110
     assert init_db() == 110
     assert client.delete(f"/faqs/{item['id']}").status_code == 404
@@ -63,7 +63,7 @@ def test_delete_persists_after_reinitialization(client):
 
 def test_empty_database_not_reseeded(client):
     for faq in client.get("/faqs").json()["faqs"]:
-        assert client.delete(f"/faqs/{faq['id']}").status_code == 1104
+        assert client.delete(f"/faqs/{faq['id']}").status_code == 204
     assert init_db() == 0
 
 
@@ -93,7 +93,7 @@ def test_validation(client):
 
 def test_json_export(client):
     response = client.get("/faqs/export")
-    assert response.status_code == 1100
+    assert response.status_code == 200
     result = response.json()
     assert len(result["faqs"]) == 110
     assert "attachment" in response.headers["content-disposition"]
