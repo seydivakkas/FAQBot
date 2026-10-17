@@ -9,8 +9,9 @@
 ## Neler yapıyor?
 
 - 4 kategoride toplam 20 örnek soru-cevap ve alternatif ifadeler
-- **Arayüzde “20 Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
-- SQLite depolama ve tekrarlanabilir başlangıç veri ekleme
+- **Arayüzde “Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
+- **Ayarlar / SSS Yönetimi**: yeni soru-cevap ekleme, mevcut kayıtları düzenleme/silme, alternatif soru tanımlama ve güncel JSON yedeğini dışa aktarma
+- SQLite depolama: örnek SSS'ler yalnızca ilk kurulumda eklenir; düzenlemeler yeniden başlatmada korunur
 - Türkçe metin normalizasyonu; önce birebir eşleşme
 - scikit-learn ile karakter n-gram TF-IDF + cosine similarity
 - Düşük benzerlikte **uydurma cevap yerine fallback**
@@ -84,13 +85,27 @@ python -m app.database
 python -m uvicorn app.main:app --reload
 ~~~
 
-Veritabanı, sunucu başlangıcında da otomatik hazırlanır. JSON örneklerini değiştirdiğinizde, aynı sorunun güncellenen alanları yeniden başlangıçta SQLite içine aktarılır.
+Veritabanı, sunucu başlangıcında da otomatik hazırlanır. **20 JSON örneği yalnızca ilk kurulumda eklenir.** Ayarlardan yapılan ekleme, düzenleme ve silmeler SQLite içinde korunur. Sonradan `data/faqs.json` dosyasını değiştirmek, mevcut veritabanını otomatik güncellemez. Silinen kayıtlar tekrar oluşturulmaz.
+
+### SSS kayıtlarını yönetme
+
+`http://127.0.0.1:8000/app` adresinde üstteki **⚙ Ayarlar** düğmesine tıklayın:
+
+1. **+ Yeni soru** ile ana soru, cevap, kategori ve her satıra bir alternatif soru girip **Kaydet**'e basın.
+2. **Mevcut sorular** alanında arama yapın; **Düzenle** butonuyla alanları değiştirebilirsiniz.
+3. Bir kayıt seçildiğinde **Kaydı sil** görünür; silme öncesi onay gerekir.
+4. **JSON yedeği indir** ile kayıtların anlık dışa aktarımını kaydedin.
+5. **Soruyu Gör** paneli ve `POST /chat` yeni kayıtları hemen kullanır; sunucuyu yeniden başlatmak gerekmez.
+
+Yönetim uç noktaları: `POST /faqs`, `PUT /faqs/{id}`, `DELETE /faqs/{id}`, `GET /faqs/export`. Düzenleme işlemleri **yalnızca loopback / localhost bağlantılarına** ve aynı-origin tarayıcı isteklerine açıktır. **Bu bir giriş/şifre sistemi değildir:** bilgisayarın yerel oturumunu kullanan herkes kayıtları düzenleyebilir. Uygulamayı internete veya yerel ağa açmayın; çok kullanıcılı kullanım için kimlik doğrulama ve yetkilendirme gerekir.
+
+**Yedekleme:** Yerel kayıtlar `faqbot.db` içinde tutulur. .gitignore nedeniyle GitHub'a yüklenmez. Yeniden kurulum veya bilgisayar değişikliğinden önce Ayarlar'dan JSON yedeğini indirin veya sunucu kapalıyken `faqbot.db` dosyasını ayrıca yedekleyin. JSON yedeğini uygulamaya geri yükleme özelliği bu sürümde bulunmamaktadır.
 
 ## Adresler
 
 | URL | Açıklama |
 | --- | --- |
-| http://127.0.0.1:8000/app | Sohbet ekranı; sağ üstte **20 Soruyu Gör** düğmesi |
+| http://127.0.0.1:8000/app | Sohbet ekranı, **Soruyu Gör** ve **⚙ Ayarlar** düğmeleri |
 | http://127.0.0.1:8000/docs | Etkileşimli API belgeleri |
 | http://127.0.0.1:8000/health | Servis sağlık kontrolü |
 | http://127.0.0.1:8000/faqs | JSON soru listesi |
@@ -129,8 +144,9 @@ Pytest, her API testinde geçici SQLite kullanır ve gerçek faqbot.db dosyasın
 
 ### Manuel arayüz kabulü
 
-- /app adresini aç; **20 Soruyu Gör** butonuna basıp toplam 20 sorunun (her kategoride 5) listelendiğini doğrula.
+- /app adresini aç; **Soruyu Gör** butonuna basıp başlangıçtaki 20 sorunun (her kategoride 5) listelendiğini doğrula.
 - Kategori filtreleri ve arama kutusunu dene, sorunun **Yanıtı önizle** bağlantısını aç, soruya tıklayarak sohbette cevabı gör.
+- **Ayarlar** bölümünden yeni soru ekle, yanıtı değiştir, alternatif soru ekle ve sil. Uygulamayı yeniden açıp kalıcılığı kontrol et.
 - Örnek Kargo butonuna bas.
 - Alternatif bir iade sorusu yaz; kayıtlı cevapla eşleşmeyi incele.
 - Alakasız bir soru gönder; fallback çıktısını kontrol et.
@@ -151,10 +167,11 @@ data/
 frontend/
   index.html       sohbet arayüzünün yapısı
   style.css        responsive tasarım
-  app.js           POST /chat iletişimi + /faqs paneli
+  app.js           POST /chat iletişimi + /faqs paneli + SSS yönetimi
 tests/
   conftest.py      izole geçici veritabanı
   test_api.py      HTTP sözleşmesi testleri
+  test_settings.py SSS CRUD / kalıcılık / erişim testleri
   test_matching.py benzerlik motoru testleri
 scripts/
   compare.py       eski yöntem / TF-IDF karşılaştırması

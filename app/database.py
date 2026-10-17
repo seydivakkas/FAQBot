@@ -1,4 +1,4 @@
-"""SSS kayıtlarının SQLite veritabanında saklanması."""
+"""SQLite veritabanı: ilk kurulum verisi ve kalıcı SSS yönetimi."""
 
 import json
 import os
@@ -7,22 +7,36 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = ROOT / "data" / "faqs.json"
+CATEGORIES = ("kargo", "iade", "odeme", "hesap")
 
 
 def get_db_path() -> Path:
-    """Testlerde ayrı bir DB kullanabilmek için yolu çalışma anında oku."""
     value = os.environ.get("FAQBOT_DB_PATH")
     return Path(value).expanduser() if value else ROOT / "faqbot.db"
 
 
+def _connect() -> sqlite3.Connection:
+    conn = sqlite3.connect(get_db_path(), timeout=10)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _as_faq(row: sqlite3.Row) -> dict:
+    item = dict(row)
+    item["alternative_questions"] = json.loads(item["alternative_questions"])
+    return item
+
+
 def init_db() -> int:
-    """Şema oluştur, JSON örnek verilerini ekle/güncelle. Tekrar çalıştırılabilir."""
+    """Örnekleri SADECE bir kez yükle; kullanıcı düzenlemelerini koru.
+
+    Önceden mevcut faqs tablosu için de meta bayrağı oluşturur.
+    Tamamı silinse bile tekrar örnek kayıt eklemez.
+    """
     db_path = get_db_path()
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    with DATA_PATH.open("r", encoding="utf-8") as file:
-        faqs = json.load(file)
 
-    with sqlite3.connect(db_path) as conn:
+    with _connect() as conn:
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS faqs (
@@ -34,46 +48,89 @@ def init_db() -> int:
             )
             """
         )
-        for faq in faqs:
-            conn.execute(
-                """
-                INSERT INTO faqs
-                    (question, answer, category, alternative_questions)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT(question) DO UPDATE SET
-                    answer = excluded.answer,
-                    category = excluded.category,
-                    alternative_questions = excluded.alternative_questions
-                """,
-                (
-                    faq["question"],
-                    faq["answer"],
-                    faq["category"],
-                    json.dumps(faq.get("alternative_questions", []), ensure_ascii=False),
-                ),
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS app_metadata (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
             )
+            """
+        )
+        seeded = conn.execute(
+            "SELECT value FROM app_metadata WHERE key = 'initial_seed_done'"
+        ).fetchone()
+        if seeded is None:
+            current_count = conn.execute(
+                "SELECT COUNT(*) FROM faqs"
+            ).fetchone()[0]
+            if current_count == 0:
+                with DATA_PATH.open("r", encoding="utf-8") as file:
+                    examples = json.load(file)
+                for faq in examples:
+                    conn.execute(
+                        """
+                        INSERT INTO faqs
+                            (question, answer, category, alternative_questions)
+                        VALUES (?, ?, ?, ?)
+                        """,
+                        (
+                            faq["question"], faq["answer"], faq["category"],
+                            json.dumps(faq.get("alternative_questions", []), ensure_ascii=False),
+                        ),
+                    )
+            conn.execute(
+                "INSERT INTO app_metadata (key, value) VALUES ('initial_seed_done', '1')"
+            )
+
         return conn.execute("SELECT COUNT(*) FROM faqs").fetchone()[0]
 
 
 def load_faqs() -> list[dict]:
-    """Kayıtları uygulamanın ve matcher'ın kullanacağı biçimde döndür."""
-    with sqlite3.connect(get_db_path()) as conn:
-        conn.row_factory = sqlite3.Row
+    with _connect() as conn:
         rows = conn.execute(
-            """
-            SELECT id, question, answer, category, alternative_questions
-            FROM faqs ORDER BY id
-            """
+            "SELECT id, question, answer, category, alternative_questions "
+            "FROM faqs ORDER BY id"
         ).fetchall()
+    return [_as_faq(row) for row in rows]
 
-    items = []
-    for row in rows:
-        item = dict(row)
-        item["alternative_questions"] = json.loads(
-            item["alternative_questions"]
+
+def get_faq(faq_id: int) -> dict | None:
+    with _connect() as conn:
+        row = conn.execute(
+            "SELECT id, question, answer, category, alternative_questions "
+            "FROM faqs WHERE id = ?", (faq_id,)
+        ).fetchone()
+    return _as_faq(row) if row is not None else None
+
+
+def add_faq(question: str, answer: str, category: str, alternatives: list[str]) -> dict:
+    with _connect() as conn:
+        cursor = conn.execute(
+            "INSERT INTO faqs (question, answer, category, alternative_questions) "
+            "VALUES (?, ?, ?, ?)",
+            (question, answer, category, json.dumps(alternatives, ensure_ascii=False)),
         )
-        items.append(item)
-    return items
+        faq_id = cursor.lastrowid
+    return get_faq(faq_id)
+
+
+def update_faq(
+    faq_id: int, question: str, answer: str, category: str, alternatives: list[str]
+) -> dict | None:
+    with _connect() as conn:
+        cursor = conn.execute(
+            "UPDATE faqs SET question = ?, answer = ?, category = ?, "
+            "alternative_questions = ? WHERE id = ?",
+            (question, answer, category, json.dumps(alternatives, ensure_ascii=False), faq_id),
+        )
+        changed = cursor.rowcount > 0
+    return get_faq(faq_id) if changed else None
+
+
+def delete_faq(faq_id: int) -> bool:
+    with _connect() as conn:
+        cursor = conn.execute("DELETE FROM faqs WHERE id = ?", (faq_id,))
+        return cursor.rowcount > 0
 
 
 if __name__ == "__main__":

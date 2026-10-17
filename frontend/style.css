@@ -74,3 +74,43 @@ body.faq-open{overflow:hidden}
 .faq-panel-footer{border-top:1px solid #edf0f5;text-align:center;color:#8b99ad;padding:14px 10px;font-size:11px}
 @media(max-width:720px){body{padding:0}.app-shell{height:100vh;height:100dvh;min-height:0;border-radius:0;display:block}.sidebar{display:none}.chat-panel{height:100%}.chat-header{padding:12px;height:78px;gap:8px}.avatar{width:37px;height:37px;font-size:20px}.chat-header h2{font-size:13px}.chat-header p{font-size:10px}.faq-toggle{padding:9px 10px;font-size:11px}.tag{display:none}.messages{padding:17px}.suggestions{padding:14px}.composer{padding:8px 12px 12px}.composer button{padding:0 12px}.bubble{max-width:92%}.faq-panel-header{padding:22px 18px 16px}.faq-toolbar{padding:14px 18px}.faq-list{padding:10px 18px 22px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* SSS kayıt yönetimi */
+.settings-toggle{border:1px solid #d9e4f3;background:#f8fafd;color:#35516f;padding:10px 12px;border-radius:11px;font-size:12px;font-weight:750;white-space:nowrap}
+.settings-toggle:hover,.settings-toggle:focus-visible{background:#eaf2ff}
+.settings-overlay{z-index:50}
+.settings-panel{position:fixed;z-index:51;inset:0 0 0 auto;width:min(540px,100%);height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;box-shadow:-12px 0 44px #10263c30;background:#fff}
+.settings-panel[hidden],.settings-overlay[hidden]{display:none}
+.settings-header{padding:23px 25px 18px;border-bottom:1px solid #e7edf5;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.settings-header h2{font-size:22px;margin:9px 0 7px}
+.settings-header p{font-size:12px;line-height:1.5;color:#6c7d91;margin:0}
+.settings-content{overflow-y:auto;min-height:0;padding:20px 25px 36px}
+.settings-actions,.form-actions{display:flex;flex-wrap:wrap;gap:9px}
+.settings-primary,.settings-secondary,.settings-danger{border-radius:10px;padding:11px 15px;font-size:12px;font-weight:700;border:1px solid transparent}
+.settings-primary{background:#397eff;color:#fff}.settings-primary:hover{background:#266bdc}
+.settings-secondary{background:#edf3fc;color:#3163a6;border-color:#d8e4f6}.settings-secondary:hover{background:#e1edff}
+.settings-danger{background:#fff2f2;border-color:#f0caca;color:#b32626}.settings-danger:hover{background:#ffe7e7}
+.settings-primary:disabled,.settings-secondary:disabled,.settings-danger:disabled{opacity:.6;cursor:not-allowed}
+.faq-edit-form{margin-top:18px;padding:19px;border:1px solid #e2eaf5;border-radius:15px;background:#fbfcff;display:flex;flex-direction:column;gap:9px}
+.faq-edit-form h3{margin:0 0 6px;font-size:16px;color:#233d60}
+.faq-edit-form label{font-size:12px;font-weight:700;color:#3d506b;margin-top:6px}
+.faq-edit-form input:not([type="hidden"]),.faq-edit-form textarea,.faq-edit-form select{width:100%;padding:11px 12px;background:#fff;border:1px solid #d4deeb;border-radius:10px;font-size:13px;color:#25364d;outline:none}
+.faq-edit-form input:focus,.faq-edit-form textarea:focus,.faq-edit-form select:focus{border-color:#397eff;box-shadow:0 0 0 3px #397eff20}
+.faq-edit-form textarea{resize:vertical}
+.faq-edit-form small{color:#8291a5;font-size:11px;line-height:1.5}
+.form-actions{margin-top:13px}
+.edit-status{margin:3px 0 0;font-size:12px;line-height:1.5;min-height:15px;color:#3c6eaa}
+.edit-status.error{color:#b32626}
+.manage-list-heading{margin:26px 0 12px}
+.manage-list-heading h3{font-size:15px;margin:0 0 11px}
+.manage-list-heading h3 span{font-size:12px;font-weight:500;color:#7c8ea2}
+.manage-list-heading input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #d7e2ef;font-size:13px}
+.manage-faq-list{display:flex;flex-direction:column;gap:8px}
+.manage-item{padding:12px 13px;display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid #e1e8f1;border-radius:11px}
+.manage-item .manage-copy{min-width:0;flex:1}
+.manage-item strong{display:block;font-size:12px;font-weight:650;color:#263c5b;line-height:1.55}
+.manage-item small{display:block;color:#7c8da0;font-size:11px;margin-top:4px}
+.manage-item button{border:1px solid #d3e0f4;border-radius:9px;background:#f0f6ff;color:#2862b7;padding:8px 10px;font-size:12px}
+.settings-footnote{color:#8a99aa;font-size:11px;line-height:1.7;margin-top:25px}
+@media(max-width:720px){.settings-toggle{font-size:11px;padding:9px 10px}.settings-header{padding:18px}.settings-content{padding:17px}.faq-edit-form{padding:14px}}

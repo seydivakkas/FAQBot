@@ -91,3 +91,5 @@ def test_faq_panel_wired_to_api(client):
     assert 'fetch("/faqs")' in js
     assert "faq.question" in js
     assert "sendMessage(faq.question)" in js
+    assert 'id="settingsToggle"' in html
+    assert 'id="faqEditForm"' in html

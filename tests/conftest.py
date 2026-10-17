@@ -9,5 +9,5 @@ from app.main import app
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     monkeypatch.setenv("FAQBOT_DB_PATH", str(tmp_path / "test-faqbot.db"))
-    with TestClient(app) as api_client:
+    with TestClient(app, base_url="http://127.0.0.1") as api_client:
         yield api_client
