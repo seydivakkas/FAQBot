@@ -15,13 +15,13 @@ def test_faq_list(client):
     response = client.get("/faqs")
     assert response.status_code == 200
     data = response.json()
-    assert data["total"] == 20
-    assert len(data["faqs"]) == 20
+    assert data["total"] == 110
+    assert len(data["faqs"]) == 110
     assert isinstance(data["faqs"][0]["alternative_questions"], list)
 
 
 def test_faq_list_categories(client):
-    """Arayüzde gösterilecek 20 soru, 8 kategoriye dağılmalı."""
+    """Arayüzde gösterilecek 110 soru, 8 kategoriye dağılmalı."""
     data = client.get("/faqs").json()
     categories = {}
     for faq in data["faqs"]:
