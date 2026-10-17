@@ -89,13 +89,28 @@ Veritabanı sunucu açılırken hazırlanır. `data/faqs.json` içindeki ilk 20 
 
 110 sayısı temiz ilk kurulum için geçerlidir. Mevcut veritabanında silinen/düzenlenen kayıtlar veya aynı soru başlığı bulunuyorsa sayı farklı olabilir. Güncellemeler eski kayıtların silinmesini veya zorla yeniden yazılmasını amaçlamaz. **Yeni 90 cevaplar gerçek mağaza politikası değil, kurgu demo senaryolarıdır**; canlı kullanıcıya yönelik doğrulanmış kaynak olarak sunulamaz.
 
+### Excel / CSV toplu aktarımı (v1.3.1)
+
+**Ayarlar → Excel / CSV toplu aktarım** bölümünde dosya seç, **Dosyayı önizle** düğmesine bas, uygun/çakışan/hatalı satırları incele. Sadece **Eklenebilir** satırları onaylamak için **Uygun satırları aktar** seçeneğini kullan.
+
+- [Örnek CSV şablonu](frontend/faq_import_template.csv).
+- Sütunlar: `question`, `answer`, `category`, isteğe bağlı `alternative_questions`. Türkçe başlıklar (`soru`, `cevap`, `kategori`, `alternatif_sorular`) da desteklenir.
+- CSV **UTF-8** olmalı. Alternatif sorular aynı hücrede `|` ile ayrılır. Excel için `.xlsx` ilk çalışma sayfası okunur; eski `.xls` desteklenmez.
+- Sınırlar: dosya **2 MB**, en fazla **500** veri satırı. Kategoriler: `kargo`, `iade`, `odeme`, `hesap`, `siparis`, `urun`, `kampanya`, `destek`.
+- Önizleme yalnızca normalize edilmiş aynı soru ve alternatif ifade çakışmalarını saptar; anlamsal olarak benzer farklı ifadeleri belirleme sonraki geliştirmedir.
+- Kaydetme anında SQLite üzerinde tekrar denetlenir. Arada kayıt değiştiyse 409 ile **bütün aktarım iptal edilir**, kısmi ekleme veya mevcut cevabın üzerine yazma olmaz.
+- Yerel API: `POST /faqs/import/preview` (multipart `file`) ve `POST /faqs/import/commit` (JSON `{"records": [...]}`).
+- **Mevcut sorular** listesindeki her satırda **Düzenle** ve **Sil** butonları bulunur; silme onay ister. Geri alma/geri yükleme bu sürümde henüz yoktur.
+
+Öncesinde güncel `faqbot.db` dosyasını veya Ayarlar'daki JSON yedeğini saklayın.
+
 ### SSS kayıtlarını yönetme
 
 `http://127.0.0.1:8000/app` adresinde üstteki **⚙ Ayarlar** düğmesine tıklayın:
 
 1. **+ Yeni soru** ile ana soru, cevap, kategori ve her satıra bir alternatif soru girip **Kaydet**'e basın.
 2. **Mevcut sorular** alanında arama yapın; **Düzenle** butonuyla alanları değiştirebilirsiniz.
-3. Bir kayıt seçildiğinde **Kaydı sil** görünür; silme öncesi onay gerekir.
+3. Her kayıt satırında **Düzenle** ve **Sil** bulunur. Düzenlenen kaydın formunda da **Kaydı sil** vardır.
 4. **JSON yedeği indir** ile kayıtların anlık dışa aktarımını kaydedin.
 5. **Soruyu Gör** paneli ve `POST /chat` yeni kayıtları hemen kullanır; sunucuyu yeniden başlatmak gerekmez.
 
@@ -163,6 +178,7 @@ Pytest, her API testinde geçici SQLite kullanır ve gerçek faqbot.db dosyasın
 app/
   main.py          FastAPI endpoint'leri ve sayfa sunumu
   database.py      SQLite + JSON veri kaynağı
+  importer.py      CSV/XLSX önizleme ve atomik içe aktarma
   matching.py      normalizasyon, exact ve TF-IDF
 data/
   faqs.json                  İlk 20 kurgu SSS
@@ -171,10 +187,12 @@ frontend/
   index.html       sohbet arayüzünün yapısı
   style.css        responsive tasarım
   app.js           POST /chat iletişimi + /faqs paneli + SSS yönetimi
+  faq_import_template.csv   Örnek CSV aktarım şablonu
 tests/
   conftest.py      izole geçici veritabanı
   test_api.py      HTTP sözleşmesi testleri
   test_settings.py SSS CRUD / kalıcılık / erişim testleri
+  test_import.py   Toplu aktarım, güvenlik ve atomiklik testleri
   test_v13_seed.py  110 örnek / sürümlü veri geçişi
   test_matching.py benzerlik motoru testleri
 scripts/
