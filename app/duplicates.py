@@ -147,7 +147,7 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
         conn.execute("BEGIN IMMEDIATE")
         rows = conn.execute(
             "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at "
-            "FROM faqs WHERE id IN (?, ?)", (keep_id, other_id)
+            "FROM faqs WHERE id IN (?, ?) AND deleted_at IS NULL", (keep_id, other_id)
         ).fetchall()
         indexed = {row["id"]: _parse(row) for row in rows}
         if len(indexed) != 2:
@@ -160,7 +160,7 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
 
         # Birleştirme sırasında eşik tekrar doğrulanmalı.
         all_rows = conn.execute(
-            "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at FROM faqs"
+            "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at FROM faqs WHERE deleted_at IS NULL"
         ).fetchall()
         config = get_settings()
         score_rows = detect([_parse(row) for row in all_rows], get_threshold(),
@@ -186,8 +186,8 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
             )
         # Başka bir kayıtta bulunan herhangi bir ifade yanlış yanıt doğurabilir.
         rows_all = conn.execute(
-            "SELECT id, question, alternative_questions FROM faqs "
-            "WHERE id NOT IN (?, ?)", (keep_id, other_id)
+            "SELECT id, question, alternative_questions FROM faqs WHERE deleted_at IS NULL "
+            "AND id NOT IN (?, ?)", (keep_id, other_id)
         ).fetchall()
         occupied = {
             normalize(text)
@@ -209,6 +209,6 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
         )
         conn.execute("UPDATE faqs SET alternative_questions=? WHERE id=?",
                      (json.dumps(merged_alts, ensure_ascii=False), keep_id))
-        conn.execute("DELETE FROM faqs WHERE id=?", (other_id,))
+        conn.execute("UPDATE faqs SET deleted_at=CURRENT_TIMESTAMP WHERE id=? AND deleted_at IS NULL", (other_id,))
         # context manager commits on exit; exception rolls back all changes.
     return {"kept": after, "removed_id": other_id, "archive_id": archive.lastrowid}

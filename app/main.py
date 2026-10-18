@@ -20,7 +20,8 @@ from app.reviews import (
     ReviewConflict,
 )
 from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, analyze, commit_records, parse_file, summarize
-from app.database import add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq
+from app.database import (add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq,
+                          list_deleted_faqs, restore_faq, RestoreConflict)
 from app.matching import find_best_match, normalize
 from app.semantic import EmbeddingUnavailable, get_settings as get_semantic_settings, set_settings as set_semantic_settings, model_status
 from app.duplicates import (
@@ -47,7 +48,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="Yerel SSS ve opsiyonel çevrimdışı embedding yönetimi",
-    version="1.5.0",
+    version="1.6.0",
     lifespan=lifespan,
 )
 
@@ -387,12 +388,34 @@ def evaluate_reviewed_data(payload: ReviewEvaluateRequest, _: LocalEditor):
     return evaluate(include_embedding=payload.include_embedding)
 
 
+@app.get("/faqs/trash")
+def get_faq_trash(_: LocalEditor):
+    """Silinmiş kayıtlar tam içerikleri ve silinme zamanlarıyla görüntülenir."""
+    entries = list_deleted_faqs()
+    return {"total": len(entries), "faqs": entries}
+
+
+class FAQRestoreRequest(BaseModel):
+    confirm: Literal[True]
+
+
+@app.post("/faqs/trash/{faq_id}/restore")
+def restore_deleted_faq(faq_id: int, payload: FAQRestoreRequest, _: LocalEditor):
+    """Tek SSS kaydını yalnızca açık onayla ve etkin kayıtlarla çakışmıyorsa geri getir."""
+    try:
+        return restore_faq(faq_id)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+    except (RestoreConflict, sqlite3.IntegrityError) as error:
+        raise HTTPException(status_code=409, detail=str(error))
+
+
 @app.post("/faqs", status_code=status.HTTP_201_CREATED)
 def create_faq(payload: FAQInput, _: LocalEditor):
     try:
         return add_faq(**_payload_fields(payload))
     except sqlite3.IntegrityError:
-        raise HTTPException(status_code=409, detail="Bu ana soru zaten kayıtlı.")
+        raise HTTPException(status_code=409, detail="Bu ana soru aktif kayıtlarda veya çöp kutusunda mevcut.")
 
 
 @app.put("/faqs/{faq_id}")
