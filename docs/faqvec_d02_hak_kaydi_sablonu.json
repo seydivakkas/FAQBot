@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "source_repo": "dogukanvzr/ml-paraphrase-tr",
+  "source_revision": "b9d5707470340db13d788a338e7f7897c5e29932",
+  "source_sha256": "2c5bace5f34bbc9bc79084ddf57bc5a298310eaa2614beb9f7862a16b674e39d",
+  "creator_or_rights_holder": "",
+  "contact_channel": "",
+  "underlying_sentence_origin": "",
+  "third_party_text_sources": "",
+  "commercial_ml_training_permission": "unknown",
+  "fine_tuned_weight_distribution_permission": "unknown",
+  "license_obligations": "",
+  "independent_legal_reviewer": "",
+  "independent_legal_review_date": "",
+  "evidence_files": [],
+  "warning": "Bu yalnızca şablondur. Gerçek hak sahibi belgeleri ve bağımsız inceleme yapılmadan izin verilmiş sayılamaz."
+}
