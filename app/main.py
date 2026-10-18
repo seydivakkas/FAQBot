@@ -23,7 +23,9 @@ from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, anal
 from app.database import (add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq,
                           list_deleted_faqs, restore_faq, RestoreConflict)
 from app.matching import find_best_match, normalize
-from app.semantic import EmbeddingUnavailable, get_settings as get_semantic_settings, set_settings as set_semantic_settings, model_status
+from app.semantic import (EmbeddingUnavailable, get_settings as get_semantic_settings,
+                          set_settings as set_semantic_settings, display_status)
+from app.faqvec_tr import DEFAULT_OWN_DIR
 from app.duplicates import (
     DEFAULT_DUPLICATE_THRESHOLD, MIN_DUPLICATE_THRESHOLD,
     MAX_DUPLICATE_THRESHOLD, MergeConflict, detect,
@@ -48,7 +50,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="Yerel SSS ve opsiyonel çevrimdışı embedding yönetimi",
-    version="1.6.0",
+    version="1.6.1",
     lifespan=lifespan,
 )
 
@@ -278,14 +280,15 @@ def save_duplicate_settings(payload: DuplicateSettings, _: LocalEditor):
 
 
 class SemanticSettingsRequest(BaseModel):
-    method: Literal["tfidf", "embedding"]
+    method: Literal["tfidf", "embedding", "faqvec_tr"]
     model_path: str = Field(min_length=1, max_length=1000)
 
 
 @app.get("/settings/semantic")
 def read_semantic_settings(_: LocalEditor):
     info = get_semantic_settings()
-    return {**info, **model_status(info["model_path"])}
+    return {**info, **display_status(info["method"], info["model_path"]),
+            "default_own_model_path": str(DEFAULT_OWN_DIR)}
 
 
 @app.put("/settings/semantic")
@@ -294,7 +297,8 @@ def update_semantic_settings(payload: SemanticSettingsRequest, _: LocalEditor):
         result = set_semantic_settings(payload.method, payload.model_path)
     except (ValueError, EmbeddingUnavailable) as error:
         raise HTTPException(status_code=422, detail=str(error))
-    return {**result, **model_status(result["model_path"])}
+    return {**result, **display_status(result["method"], result["model_path"]),
+            "default_own_model_path": str(DEFAULT_OWN_DIR)}
 
 
 @app.get("/faqs/duplicates")

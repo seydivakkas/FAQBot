@@ -11,6 +11,8 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from app.database import ROOT, _connect
+from app.faqvec_tr import (DEFAULT_OWN_DIR, OwnModelError, artifact_status,
+                           load_model, similarity_matrix as own_similarity)
 
 DEFAULT_MODEL_PATH = ROOT / "models" / "paraphrase-multilingual-MiniLM-L12-v2"
 
@@ -46,8 +48,8 @@ def model_status(path):
 
 
 def set_settings(method, model_path):
-    if method not in ("tfidf", "embedding"):
-        raise ValueError("Yöntem tfidf veya embedding olmalıdır.")
+    if method not in ("tfidf", "embedding", "faqvec_tr"):
+        raise ValueError("Yöntem tfidf, embedding veya faqvec_tr olmalıdır.")
     if not model_path or len(model_path) > 1000:
         raise ValueError("Geçerli bir yerel model klasörü belirtin.")
     directory = Path(model_path).expanduser()
@@ -60,6 +62,15 @@ def set_settings(method, model_path):
             "Yerel model veya sentence-transformers kurulumu eksik. "
             "Önce isteğe bağlı embedding kurulumunu tamamlayın."
         )
+    if method == "faqvec_tr":
+        if not artifact_status(str(directory))["ready_to_load"]:
+            raise EmbeddingUnavailable(
+                "FAQVec-TR modeli henüz üretilmedi. Önce setup_faqvec_windows.bat çalıştırın."
+            )
+        try:
+            load_model(directory)
+        except OwnModelError as exc:
+            raise EmbeddingUnavailable(str(exc)) from exc
     with _connect() as conn:
         for key, value in (
             ("duplicate_method", method),
@@ -89,7 +100,18 @@ def _get_model(model_path):
         ) from exc
 
 
-def similarity_matrix(phrases, model_path):
+def display_status(method, path):
+    if method == "faqvec_tr":
+        return artifact_status(path)
+    return model_status(path)
+
+
+def similarity_matrix(phrases, model_path, method="embedding"):
+    if method == "faqvec_tr":
+        try:
+            return own_similarity(phrases, model_path)
+        except OwnModelError as exc:
+            raise EmbeddingUnavailable(str(exc)) from exc
     if not phrases:
         return np.zeros((0, 0))
     model = _get_model(model_path)

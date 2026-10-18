@@ -177,7 +177,7 @@ def _actual_reviewed():
     return [dict(row) for row in reversed(rows)]
 
 
-def _embedding_predictions(questions, faqs, threshold, model_path):
+def _embedding_predictions(questions, faqs, threshold, model_path, method="embedding"):
     """Sadece doğru/yanlış etiketli soruları güncel bilgi tabanına göre yeniden hesapla."""
     owners, phrases = [], []
     for faq in faqs:
@@ -188,7 +188,14 @@ def _embedding_predictions(questions, faqs, threshold, model_path):
                 phrases.append(cleaned)
     if not phrases:
         return [None] * len(questions)
-    model = _get_model(model_path)
+    if method == "faqvec_tr":
+        from app.faqvec_tr import OwnModelError, load_model
+        try:
+            model = load_model(model_path)
+        except OwnModelError as exc:
+            raise EmbeddingUnavailable(str(exc)) from exc
+    else:
+        model = _get_model(model_path)
     try:
         raw_vectors = np.asarray(model.encode(
             phrases + [normalize(q) for q in questions],
@@ -249,11 +256,12 @@ def evaluate(include_embedding=False):
         settings = semantic_settings()
         try:
             predicted = _embedding_predictions(
-                questions, faqs, EMBEDDING_EVAL_THRESHOLD, settings["model_path"]
+                questions, faqs, EMBEDDING_EVAL_THRESHOLD, settings["model_path"],
+                method=settings["method"]
             ) if valid else []
             result["embedding"] = {
                 "status": "ok",
-                **metrics(predicted, "embedding", EMBEDDING_EVAL_THRESHOLD),
+                **metrics(predicted, settings["method"] if settings["method"] == "faqvec_tr" else "embedding", EMBEDDING_EVAL_THRESHOLD),
             }
         except EmbeddingUnavailable as exc:
             result["embedding"] = {"status": "unavailable", "reason": str(exc)}

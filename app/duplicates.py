@@ -79,10 +79,10 @@ def detect(faqs, threshold, max_results=100, method="tfidf", model_path=None):
     if len(phrases) < 2:
         return []
 
-    if method == "embedding":
+    if method in ("embedding", "faqvec_tr"):
         if not model_path:
             raise ValueError("Yerel embedding modeli klasörü belirtilmeli.")
-        scores = similarity_matrix(phrases, model_path)
+        scores = similarity_matrix(phrases, model_path, method=method)
     elif method == "tfidf":
         char = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5),
                                lowercase=False, sublinear_tf=True)

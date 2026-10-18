@@ -53,6 +53,7 @@ const editValidUntil = document.getElementById("editValidUntil");
 const editVerificationStatus = document.getElementById("editVerificationStatus");
 const dupMethod = document.getElementById("dupMethod");
 const dupModelPath = document.getElementById("dupModelPath");
+let ownModelPathDefault = "";
 const dupMethodSave = document.getElementById("dupMethodSave");
 const dupMethodStatus = document.getElementById("dupMethodStatus");
 const dupThresholdRange = document.getElementById("dupThresholdRange");
@@ -910,13 +911,21 @@ async function loadSemanticSettings() {
         const settings = await response.json();
         dupMethod.value = settings.method;
         dupModelPath.value = settings.model_path;
+        ownModelPathDefault = settings.default_own_model_path || "";
         dupMethodStatus.textContent = settings.ready_to_load
-            ? "Yerel model dosyaları ve Python bağımlılığı bulundu."
+            ? "Yerel model dosyaları kullanıma hazır (ticari kabul ayrı)."
             : "Model hazır değil. TF-IDF kullanabilir veya isteğe bağlı modeli kurabilirsiniz.";
     } catch (error) {
         dupMethodStatus.textContent = error.message;
     }
 }
+dupMethod.addEventListener("change", () => {
+    if (dupMethod.value === "faqvec_tr" && ownModelPathDefault) {
+        dupModelPath.value = ownModelPathDefault;
+    }
+    dupMethodStatus.textContent = "Yöntemi kaydedip yeniden tarayın. FAQVec-TR için yerel eğitim gerekir.";
+});
+
 dupMethodSave.addEventListener("click", async () => {
     const response = await fetch("/settings/semantic", {
         method: "PUT",
@@ -930,8 +939,10 @@ dupMethodSave.addEventListener("click", async () => {
         return;
     }
     duplicateCandidates.replaceChildren();
-    dupMethodStatus.textContent = data.method === "embedding"
-        ? "Yerel embedding yöntemi kaydedildi. Benzerleri tara düğmesine basın."
+    dupMethodStatus.textContent = data.method === "faqvec_tr"
+        ? "FAQVec-TR yerel model seçildi. Yeni embedding skorlarını gözle inceleyin."
+        : data.method === "embedding"
+        ? "MiniLM seçildi. Benzerleri tara düğmesine basın."
         : "TF-IDF yöntemi kaydedildi.";
 });
 
