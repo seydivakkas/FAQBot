@@ -27,6 +27,8 @@ jobs:
         run: node --check frontend/app.js
       - name: FAQVec-TR offline training on bundled demo FAQs
         run: python -m scripts.train_faqvec_tr --epochs 30 --output "${{ runner.temp }}/faqvec-tr-ci"
+      - name: FAQVec-TR v0.2 test gallery diagnostics (no model download)
+        run: python -m scripts.benchmark_faqvec_v2 --demo --output "${{ runner.temp }}/faqvec_v2_demo.json"
       - name: Comparison demo
         run: python -m scripts.compare
 
@@ -43,6 +45,9 @@ jobs:
       - name: Test Windows BAT installer (no server or browser)
         shell: cmd
         run: call setup_windows.bat --check-only
+      - name: FAQVec-TR v0.2 Windows script check (no download)
+        shell: cmd
+        run: call setup_faqvec_v2_windows.bat --check-only
       - name: FAQVec-TR offline training on Windows
         shell: cmd
         run: call "%USERPROFILE%\Projects\FAQBot\.venv\Scripts\python.exe" -m scripts.train_faqvec_tr --epochs 2 --output "%RUNNER_TEMP%\faqvec-tr-ci"

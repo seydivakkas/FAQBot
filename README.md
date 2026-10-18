@@ -21,6 +21,17 @@
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
 
+## FAQVec-TR v0.2 — MIT E5 tabanlı ticari odaklı araştırma sürümü
+
+- **Temel model:** [intfloat/multilingual-e5-base](https://huggingface.co/intfloat/multilingual-e5-base) (MIT, 768 boyut). Üründe bu türevin kökeni ve MIT bildirimleri korunacak. Daha güçlü karşılaştırma modeli: [BAAI/bge-m3](https://huggingface.co/BAAI/bge-m3) (MIT).
+- **Yalnızca açık kullanıcı komutuyla kurulum:** [setup_faqvec_v2_windows.bat](setup_faqvec_v2_windows.bat). Normal FAQBot kurulumu ücretli API veya model indirmesi gerektirmez.
+- **Eğitim:** `scripts/train_faqvec_v2.py` ile yerel E5 üzerinde MultipleNegativesRankingLoss; yanlış negatifleri azaltan NO_DUPLICATES; insan onaylı zor negatiflerle ayrı ince ayar.
+- **Veri sözleşmesi:** `app/faqvec_v2_data.py` lisans/kaynak incelemesi, SHA-256, niyet düzeyinde train-validation-test ayrımı. 110 demo SSS yalnızca deney; ticari veri izni otomatik verilmez.
+- **Yarışma altyapısı:** `scripts/benchmark_faqvec_v2.py`, aynı test galerisiyle TF-IDF, E5-base, FAQVec-TR v0.2, MiniLM ve BGE-M3 modellerini Recall@1/5, yanlış cevap, yanıtsız bırakma ve yanlış cevap verme oranlarında karşılaştırır.
+- **Önemli:** Kod ve otomatik testler hazır. E5'in yaklaşık 1 GB'lık ağırlıkları henüz bu depoya indirilmedi; tam ince ayar ve bağımsız gerçek veri yarışması tamamlanmadı. Ticari ürün kabulü `HOLD`.
+
+[Ayrıntılı v0.2 eğitim ve ticari kabul sözleşmesi](docs/faqvec_tr_v2_arastirma.md)
+
 ## FAQVec-TR v0.1 — Kendi sıfırdan eğitilen embedding modelimiz
 
 - FAQVec-TR, 48 boyutlu Türkçe n-gram tabanlı öğrenilebilir encoder'ımızdır; dışarıdan hazır model ağırlığı indirmez.
