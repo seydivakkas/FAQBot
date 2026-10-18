@@ -1,0 +1,5 @@
+# Sadece FAQVec-TR v0.2 E5 eğitim / benchmark aşaması için.
+-r requirements-embeddings.txt
+datasets>=3.0,<5.0
+accelerate>=1.0,<2.0
+huggingface-hub>=0.26,<2.0
