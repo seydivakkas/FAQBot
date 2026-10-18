@@ -1,0 +1,38 @@
+name: FAQVec D01 Original Dataset Audit
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/faqvec-d01.yml"
+      - "scripts/fetch_faqvec_d01_original.py"
+      - "scripts/audit_faqvec_d01.py"
+permissions:
+  contents: read
+jobs:
+  original-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install audit dependencies
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install "huggingface-hub>=0.26,<2.0"
+      - name: Fetch immutable Hugging Face JSONL
+        run: python -m scripts.fetch_faqvec_d01_original --output /tmp/faqvec-d01-raw
+      - name: Audit original rows and provenance
+        run: python -m scripts.audit_faqvec_d01 --input /tmp/faqvec-d01-raw/ml_paraphrase_60k_labeled.jsonl --source-card /tmp/faqvec-d01-raw/README.md --output-dir /tmp/faqvec-d01-audit
+      - name: Publish only counts and provenance
+        uses: actions/upload-artifact@v4
+        with:
+          name: faqvec-d01-counts-provenance
+          path: |
+            /tmp/faqvec-d01-audit/audit.json
+            /tmp/faqvec-d01-audit/audit.md
+            /tmp/faqvec-d01-raw/download_provenance.json
+          retention-days: 30
