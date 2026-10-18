@@ -23,7 +23,7 @@ HF veri kartındaki lisans beyanı **tek başına temel metinlerin hak sahipliğ
 5. Rastgele negatifler ayrı negative_candidates_unreviewed.jsonl dosyasına **needs_human_review** statüsüyle yazılır; eğitime onaylı zor negatif olarak otomatik sokulmaz.
 6. manifest.CANDIDATE.json commercial_training_approved=false ile üretilir. Başka kişi incelemeden true yapılmaz.
 
-**Not:** Harici kaynakta 60.000 satır bulunduğu beyan edilmesi, 60.000 kullanılabilir ve bağımsız niyet çıktığı anlamına gelmez. Gerçek indirmenin ardından kabul edilen/karantinaya alınan/dışlanan çift sayıları SHA'lı raporla belirlenmelidir. Bu ortamda harici ağırlık veya veri dosyaları indirilmedi.
+**D01 gerçek veri güncellemesi (18 Ekim 2026):** Özgün JSONL sabit revizyondan GitHub Actions üzerinde indirildi; 16.459.390 bayt ve SHA-256 doğrulandı. 60.000 satırda 59.996 biçimsel geçerli; 29 karantina kümesi; 43.145 pozitif ve 13.813 negatif insan inceleme adayı hesaplandı. Ayrıntılar: [D01 gerçek veri denetim raporu](faqvec_d01_gercek_veri_denetimi.md). İndirme ve biçimsel kontrol PASS; gerçek veri hakları, insan semantik etiketleri ve ticari eğitim kabulü HOLD. E5/BGE model ağırlıkları indirilmedi.
 
 ## İnsan inceleme kuralları
 
