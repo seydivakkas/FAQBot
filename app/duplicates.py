@@ -79,7 +79,7 @@ def detect(faqs, threshold, max_results=100, method="tfidf", model_path=None):
     if len(phrases) < 2:
         return []
 
-    if method in ("embedding", "faqvec_tr"):
+    if method in ("embedding", "faqvec_tr", "faqvec_v2"):
         if not model_path:
             raise ValueError("Yerel embedding modeli klasörü belirtilmeli.")
         scores = similarity_matrix(phrases, model_path, method=method)

@@ -15,6 +15,8 @@ from app.faqvec_tr import (DEFAULT_OWN_DIR, OwnModelError, artifact_status,
                            load_model, similarity_matrix as own_similarity)
 
 DEFAULT_MODEL_PATH = ROOT / "models" / "paraphrase-multilingual-MiniLM-L12-v2"
+DEFAULT_V2_MODEL_PATH = ROOT / "models" / "faqvec-tr-v0.2-e5" / "model"
+
 
 
 class EmbeddingUnavailable(RuntimeError):
@@ -48,8 +50,8 @@ def model_status(path):
 
 
 def set_settings(method, model_path):
-    if method not in ("tfidf", "embedding", "faqvec_tr"):
-        raise ValueError("Yöntem tfidf, embedding veya faqvec_tr olmalıdır.")
+    if method not in ("tfidf", "embedding", "faqvec_tr", "faqvec_v2"):
+        raise ValueError("Yöntem tfidf, embedding, faqvec_tr veya faqvec_v2 olmalıdır.")
     if not model_path or len(model_path) > 1000:
         raise ValueError("Geçerli bir yerel model klasörü belirtin.")
     directory = Path(model_path).expanduser()
@@ -62,6 +64,22 @@ def set_settings(method, model_path):
             "Yerel model veya sentence-transformers kurulumu eksik. "
             "Önce isteğe bağlı embedding kurulumunu tamamlayın."
         )
+    if method == "faqvec_v2":
+        if not model_status(str(directory))["ready_to_load"] or not (
+            directory / "faqvec_v2_manifest.json"
+        ).is_file():
+            raise EmbeddingUnavailable("FAQVec-TR v0.2 henüz eğitilmedi; yerel model klasörü ve manifest eksik.")
+        try:
+            manifest = __import__("json").loads(
+                (directory / "faqvec_v2_manifest.json").read_text(encoding="utf-8")
+            )
+            if not manifest.get("backbone", {}).get("declared_license") == "MIT" or (
+                manifest.get("model_input_prefix") != "query: "
+            ):
+                raise ValueError("Model kökeni veya E5 önek sözleşmesi geçersiz.")
+            _get_model(str(directory))
+        except (ValueError, OSError, KeyError) as exc:
+            raise EmbeddingUnavailable("FAQVec-TR v0.2 metadata geçersiz.") from exc
     if method == "faqvec_tr":
         if not artifact_status(str(directory))["ready_to_load"]:
             raise EmbeddingUnavailable(
@@ -115,9 +133,10 @@ def similarity_matrix(phrases, model_path, method="embedding"):
     if not phrases:
         return np.zeros((0, 0))
     model = _get_model(model_path)
+    query_inputs = ["query: " + phrase for phrase in phrases] if method == "faqvec_v2" else phrases
     try:
         vectors = np.asarray(model.encode(
-            phrases, convert_to_numpy=True, normalize_embeddings=True,
+            query_inputs, convert_to_numpy=True, normalize_embeddings=True,
             show_progress_bar=False,
         ), dtype=np.float32)
     except Exception as exc:

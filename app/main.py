@@ -26,6 +26,7 @@ from app.matching import find_best_match, normalize
 from app.semantic import (EmbeddingUnavailable, get_settings as get_semantic_settings,
                           set_settings as set_semantic_settings, display_status)
 from app.faqvec_tr import DEFAULT_OWN_DIR
+from app.semantic import DEFAULT_V2_MODEL_PATH
 from app.duplicates import (
     DEFAULT_DUPLICATE_THRESHOLD, MIN_DUPLICATE_THRESHOLD,
     MAX_DUPLICATE_THRESHOLD, MergeConflict, detect,
@@ -50,7 +51,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="Yerel SSS ve opsiyonel çevrimdışı embedding yönetimi",
-    version="1.6.1",
+    version="1.7.0",
     lifespan=lifespan,
 )
 
@@ -280,7 +281,7 @@ def save_duplicate_settings(payload: DuplicateSettings, _: LocalEditor):
 
 
 class SemanticSettingsRequest(BaseModel):
-    method: Literal["tfidf", "embedding", "faqvec_tr"]
+    method: Literal["tfidf", "embedding", "faqvec_tr", "faqvec_v2"]
     model_path: str = Field(min_length=1, max_length=1000)
 
 
@@ -288,7 +289,8 @@ class SemanticSettingsRequest(BaseModel):
 def read_semantic_settings(_: LocalEditor):
     info = get_semantic_settings()
     return {**info, **display_status(info["method"], info["model_path"]),
-            "default_own_model_path": str(DEFAULT_OWN_DIR)}
+            "default_own_model_path": str(DEFAULT_OWN_DIR),
+            "default_v2_model_path": str(DEFAULT_V2_MODEL_PATH)}
 
 
 @app.put("/settings/semantic")

@@ -54,6 +54,7 @@ const editVerificationStatus = document.getElementById("editVerificationStatus")
 const dupMethod = document.getElementById("dupMethod");
 const dupModelPath = document.getElementById("dupModelPath");
 let ownModelPathDefault = "";
+let v2ModelPathDefault = "";
 const dupMethodSave = document.getElementById("dupMethodSave");
 const dupMethodStatus = document.getElementById("dupMethodStatus");
 const dupThresholdRange = document.getElementById("dupThresholdRange");
@@ -912,6 +913,7 @@ async function loadSemanticSettings() {
         dupMethod.value = settings.method;
         dupModelPath.value = settings.model_path;
         ownModelPathDefault = settings.default_own_model_path || "";
+        v2ModelPathDefault = settings.default_v2_model_path || "";
         dupMethodStatus.textContent = settings.ready_to_load
             ? "Yerel model dosyaları kullanıma hazır (ticari kabul ayrı)."
             : "Model hazır değil. TF-IDF kullanabilir veya isteğe bağlı modeli kurabilirsiniz.";
@@ -922,6 +924,8 @@ async function loadSemanticSettings() {
 dupMethod.addEventListener("change", () => {
     if (dupMethod.value === "faqvec_tr" && ownModelPathDefault) {
         dupModelPath.value = ownModelPathDefault;
+    } else if (dupMethod.value === "faqvec_v2" && v2ModelPathDefault) {
+        dupModelPath.value = v2ModelPathDefault;
     }
     dupMethodStatus.textContent = "Yöntemi kaydedip yeniden tarayın. FAQVec-TR için yerel eğitim gerekir.";
 });
@@ -939,7 +943,9 @@ dupMethodSave.addEventListener("click", async () => {
         return;
     }
     duplicateCandidates.replaceChildren();
-    dupMethodStatus.textContent = data.method === "faqvec_tr"
+    dupMethodStatus.textContent = data.method === "faqvec_v2"
+        ? "FAQVec-TR v0.2 seçildi; değerlendirmeyi bağımsız veriyle tamamlayın."
+        : data.method === "faqvec_tr"
         ? "FAQVec-TR yerel model seçildi. Yeni embedding skorlarını gözle inceleyin."
         : data.method === "embedding"
         ? "MiniLM seçildi. Benzerleri tara düğmesine basın."

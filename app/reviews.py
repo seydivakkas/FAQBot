@@ -196,9 +196,12 @@ def _embedding_predictions(questions, faqs, threshold, model_path, method="embed
             raise EmbeddingUnavailable(str(exc)) from exc
     else:
         model = _get_model(model_path)
+    inputs = phrases + [normalize(q) for q in questions]
+    if method == "faqvec_v2":
+        inputs = ["query: " + phrase for phrase in inputs]
     try:
         raw_vectors = np.asarray(model.encode(
-            phrases + [normalize(q) for q in questions],
+            inputs,
             convert_to_numpy=True, normalize_embeddings=True,
             show_progress_bar=False,
         ), dtype=np.float32)

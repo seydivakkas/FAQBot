@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.6.1</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.7.0</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -181,13 +181,14 @@
                         <select id="dupMethod">
                             <option value="tfidf">TF-IDF (kurulumsuz)</option>
                             <option value="embedding">MiniLM — üçüncü taraf Apache-2.0</option>
-                            <option value="faqvec_tr">FAQVec-TR — kendi eğittiğimiz yerel model</option>
+                            <option value="faqvec_tr">FAQVec-TR v0.1 — sıfırdan n-gram model</option>
+                            <option value="faqvec_v2">FAQVec-TR v0.2 — MIT E5-base ince ayar</option>
                         </select>
                         <label for="dupModelPath">Yerel model klasörü (embedding)</label>
                         <input id="dupModelPath" type="text" placeholder="C:\Projects\FAQBot\models\paraphrase-multilingual-MiniLM-L12-v2">
                         <button id="dupMethodSave" type="button" class="settings-secondary">Yöntemi kaydet</button>
                         <p id="dupMethodStatus" class="edit-status" role="status"></p>
-                        <small>FAQVec-TR ağırlıkları sıfırdan, <code>setup_faqvec_windows.bat</code> ile bilgisayarında eğitilir; model indirmez. MiniLM için ayrı kurulum gerekir. Ticari performans kabulü henüz HOLD. Sohbet motoru değişmez.</small>
+                        <small>FAQVec-TR v0.1 sıfırdan eğitilir. FAQVec-TR v0.2 için ticari kullanıma izin veren MIT E5-base ağırlıkları bir kez açıkça indirilip yerelde ince ayar yapılır. MiniLM için ayrı kurulum gerekir. Ticari performans kabulü henüz HOLD. Sohbet motoru değişmez.</small>
                     </div>
                     <label for="dupThresholdRange">Benzerlik eşiği <strong id="dupThresholdLabel">%70</strong></label>
                     <input id="dupThresholdRange" type="range" min="40" max="95" step="1" value="70">
