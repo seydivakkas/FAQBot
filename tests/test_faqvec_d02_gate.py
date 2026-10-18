@@ -66,3 +66,39 @@ def test_windows_review_setup_and_ui_are_real_repo_files():
     assert "faqvec_d02_review prepare" in batch
     assert "bundle_id" in ui and "reviewer_id" in ui
     assert "new Blob" in ui
+
+def test_d02_source_cannot_be_approved_by_changing_manifest_checkbox(tmp_path):
+    """An unverified rights claim is not an authorization to train commercially."""
+    import hashlib
+    import pytest
+    from app.faqvec_v2_data import load_approved_sources, DatasetError
+    record={
+        "intent_id":"candidate-1","split":"train",
+        "question":"Kargom nerede?",
+        "alternatives":["Paketim nerede?"],
+        "source_id":"turkish-paraphrase-candidate",
+    }
+    raw=(json.dumps(record,ensure_ascii=False)+"\n").encode("utf-8")
+    dataset=tmp_path/"private.jsonl"
+    dataset.write_bytes(raw)
+    manifest={
+        "schema_version":1,
+        "sources":[{
+            "id":"turkish-paraphrase-candidate",
+            "origin_url":"https://huggingface.co/datasets/dogukanvzr/ml-paraphrase-tr",
+            "license_spdx":"Apache-2.0",
+            "reviewed_by":"unverified-local-checkbox",
+            "evidence_sha256":"a"*64,
+            "commercial_training_approved":True,
+        }],
+        "files":[{"path":"private.jsonl","sha256":hashlib.sha256(raw).hexdigest()}],
+    }
+    document=tmp_path/"manifest.json"
+    document.write_text(json.dumps(manifest),encoding="utf-8")
+    with pytest.raises(DatasetError,match="D02"):
+        load_approved_sources(document,for_commercial=True)
+    manifest["sources"][0]["id"]="renamed-source"
+    manifest["sources"][0]["origin_url"]="https://huggingface.co/datasets/dogukanvzr/ml-paraphrase-tr/tree/main"
+    document.write_text(json.dumps(manifest),encoding="utf-8")
+    with pytest.raises(DatasetError,match="D02"):
+        load_approved_sources(document,for_commercial=True)
