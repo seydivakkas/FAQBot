@@ -75,3 +75,54 @@ def evaluate_matrix(scores, gallery_ids, labels, threshold, k=5):
         "false_answer_count": false_answer,
         "overall_accuracy": ratio(correct, len(labels)),
     }
+
+
+def paired_intent_bootstrap_recall_delta(
+    baseline_scores, challenger_scores, gallery_ids, labels, *,
+    iterations=2000, seed=42
+):
+    """Her niyeti bootstrap birimi seç; soruları bağımsız sayarak güveni şişirme.
+
+    Calibration'dan bağımsız top-1 başarı farkı. OOS sorgular bu metrikte yoktur.
+    Az sayıda bağımsız niyette güven aralığı hesaplanmaz.
+    """
+    from collections import defaultdict
+    source = np.asarray(baseline_scores)
+    challenger = np.asarray(challenger_scores)
+    if source.shape != challenger.shape or source.ndim != 2:
+        raise ValueError("Karşılaştırılan skor matrisleri aynı boyutta olmalı.")
+    if source.shape != (len(labels), len(gallery_ids)):
+        raise ValueError("Skor matrisi etiket/galeri boyutuyla uyuşmuyor.")
+    if not np.isfinite(source).all() or not np.isfinite(challenger).all():
+        raise ValueError("Skor matrisinde geçersiz değer var.")
+    if iterations < 100 or iterations > 10000:
+        raise ValueError("Bootstrap tekrarı 100–10000 arasında olmalı.")
+    groups = defaultdict(list)
+    for i, target in enumerate(labels):
+        if target is not None:
+            groups[target].append(i)
+    if not groups:
+        return {"intents":0, "positive_queries":0, "delta_recall_at_1": None,
+                "ci95": None, "significant_positive": None}
+    baseline_idx = source.argmax(axis=1)
+    challenger_idx = challenger.argmax(axis=1)
+    correct_old = np.array([gallery_ids[i] == target
+                            for i, target in zip(baseline_idx, labels)],dtype=np.float64)
+    correct_new = np.array([gallery_ids[i] == target
+                            for i, target in zip(challenger_idx, labels)],dtype=np.float64)
+    indices = [np.array(v, dtype=int) for _, v in sorted(groups.items())]
+    totals = np.array([len(v) for v in indices], dtype=np.float64)
+    deltas = np.array([float(np.sum(correct_new[v] - correct_old[v])) for v in indices])
+    obs = float(deltas.sum() / totals.sum())
+    result = {"intents":len(indices), "positive_queries":int(totals.sum()),
+              "delta_recall_at_1":round(obs, 4), "ci95":None,
+              "significant_positive":None}
+    if len(indices) < 5:
+        return result
+    rng = np.random.default_rng(seed)
+    sample = rng.integers(0,len(indices),size=(iterations,len(indices)))
+    values = deltas[sample].sum(axis=1) / totals[sample].sum(axis=1)
+    bounds = np.quantile(values,[.025,.975])
+    result["ci95"] = [round(float(x),4) for x in bounds]
+    result["significant_positive"] = bool(bounds[0] > 0)
+    return result
