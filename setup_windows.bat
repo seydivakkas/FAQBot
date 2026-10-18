@@ -94,7 +94,7 @@ echo ==========================================
 echo  FAQBot kurulumu tamamlandi!
 echo  Sohbet: http://127.0.0.1:8000/app
 echo  API:    http://127.0.0.1:8000/docs
-echo  Sorular: Sohbet ekraninda 20 Soruyu Gor
+echo  Sorular: Sohbet ekraninda Soruyu Gor
 echo  Sunucuyu kapatmak icin: CTRL + C
 echo ==========================================
 echo.

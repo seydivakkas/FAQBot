@@ -19,7 +19,15 @@
 - FastAPI, OpenAPI /docs ve otomatik pytest testleri
 - GitHub Actions CI
 
-**Not:** TF-IDF metin benzerliğidir; büyük dil modeli (LLM), semantik garantisi veya gerçek mağaza entegrasyonu değildir.
+**Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
+
+## v1.4 — Yerel embedding ve kaynak bilgileri
+
+- Her SSS kaydında kaynak başlığı, URL, geçerlilik tarihi, elle doğrulama durumu ve geçerlilik uyarısı.
+- Ayarlar'da **TF-IDF** veya yalnızca yerel klasörden yüklenen **çok dilli embedding** yöntemi.
+- İsteğe bağlı model kurulumu: [setup_embedding_windows.bat](setup_embedding_windows.bat). Temel kurulum model indirmez.
+- JSON dışa aktarma ve Excel/CSV aktarımında kaynak alanları korunur.
+- Ayrıntılı sözleşme ve sınırlamalar: [Yerel model ve kaynak yönetimi](docs/yerel_embedding_ve_kaynak.md).
 
 ## Mimari
 
