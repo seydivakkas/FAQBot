@@ -21,6 +21,18 @@
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
 
+## FAQVec-TR-V2-D02 — Çift bağımsız insan incelemesi
+
+- **Gerçek D02 hazırlama PASS:** 60.000 satırlı SHA-doğrulanmış özgün JSONL'den 396 ayrı inceleme görevi üretildi: 134 karantina pozitif çifti, 1 doğrudan etiket çelişkisi, 1 geçişli çelişki, 60 kontrol pozitif çifti ve 200 yüksek öncelikli negatif aday.
+- Kaynakta incelenebilecek toplam 13.813 negatif aday ve 39.276 pozitif niyet adayı korunuyor; 5.845 test adayı niyetin kimliği SHA ile **aday** olarak donduruldu. Bağımsız gerçek müşteri testi değildir.
+- Yerel özel paket: `python -m scripts.faqvec_d02_review prepare --input datasets/faqvec_d01_original/ml_paraphrase_60k_labeled.jsonl`.
+- **İnceleme paneli:** [frontend/d02_review_offline.html](frontend/d02_review_offline.html) — internet olmadan iki ayrı incelemeci SAME / DIFFERENT / UNCERTAIN etiketleri verir, ayrı JSON dosyaları üretir.
+- Birleştirme: `python -m scripts.faqvec_d02_review aggregate --bundle reports/faqvec-d02/review_bundle.PRIVATE.json --review-a INCELEMECI_1.json --review-b INCELEMECI_2.json --output reports/faqvec-d02/dual_review_report.json`.
+- Hak kanıtı doğrulama: `python -m scripts.faqvec_d02_rights --evidence-register HAK_KAYDI.json`. Lisans kartı Apache-2.0 beyanıdır; **özgün metin hak zinciri ve ticari eğitim izni henüz bağımsız onaylı değildir**.
+- D02 CI yalnızca sayımlar ve kilitlenmiş aday test kimliklerini yayımlar; ham soru metinleri ve inceleme kararları depoya/CI artifact'ına konmaz.
+- [D02 hak kanıtı ve uzman inceleme sözleşmesi](docs/faqvec_d02_hak_kaniti_ve_uzman_inceleme.md) · [D02 hazırlama CI](https://github.com/seydivakkas/FAQBot/actions/runs/39165639818).
+
+**Durum:** D02_KOD_VE_GERÇEK_GÖREV_PAKETİ_PASS / İKİ_UZMAN_ETİKETİ_HOLD / VERİ_HAKLARI_HOLD / MODEL_PERFORMANSI_HOLD / TİCARİ_YAYIN_HOLD.
 ## FAQVec-TR-V2-D01 — Özgün 60.000 çift dosyasının gerçek denetimi
 
 - Sabit HF revizyonu: b9d5707470340db13d788a338e7f7897c5e29932; JSONL boyutu 16.459.390 bayt; SHA-256 bütünlüğü **PASS**.
