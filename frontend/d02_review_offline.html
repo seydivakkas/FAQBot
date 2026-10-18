@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FAQVec-TR D02 — Bağımsız İnceleme</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#20354d;background:#f5f8fd}
+*{box-sizing:border-box}body{max-width:1050px;padding:20px;margin:auto}
+h1{font-size:1.65rem}h2{font-size:1.2rem}
+.panel{background:white;border:1px solid #d8e2ed;padding:20px;border-radius:16px;margin:15px 0}
+p,small{color:#52657c;line-height:1.6}label{display:block;font-size:14px;font-weight:650;margin:10px 0 5px}
+input,textarea,select{border:1px solid #bccce0;border-radius:9px;padding:10px;width:100%;font:inherit}
+input[type=file]{font-size:14px}
+button{border:0;background:#195da5;color:white;padding:12px 16px;border-radius:9px;cursor:pointer;font:inherit;margin:5px 6px 5px 0}
+button:disabled{opacity:.4;cursor:not-allowed}.alt{background:#405b79}.warn{background:#955420}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.quote{border:1px solid #cbd9ec;background:#f5f8fd;border-radius:12px;padding:15px;min-height:115px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.55}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.actions label{display:flex;align-items:center;gap:6px;font-weight:550;cursor:pointer}
+.actions input{width:auto}
+.tag{background:#e8f1fc;padding:4px 7px;border-radius:6px;font-size:12px}
+#feedback{white-space:pre-wrap;color:#8e4517}
+@media(max-width:620px){.pair{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<h1>FAQVec-TR — D02 Bağımsız İnceleme</h1>
+<p>Bu ekran tamamen yereldir. Sorular sunucuya gönderilmez, otomatik kaydedilmez. Her incelemeci kendi bilgisayarında görev dosyasını açıp yalnızca kendi kararlarını JSON olarak dışa aktarmalıdır. Hak ve ticari eğitim onayı bu ekrandan verilemez.</p>
+<section class="panel">
+<h2>Görev paketini aç</h2>
+<label for="taskFile">Görev paketi (review_bundle.PRIVATE.json)</label>
+<input type="file" id="taskFile" accept=".json,application/json">
+<label for="existing">Önceki incelemeye devam (isteğe bağlı karar JSON)</label>
+<input type="file" id="existing" accept=".json,application/json">
+<label for="reviewer">Bağımsız incelemeci kimliği</label>
+<input id="reviewer" placeholder="Örnek: incelemeci_01" maxlength="100" autocomplete="off">
+<p><strong id="overall">Dosya yüklenmedi.</strong></p>
+</section>
+<section class="panel" id="review" hidden>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<strong id="progress">0/0</strong>
+<span id="metadata" class="tag"></span>
+</div>
+<div class="pair" style="margin:15px 0">
+<div><strong>İfade A</strong><div id="a" class="quote"></div></div>
+<div><strong>İfade B</strong><div id="b" class="quote"></div></div>
+</div>
+<fieldset><legend>İki ifade aynı soruya/aynı yanıt ihtiyacına mı karşılık geliyor?</legend>
+<div class="actions">
+<label><input name="decision" type="radio" value="same"> Aynı anlam, aynı cevap</label>
+<label><input name="decision" type="radio" value="different"> Farklı anlam / farklı cevap</label>
+<label><input name="decision" type="radio" value="uncertain"> Kararsız / uzman incelemesi</label>
+</div>
+</fieldset>
+<label for="note">Gerekçe (özellikle farklı/kararsız etiketlerde önerilir)</label>
+<textarea id="note" rows="3" maxlength="500" placeholder="Gerekçeyi yazın..."></textarea>
+<div style="margin-top:12px">
+<button id="prev" class="alt">Önceki</button>
+<button id="saveNext">Kararı kaydet ve ilerle</button>
+<button id="next" class="alt">Sonraki</button>
+<button id="export" class="warn">Kararları JSON olarak dışa aktar</button>
+</div>
+<p id="feedback" role="status"></p>
+</section>
+<script>
+"use strict";
+let bundle = null;
+let currentIndex = 0;
+let decisions = new Map();
+const byId = (id) => document.getElementById(id);
+function message(value){byId("feedback").textContent=value;}
+async function parseFile(file){
+  if(!file) return null;
+  return JSON.parse(await file.text());
+}
+function render(){
+  if(!bundle) return;
+  const tasks=bundle.tasks;
+  if(!tasks.length){byId("review").hidden=true;return;}
+  byId("review").hidden=false;
+  currentIndex=Math.min(tasks.length-1,Math.max(0,currentIndex));
+  const item=tasks[currentIndex], saved=decisions.get(item.task_id);
+  byId("progress").textContent=String(currentIndex+1)+" / "+String(tasks.length)+
+    " · Karar verilmiş: "+String(decisions.size);
+  byId("metadata").textContent="Görev "+item.task_id;
+  byId("a").textContent=item.question_a;
+  byId("b").textContent=item.question_b;
+  document.querySelectorAll('input[name="decision"]').forEach(el=>{
+    el.checked=Boolean(saved&&saved.decision===el.value);
+  });
+  byId("note").value=saved?.note||"";
+  byId("prev").disabled=currentIndex===0;
+  byId("next").disabled=currentIndex===tasks.length-1;
+  message("");
+}
+byId("taskFile").addEventListener("change",async e=>{
+  try{
+    const result=await parseFile(e.target.files[0]);
+    if(!result||result.schema!==1||!Array.isArray(result.tasks)||!result.bundle_id
+       ||result.tasks.some(t=>!t.task_id||typeof t.question_a!=="string"
+                              ||typeof t.question_b!=="string"))throw Error("Geçersiz D02 görev paketi.");
+    bundle=result;decisions=new Map();currentIndex=0;
+    byId("overall").textContent="Paket kimliği: "+result.bundle_id+" · Görev: "+result.tasks.length;
+    render();
+  }catch(err){bundle=null;byId("review").hidden=true;byId("overall").textContent=String(err.message);}
+});
+byId("existing").addEventListener("change",async e=>{
+  try{
+    if(!bundle)throw Error("Önce görev paketini seçin.");
+    const file=await parseFile(e.target.files[0]);
+    if(file.schema!==1||file.bundle_id!==bundle.bundle_id||!Array.isArray(file.decisions))
+      throw Error("Önceki inceleme dosyası bu görev paketine ait değil.");
+    const allowed=new Set(bundle.tasks.map(t=>t.task_id));
+    const newMap=new Map();
+    for(const row of file.decisions){
+      if(!allowed.has(row.task_id)||newMap.has(row.task_id)||
+        !["same","different","uncertain"].includes(row.decision))
+        throw Error("Hatalı/yinelenen görev kimliği.");
+      newMap.set(row.task_id,{task_id:row.task_id,decision:row.decision,note:row.note||""});
+    }
+    decisions=newMap;byId("reviewer").value=file.reviewer_id||"";
+    render();
+  }catch(err){message(String(err.message));}
+});
+function store(){
+  if(!bundle)return false;
+  const selected=document.querySelector('input[name="decision"]:checked');
+  if(!selected){message("Lütfen bir karar seçin.");return false;}
+  const task=bundle.tasks[currentIndex];
+  decisions.set(task.task_id,{
+    task_id:task.task_id,decision:selected.value,note:byId("note").value.trim().slice(0,500)
+  });
+  return true;
+}
+byId("prev").addEventListener("click",()=>{currentIndex--;render();});
+byId("next").addEventListener("click",()=>{currentIndex++;render();});
+byId("saveNext").addEventListener("click",()=>{
+  if(store()){currentIndex=Math.min(bundle.tasks.length-1,currentIndex+1);render();}
+});
+byId("export").addEventListener("click",()=>{
+  if(!bundle)return;
+  const reviewer=byId("reviewer").value.trim();
+  if(!/^[a-zA-Z0-9_.-]{3,100}$/.test(reviewer)){
+    message("İncelemeci kimliği 3–100 karakter; harf, rakam, nokta, - veya _ olmalı.");
+    return;
+  }
+  // Export is explicit. An unsaved selection on the active page is not silently committed.
+  if(!decisions.size){message("Önce en az bir karar kaydedin.");return;}
+  const data={
+    schema:1,reviewer_id:reviewer,bundle_id:bundle.bundle_id,
+    exported_at_utc:new Date().toISOString(),
+    decisions:Array.from(decisions.values()).sort((a,b)=>a.task_id.localeCompare(b.task_id))
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});
+  const link=document.createElement("a");
+  link.href=URL.createObjectURL(blob);
+  link.download="faqvec_d02_"+reviewer+"_reviews.json";
+  document.body.appendChild(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(link.href),5000);
+  message("Dosya yalnızca bilgisayarınıza indirildi. İkinci incelemeci ayrı oturum/dosya kullanmalı.");
+});
+</script>
+</body>
+</html>
