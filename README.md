@@ -27,6 +27,9 @@
 - Kaynakta incelenebilecek toplam 13.813 negatif aday ve 39.276 pozitif niyet adayı korunuyor; 5.845 test adayı niyetin kimliği SHA ile **aday** olarak donduruldu. Bağımsız gerçek müşteri testi değildir.
 - Yerel özel paket: `python -m scripts.faqvec_d02_review prepare --input datasets/faqvec_d01_original/ml_paraphrase_60k_labeled.jsonl`.
 - **İnceleme paneli:** [frontend/d02_review_offline.html](frontend/d02_review_offline.html) — internet olmadan iki ayrı incelemeci SAME / DIFFERENT / UNCERTAIN etiketleri verir, ayrı JSON dosyaları üretir.
+- **Windows tek adım:** [setup_faqvec_d02_windows.bat](setup_faqvec_d02_windows.bat) dosyası, özgün kaynağın yerel hazırlığını ve çevrimdışı inceleme ekranını açmayı kolaylaştırır.
+- **Kabul kapısı:** [scripts/faqvec_d02_acceptance.py](scripts/faqvec_d02_acceptance.py), gerçek kanıt/iki incelemeci dosyası gelmeden ticari eğitimi `BLOCKED` tutar. İzin veya uzman incelemesini kod otomatik onaylamaz.
+- Güncel hak belgesi ve uzman sonuçlarının toplanması [GitHub Issue #2](https://github.com/seydivakkas/FAQBot/issues/2) altında takip edilir; gizli dosyalar herkese açık Issue'ya yüklenmez.
 - Birleştirme: `python -m scripts.faqvec_d02_review aggregate --bundle reports/faqvec-d02/review_bundle.PRIVATE.json --review-a INCELEMECI_1.json --review-b INCELEMECI_2.json --output reports/faqvec-d02/dual_review_report.json`.
 - Hak kanıtı doğrulama: `python -m scripts.faqvec_d02_rights --evidence-register HAK_KAYDI.json`. Lisans kartı Apache-2.0 beyanıdır; **özgün metin hak zinciri ve ticari eğitim izni henüz bağımsız onaylı değildir**.
 - D02 CI yalnızca sayımlar ve kilitlenmiş aday test kimliklerini yayımlar; ham soru metinleri ve inceleme kararları depoya/CI artifact'ına konmaz.
