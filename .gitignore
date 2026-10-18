@@ -17,3 +17,11 @@ Thumbs.db
 
 # Model ağırlıkları indirilebilir artefaktlardır; Git deposuna eklenmez.
 models/
+
+# D01/D02 ham lisans verileri ve inceleme kararları yerel kalır.
+datasets/
+reports/
+*review_bundle.PRIVATE.json
+*dual_review_report.json
+*rights_status.json
+*reviews.json
