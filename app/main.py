@@ -127,6 +127,7 @@ class FAQInput(BaseModel):
 
 def _payload_fields(payload: FAQInput) -> dict:
     data = payload.model_dump()
+    data["alternatives"] = data.pop("alternative_questions")
     if data.get("valid_until") is not None:
         data["valid_until"] = data["valid_until"].isoformat()
     return data
