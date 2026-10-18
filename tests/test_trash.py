@@ -129,7 +129,7 @@ def test_all_records_deleted_do_not_reseed(client):
     assert init_db() == 1
 
 
-def test_previous_schema_upgrade_preserves_user_row(tmp_path, monkeypatch):
+def test_previous_schema_upgrade_preserves_user_row(client, tmp_path, monkeypatch):
     monkeypatch.setenv("FAQBOT_DB_PATH", str(tmp_path / "old.db"))
     with sqlite3.connect(get_db_path()) as db:
         db.execute(
