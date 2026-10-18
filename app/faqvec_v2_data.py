@@ -70,6 +70,17 @@ def load_approved_sources(manifest_path, for_commercial=False):
             raise DatasetError(f"İzin verilenler dışı/verifiye edilmemiş lisans: {source['id']}")
         if not source.get("evidence_sha256") or len(source["evidence_sha256"]) != 64:
             raise DatasetError("Kaynak kanıt SHA-256 alanı gerekli.")
+        # D02: The original Turkish paraphrase corpus lacks independently
+        # verified underlying-text provenance and dual human review. A local
+        # manifest checkbox cannot bypass this dataset-specific HOLD.
+        if for_commercial and (
+            source["id"] == "turkish-paraphrase-candidate"
+            or "dogukanvzr/ml-paraphrase-tr" in source["origin_url"].lower()
+        ):
+            raise DatasetError(
+                "FAQVec-TR D02 veri hakları ve çift uzman kabulü HOLD. "
+                "Bu kaynağın ticari E5 eğitimine alınması engellendi."
+            )
         if for_commercial and not source.get("commercial_training_approved", False):
             raise DatasetError(f"Ticari veri kullanımı onaylanmamış: {source['id']}")
         index[source["id"]] = source
