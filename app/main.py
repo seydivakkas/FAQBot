@@ -2,6 +2,7 @@
 
 import ipaddress
 import sqlite3
+import logging
 from contextlib import asynccontextmanager
 from datetime import date
 from urllib.parse import urlparse
@@ -13,6 +14,11 @@ from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+from app.reviews import (
+    initialize as init_reviews, get_logging_enabled, set_logging_enabled,
+    record_chat, list_reviews, label_review, clear_reviews, evaluate,
+    ReviewConflict,
+)
 from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, analyze, commit_records, parse_file, summarize
 from app.database import add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq
 from app.matching import find_best_match, normalize
@@ -34,13 +40,14 @@ FALLBACK = (
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_db()
+    init_reviews()
     yield
 
 
 app = FastAPI(
     title="FAQBot API",
     description="Yerel SSS ve opsiyonel çevrimdışı embedding yönetimi",
-    version="1.4.0",
+    version="1.5.0",
     lifespan=lifespan,
 )
 
@@ -319,6 +326,67 @@ def apply_duplicate_merge(payload: DuplicateMergeRequest, _: LocalEditor):
         raise HTTPException(status_code=422, detail=str(error))
 
 
+class ReviewLoggingSettings(BaseModel):
+    enabled: bool
+
+
+class ReviewLabelRequest(BaseModel):
+    status: Literal["pending", "correct", "incorrect", "unsure"]
+    expected_faq_id: int | None = Field(default=None, gt=0)
+    note: str = Field(default="", max_length=500)
+
+
+class ReviewClearRequest(BaseModel):
+    confirm: Literal[True]
+
+
+class ReviewEvaluateRequest(BaseModel):
+    include_embedding: bool = False
+
+
+@app.get("/reviews/settings")
+def read_review_settings(_: LocalEditor):
+    return {"enabled": get_logging_enabled(), "retention_limit": 1000,
+            "sensitive_filter": True}
+
+
+@app.put("/reviews/settings")
+def update_review_settings(payload: ReviewLoggingSettings, _: LocalEditor):
+    return {"enabled": set_logging_enabled(payload.enabled)}
+
+
+@app.get("/reviews")
+def read_review_list(_: LocalEditor, status: Literal[
+    "all", "pending", "correct", "incorrect", "unsure"
+] = "all", limit: int = 100):
+    if not 1 <= limit <= 200:
+        raise HTTPException(status_code=422, detail="Liste sınırı 1–200 olmalıdır.")
+    return list_reviews(status=status, limit=limit)
+
+
+@app.patch("/reviews/{review_id}")
+def update_review_label(review_id: int, payload: ReviewLabelRequest, _: LocalEditor):
+    try:
+        return label_review(
+            review_id, payload.status, payload.expected_faq_id, payload.note
+        )
+    except ReviewConflict as exc:
+        raise HTTPException(status_code=404 if "bulunamadı" in str(exc) else 409,
+                            detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.delete("/reviews")
+def delete_review_history(payload: ReviewClearRequest, _: LocalEditor):
+    return {"deleted": clear_reviews()}
+
+
+@app.post("/reviews/evaluate")
+def evaluate_reviewed_data(payload: ReviewEvaluateRequest, _: LocalEditor):
+    return evaluate(include_embedding=payload.include_embedding)
+
+
 @app.post("/faqs", status_code=status.HTTP_201_CREATED)
 def create_faq(payload: FAQInput, _: LocalEditor):
     try:
@@ -346,8 +414,15 @@ def remove_faq(faq_id: int, _: LocalEditor):
 
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
+def chat(request: ChatRequest, http_request: Request):
     match = find_best_match(request.message, load_faqs())
+    reply = match["faq"]["answer"] if match else FALLBACK
+    # Kayda yalnızca açık yönetici tercihi ve yerel istekle izin ver.
+    if _is_loopback(http_request.client.host if http_request.client else None):
+        try:
+            record_chat(request.message, match, reply)
+        except sqlite3.Error:
+            logging.getLogger(__name__).exception("Yerel eşleşme günlüğüne kayıt yapılamadı.")
     if match is None:
         return ChatResponse(
             answer=FALLBACK,
