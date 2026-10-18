@@ -62,6 +62,7 @@ def init_db() -> int:
             ("valid_until", "TEXT"),
             ("verification_status", "TEXT NOT NULL DEFAULT 'unverified'"),
             ("verified_at", "TEXT"),
+            ("deleted_at", "TEXT"),
         ):
             if name not in columns:
                 conn.execute(f"ALTER TABLE faqs ADD COLUMN {name} {definition}")
@@ -135,14 +136,14 @@ def init_db() -> int:
                 "INSERT INTO app_metadata (key, value) VALUES ('v13_additions_done', '1')"
             )
 
-        return conn.execute("SELECT COUNT(*) FROM faqs").fetchone()[0]
+        return conn.execute("SELECT COUNT(*) FROM faqs WHERE deleted_at IS NULL").fetchone()[0]
 
 
 def load_faqs() -> list[dict]:
     with _connect() as conn:
         rows = conn.execute(
             "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at "
-            "FROM faqs ORDER BY id"
+            "FROM faqs WHERE deleted_at IS NULL ORDER BY id"
         ).fetchall()
     return [_as_faq(row) for row in rows]
 
@@ -151,7 +152,7 @@ def get_faq(faq_id: int) -> dict | None:
     with _connect() as conn:
         row = conn.execute(
             "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at "
-            "FROM faqs WHERE id = ?", (faq_id,)
+            "FROM faqs WHERE id = ? AND deleted_at IS NULL", (faq_id,)
         ).fetchone()
     return _as_faq(row) if row is not None else None
 
@@ -187,7 +188,7 @@ def update_faq(
         previous = conn.execute(
             "SELECT question, answer, category, alternative_questions, "
             "source_title, source_url, valid_until, verification_status, verified_at "
-            "FROM faqs WHERE id=?", (faq_id,)
+            "FROM faqs WHERE id=? AND deleted_at IS NULL", (faq_id,)
         ).fetchone()
         if previous is None:
             return None
@@ -204,17 +205,80 @@ def update_faq(
         conn.execute(
             "UPDATE faqs SET question=?, answer=?, category=?, alternative_questions=?, "
             "source_title=?, source_url=?, valid_until=?, verification_status=?, "
-            "verified_at=? WHERE id=?",
+            "verified_at=? WHERE id=? AND deleted_at IS NULL",
             (question, answer, category, json.dumps(alternatives, ensure_ascii=False),
              source_title, source_url, valid_until, verification_status, verified_at, faq_id),
         )
     return get_faq(faq_id)
 
 
+class RestoreConflict(ValueError):
+    """Geri yüklemeyi engelleyen bir soru veya alternatif ifade çakışması."""
+
+
 def delete_faq(faq_id: int) -> bool:
+    """Soruyu silmek yerine zaman damgasıyla çöp kutusuna taşı."""
     with _connect() as conn:
-        cursor = conn.execute("DELETE FROM faqs WHERE id = ?", (faq_id,))
+        cursor = conn.execute(
+            "UPDATE faqs SET deleted_at=? WHERE id=? AND deleted_at IS NULL",
+            (datetime.now(timezone.utc).isoformat(), faq_id),
+        )
         return cursor.rowcount > 0
+
+
+def list_deleted_faqs() -> list[dict]:
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT id, question, answer, category, alternative_questions, "
+            "source_title, source_url, valid_until, verification_status, "
+            "verified_at, deleted_at FROM faqs "
+            "WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC, id DESC"
+        ).fetchall()
+    return [_as_faq(row) for row in rows]
+
+
+def restore_faq(faq_id: int) -> dict:
+    """Atomik geri yükleme: etkin sorularla bütün ana/alternatif ifadeleri karşılaştır.
+
+    Yeni kayıtlar silinmiş ana soruyu kullanamaz çünkü orijinal UNIQUE(question)
+    veritabanı şemasını migration sırasında yıkıcı biçimde değiştirmiyoruz.
+    """
+    from app.matching import normalize
+
+    with _connect() as conn:
+        conn.execute("BEGIN IMMEDIATE")
+        row = conn.execute(
+            "SELECT id, question, answer, category, alternative_questions, "
+            "source_title, source_url, valid_until, verification_status, "
+            "verified_at, deleted_at FROM faqs WHERE id=? AND deleted_at IS NOT NULL",
+            (faq_id,),
+        ).fetchone()
+        if row is None:
+            raise LookupError("Çöp kutusunda böyle bir SSS kaydı bulunamadı.")
+        restored = _as_faq(row)
+        phrases = [restored["question"], *restored["alternative_questions"]]
+        normalized = [normalize(item) for item in phrases]
+        if not all(normalized) or len(set(normalized)) != len(normalized):
+            raise RestoreConflict("Silinen kayıt kendi içinde tekrarlanan/geçersiz ifadeler içeriyor.")
+
+        current = conn.execute(
+            "SELECT question, alternative_questions FROM faqs "
+            "WHERE deleted_at IS NULL"
+        ).fetchall()
+        occupied = set()
+        for active in current:
+            occupied.add(normalize(active["question"]))
+            occupied.update(normalize(alt) for alt in json.loads(active["alternative_questions"]))
+        if any(key in occupied for key in normalized):
+            raise RestoreConflict(
+                "Geri yükleme yapılamadı: ana soru veya alternatif ifade aktif bir kayıtla "
+                "çakışıyor. Önce çakışan aktif kaydı düzenleyin."
+            )
+        conn.execute(
+            "UPDATE faqs SET deleted_at=NULL WHERE id=? AND deleted_at IS NOT NULL",
+            (faq_id,),
+        )
+    return get_faq(faq_id)
 
 
 if __name__ == "__main__":
