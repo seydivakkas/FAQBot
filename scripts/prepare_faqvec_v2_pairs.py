@@ -171,6 +171,10 @@ def prepare_pairs(rows, *, seed="faqvec-v2-split-2026-10",
 
 def save_candidate_package(records, candidates, summary, *, source_file, output_dir,
                            source_repo, revision, card_path=None):
+    if source_repo != "dogukanvzr/ml-paraphrase-tr":
+        raise PairDataError("Bu dönüştürücü yalnızca kaydı incelenen Türkçe paraphrase aday kaynağı içindir.")
+    if len(revision) != 40 or any(char not in "0123456789abcdef" for char in revision.lower()):
+        raise PairDataError("Kaynağa ait sabit 40 haneli commit SHA gerekli.")
     folder = Path(output_dir).resolve()
     folder.mkdir(parents=True, exist_ok=True)
     output = folder / "turkish_pairs_candidate.jsonl"

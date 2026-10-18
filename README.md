@@ -21,6 +21,15 @@
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
 
+## FAQVec-TR — lisansı incelenecek yeni Türkçe çiftler
+
+- **Aday veri:** [dogukanvzr/ml-paraphrase-tr](https://huggingface.co/datasets/dogukanvzr/ml-paraphrase-tr); kartında Apache-2.0 ve 60.000 Türkçe eşleştirme çifti beyan ediliyor. **İlk metinlerin kökeni ve gerçek ticari kullanım hakları henüz bağımsız teyit edilmedi.**
+- `python -m scripts.fetch_faqvec_v2_pairs`: yalnızca açık komutla veri indirme, revizyon ve SHA-256 kayıtları oluşturma.
+- `python -m scripts.prepare_faqvec_v2_pairs --source-file DOSYA.json --card-path README.md --revision 40_HANELI_SHA`: olumlu çiftlerden sızıntı kontrollü niyetler üretme ve olumsuzları inceleme adayı olarak ayırma.
+- Hiçbir negatif uzman onayı olmadan zor negatif kabul edilmez. Çelişkili etiketler işlemi durdurur, sonuç manifesti `commercial_training_approved=false` bırakır.
+- **Ölçüm:** `scripts/benchmark_faqvec_v2.py` ve `scripts/profile_faqvec_v2.py` ile başarı farkı güven aralığı, yanlış cevap, reddetme, gecikme ve kaynak kullanımı.
+- [Veri kökeni ve ticari kabul kayıtları](docs/faqvec_v2_veri_kokeni_ve_kabul.md). Gerçek E5/BGE ağırlıklarıyla performans yarışı henüz yapılmadı.
+
 ## FAQVec-TR v0.2 — MIT E5 tabanlı ticari odaklı araştırma sürümü
 
 - **Temel model:** [intfloat/multilingual-e5-base](https://huggingface.co/intfloat/multilingual-e5-base) (MIT, 768 boyut). Üründe bu türevin kökeni ve MIT bildirimleri korunacak. Daha güçlü karşılaştırma modeli: [BAAI/bge-m3](https://huggingface.co/BAAI/bge-m3) (MIT).
