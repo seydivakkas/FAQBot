@@ -1,0 +1,52 @@
+name: FAQVec D02 Independent Review Preparation
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/faqvec-d02.yml"
+      - "scripts/faqvec_d02_review.py"
+      - "scripts/faqvec_d02_rights.py"
+permissions:
+  contents: read
+jobs:
+  prepare-private-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install requirements
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install "huggingface-hub>=0.26,<2.0"
+      - name: Fetch pinned D01 data with license declaration and SHA check
+        run: python -m scripts.fetch_faqvec_d01_original --output /tmp/faqvec-d02-original
+      - name: Generate private review tasks and freeze provisional test IDs
+        run: python -m scripts.faqvec_d02_review prepare --input /tmp/faqvec-d02-original/ml_paraphrase_60k_labeled.jsonl --output-dir /tmp/faqvec-d02-private
+      - name: Check summary status and keep commercialization blocked
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("/tmp/faqvec-d02-private/summary.json")
+          summary = json.loads(p.read_text(encoding="utf-8"))
+          assert summary["rights_clearance"] == "HOLD"
+          assert summary["human_approved_negative_pairs"] == 0
+          assert summary["human_approved_pairs"] == 0
+          assert summary["unique_quarantine_components"] == 29
+          assert summary["candidate_intents"] == 39276
+          assert summary["frozen_test_candidate_intents"] == 5845
+          print("D02_PRIVATE_REVIEW_SUMMARY=" + json.dumps(summary, ensure_ascii=True))
+          PY
+      - name: Publish counts and hashed test candidate IDs only
+        uses: actions/upload-artifact@v4
+        with:
+          name: faqvec-d02-summary-and-frozen-test-candidates
+          path: |
+            /tmp/faqvec-d02-private/summary.json
+            /tmp/faqvec-d02-private/frozen_candidate_test_ids.json
+          retention-days: 30
