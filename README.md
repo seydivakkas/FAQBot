@@ -21,6 +21,16 @@
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
 
+## FAQVec-TR v0.1 — Kendi sıfırdan eğitilen embedding modelimiz
+
+- FAQVec-TR, 48 boyutlu Türkçe n-gram tabanlı öğrenilebilir encoder'ımızdır; dışarıdan hazır model ağırlığı indirmez.
+- Eğitim: scripts/train_faqvec_tr.py, Windows: setup_faqvec_windows.bat.
+- Eğitim verisi: ilk 110 demo SSS ve alternatifleri. Eğitim ve çıkarım offline çalışır.
+- Her modelin weights.npz ve manifest.json dosyası sürüm, checksum ve veri kökeni taşır. models/ Git'e eklenmez.
+- Ayarlar > Benzer Sorular alanında FAQVec-TR seçilebilir. Mevcut TF-IDF / MiniLM seçeneği korunur.
+- **Ticari kabul HOLD:** model performansı ve veri kullanım hakları bağımsız doğrulanmalı.
+
+[FAQVec-TR teknik sözleşmesi ve ticari kabul koşulları](docs/faqvec_tr_ticari_model.md)
 ## v1.6 — SSS Çöp Kutusu ve Geri Yükleme
 
 - Ayarlar'da **Çöp Kutusu — Silinen Soru ve Cevaplar** ekranı; silinmiş soruların cevapları, kategori bilgileri ve UTC silinme zamanları görünür.
