@@ -155,5 +155,5 @@ def test_rights_evidence_rejects_path_escape(tmp_path):
         "source_sha256":SOURCE_LFS_SHA256,
         "evidence_files":[{"path":"../outside.pdf","sha256":"0"*64}],
     }
-    with pytest.raises(ValueError,match="dışına"):
+    with pytest.raises(ValueError,match="yerel ve güvenli"):
         review_evidence(register,tmp_path)
