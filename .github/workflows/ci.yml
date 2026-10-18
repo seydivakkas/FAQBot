@@ -48,6 +48,9 @@ jobs:
       - name: FAQVec-TR v0.2 Windows script check (no download)
         shell: cmd
         run: call setup_faqvec_v2_windows.bat --check-only
+      - name: D02 Windows reviewer preparation script check (no download)
+        shell: cmd
+        run: call setup_faqvec_d02_windows.bat --check-only
       - name: FAQVec-TR offline training on Windows
         shell: cmd
         run: call "%USERPROFILE%\Projects\FAQBot\.venv\Scripts\python.exe" -m scripts.train_faqvec_tr --epochs 2 --output "%RUNNER_TEMP%\faqvec-tr-ci"
