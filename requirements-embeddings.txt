@@ -1,0 +1,2 @@
+# Yalnızca yerel anlamsal benzerlik modunu isteyen kullanıcılar için.
+sentence-transformers>=3.0,<6.0

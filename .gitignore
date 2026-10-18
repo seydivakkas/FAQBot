@@ -14,3 +14,6 @@ htmlcov/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Model ağırlıkları indirilebilir artefaktlardır; Git deposuna eklenmez.
+models/
