@@ -91,11 +91,11 @@ def main():
             "independent_real_customer_test": False,
         },
     })
-    print("FAQVec-TR üretildi:", args.output)
-    print("Boyut:", manifest["dimensions"], "Eğitim niyeti:", manifest["train_intents"])
+    print("FAQVec-TR model saved:", args.output)
+    print("Dimensions:", manifest["dimensions"], "Train intents:", manifest["train_intents"])
     print("Holdout Recall@1:", recall, "TF-IDF baseline:", baseline)
-    print("Ticari kabul:", manifest["commercial_acceptance"],
-          "(veri hakları ve bağımsız performans doğrulaması açık)")
+    print("Commercial acceptance:", manifest["commercial_acceptance"],
+          "(data rights and independent model performance review required)")
 
 
 if __name__ == "__main__":
