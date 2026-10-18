@@ -13,6 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from app.database import _connect
 from app.matching import normalize
+from app.semantic import get_settings, similarity_matrix
 
 DEFAULT_DUPLICATE_THRESHOLD = 0.70
 MIN_DUPLICATE_THRESHOLD = 0.40
@@ -41,8 +42,9 @@ def set_threshold(value):
 
 def fingerprint(faq):
     data = {
-        name: faq[name]
-        for name in ("id", "question", "answer", "category", "alternative_questions")
+        name: faq.get(name)
+        for name in ("id", "question", "answer", "category", "alternative_questions",
+                 "source_title", "source_url", "valid_until", "verification_status", "verified_at")
     }
     return hashlib.sha256(
         json.dumps(data, ensure_ascii=False, sort_keys=True).encode("utf-8")
@@ -69,7 +71,7 @@ def _vectors(faqs):
     return phrases, owners
 
 
-def detect(faqs, threshold, max_results=100):
+def detect(faqs, threshold, max_results=100, method="tfidf", model_path=None):
     """Soru ve alternatif ifadeler arasındaki en yüksek hibrit metin benzerliği."""
     if len(faqs) < 2:
         return []
@@ -77,14 +79,20 @@ def detect(faqs, threshold, max_results=100):
     if len(phrases) < 2:
         return []
 
-    char = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5),
-                           lowercase=False, sublinear_tf=True)
-    word = TfidfVectorizer(analyzer="word", ngram_range=(1, 2),
-                           token_pattern=r"(?u)\b\w+\b", lowercase=False)
-    matrix_c = char.fit_transform(phrases)
-    matrix_w = word.fit_transform(phrases)
-    # Katsayılar deneysel; ayrı bir doğrulama veri kümesiyle kalibre edilmeli.
-    scores = 0.7 * cosine_similarity(matrix_c) + 0.3 * cosine_similarity(matrix_w)
+    if method == "embedding":
+        if not model_path:
+            raise ValueError("Yerel embedding modeli klasörü belirtilmeli.")
+        scores = similarity_matrix(phrases, model_path)
+    elif method == "tfidf":
+        char = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 5),
+                               lowercase=False, sublinear_tf=True)
+        word = TfidfVectorizer(analyzer="word", ngram_range=(1, 2),
+                               token_pattern=r"(?u)\b\w+\b", lowercase=False)
+        matrix_c = char.fit_transform(phrases)
+        matrix_w = word.fit_transform(phrases)
+        scores = 0.7 * cosine_similarity(matrix_c) + 0.3 * cosine_similarity(matrix_w)
+    else:
+        raise ValueError("Tanımsız eşleştirme yöntemi.")
     np.fill_diagonal(scores, 0.0)
 
     # En iyi ifade çifti her SSS çifti için tek bir aday üretir.
@@ -110,6 +118,7 @@ def detect(faqs, threshold, max_results=100):
             "left_fingerprint": fingerprint(first),
             "right_fingerprint": fingerprint(second),
             "score": round(score, 4),
+            "method": method,
             "example_left": example_a,
             "example_right": example_b,
             "same_category": same_category,
@@ -137,7 +146,7 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
     with _connect() as conn:
         conn.execute("BEGIN IMMEDIATE")
         rows = conn.execute(
-            "SELECT id, question, answer, category, alternative_questions "
+            "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at "
             "FROM faqs WHERE id IN (?, ?)", (keep_id, other_id)
         ).fetchall()
         indexed = {row["id"]: _parse(row) for row in rows}
@@ -151,9 +160,12 @@ def merge_records(keep_id, other_id, expected_keep, expected_other, approved):
 
         # Birleştirme sırasında eşik tekrar doğrulanmalı.
         all_rows = conn.execute(
-            "SELECT id, question, answer, category, alternative_questions FROM faqs"
+            "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at FROM faqs"
         ).fetchall()
-        score_rows = detect([_parse(row) for row in all_rows], get_threshold(), max_results=50000)
+        config = get_settings()
+        score_rows = detect([_parse(row) for row in all_rows], get_threshold(),
+                            max_results=50000, method=config["method"],
+                            model_path=config["model_path"])
         score_rows = [row for row in score_rows if {row["left"]["id"], row["right"]["id"]} == {keep_id, other_id}]
         if not score_rows:
             raise MergeConflict("Bu çift kayıtlı benzerlik eşiğinin altında kaldı.")
