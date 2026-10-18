@@ -21,6 +21,15 @@
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
 
+## FAQVec-TR-V2-D01 — Özgün 60.000 çift dosyasının gerçek denetimi
+
+- Sabit HF revizyonu: b9d5707470340db13d788a338e7f7897c5e29932; JSONL boyutu 16.459.390 bayt; SHA-256 bütünlüğü **PASS**.
+- 60.000 satırdan 59.996 geçerli biçimsel kayıt, 241 tekrarlı çift, 1 doğrudan karşıt etiketli çift tespit edildi.
+- 29 farklı şüpheli niyet kümesi karantinada; 43.145 pozitif çift ve 39.276 niyet yalnızca insan incelemesine aday.
+- 13.813 negatif çift yalnızca insan inceleme adayıdır; onaylı zor negatif sayısı **0**.
+- **İlk cümlelerin hak zinciri ve insan semantik kontrolü HOLD.** Verinin tamamı henüz ticari eğitim için onaylanmadı.
+- [Gerçek veri ve hash kanıtı raporu](docs/faqvec_d01_gercek_veri_denetimi.md) · [Başarılı orijinal veri koşusu](https://github.com/seydivakkas/FAQBot/actions/runs/39131287668) · [Açık hak incelemesi](https://github.com/seydivakkas/FAQBot/issues/1).
+
 ## FAQVec-TR — lisansı incelenecek yeni Türkçe çiftler
 
 - **Aday veri:** [dogukanvzr/ml-paraphrase-tr](https://huggingface.co/datasets/dogukanvzr/ml-paraphrase-tr); kartında Apache-2.0 ve 60.000 Türkçe eşleştirme çifti beyan ediliyor. **İlk metinlerin kökeni ve gerçek ticari kullanım hakları henüz bağımsız teyit edilmedi.**
