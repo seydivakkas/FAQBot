@@ -1,6 +1,5 @@
 """Açık kullanıcı komutuyla MIT lisanslı E5 ağırlıklarını bir kez indirir."""
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
@@ -21,7 +20,7 @@ def main():
     directory = Path(args.output).resolve()
     directory.mkdir(parents=True, exist_ok=True)
     snapshot_download(repo_id=REPO, revision=info.sha, local_dir=str(directory),
-                      allow_patterns=["*.json", "*.txt", "*.safetensors", "*.md", "LICENSE"])
+                      allow_patterns=["*.json", "*.txt", "*.safetensors", "*.md", "*.model", "LICENSE"])
     (directory / "faqvec_backbone_origin.json").write_text(
         json.dumps({
             "repo": REPO, "revision": info.sha, "declared_license": LICENSE,
