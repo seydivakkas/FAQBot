@@ -82,7 +82,8 @@ def prepare_pairs(rows, *, seed="faqvec-v2-split-2026-10",
             continue
         for n, t in ((na, a), (nb, b)):
             parent.setdefault(n, n)
-            originals.setdefault(n, t)
+            if n not in originals or (len(t), t) < (len(originals[n]), originals[n]):
+                originals[n] = t
         edge = _key(na, nb)
         if label == 1:
             positives.add(edge)
@@ -179,8 +180,13 @@ def save_candidate_package(records, candidates, summary, *, source_file, output_
     neg.write_text("".join(json.dumps(x, ensure_ascii=False) + "\n"
                            for x in candidates), encoding="utf-8")
     source_path = Path(source_file)
-    card_sha = (hashlib.sha256(Path(card_path).read_bytes()).hexdigest()
-                if card_path else None)
+    evidence_name = None
+    if card_path:
+        # Kaynak kartının birebir kopyasını aday paketiyle birlikte sakla.
+        evidence_name = "SOURCE_CARD_EVIDENCE.md"
+        (folder / evidence_name).write_bytes(Path(card_path).read_bytes())
+    card_sha = (hashlib.sha256((folder / evidence_name).read_bytes()).hexdigest()
+                if evidence_name else None)
     manifest = {
         "schema_version": 1,
         "sources": [{
@@ -191,6 +197,7 @@ def save_candidate_package(records, candidates, summary, *, source_file, output_
             "rights_review_status": "PENDING",
             "reviewed_by": None,
             "evidence_sha256": card_sha,
+            "evidence_file": evidence_name,
             "commercial_training_approved": False,
         }],
         "files": [{
