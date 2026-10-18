@@ -16,7 +16,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app.faqvec_v2_data import (
     _read_jsonl, load_approved_sources, load_bundled_demo, validate_intents,
 )
-from app.faqvec_v2_metrics import evaluate_matrix, thresholds_on_validation
+from app.faqvec_v2_metrics import (evaluate_matrix, thresholds_on_validation,
+                                     paired_intent_bootstrap_recall_delta)
 from app.matching import normalize
 
 
@@ -98,12 +99,14 @@ def benchmark(records, specs, negative_file=None):
         "models": [],
         "note": "Demo SSS testleri bağımsız gerçek müşteri ölçümü değildir.",
     }
+    test_score_matrices = {}
     for name, modelpath, e5 in specs:
         def calc(q):
             texts = [i["query"] for i in q]
             return tfidf_scores(gallery_text, texts) if name == "tfidf" else \
                 embedding_scores(modelpath, gallery_text, texts, e5=e5)
         valid_matrix, test_matrix = calc(val), calc(test)
+        test_score_matrices[name] = test_matrix
         valid_labels = [q["expected_id"] for q in val]
         test_labels = [q["expected_id"] for q in test]
         if any(label is None for label in valid_labels):
@@ -119,6 +122,15 @@ def benchmark(records, specs, negative_file=None):
             "diagnostic_only": not calibrated,
             "test": report,
         })
+    # İstatistik karşılaştırması yalnızca eşleştirilmiş AYNI test sorgularında.
+    if "tfidf" in test_score_matrices:
+        baseline = test_score_matrices["tfidf"]
+        labels = [item["expected_id"] for item in test]
+        for entry in result["models"]:
+            if entry["name"] != "tfidf":
+                entry["paired_vs_tfidf"] = paired_intent_bootstrap_recall_delta(
+                    baseline, test_score_matrices[entry["name"]], gallery_ids, labels
+                )
     return result
 
 
