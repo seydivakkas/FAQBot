@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, analyze, commit_records, parse_file, summarize
 from app.database import add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq
 from app.matching import find_best_match, normalize
+from app.semantic import EmbeddingUnavailable, get_settings as get_semantic_settings, set_settings as set_semantic_settings, model_status
 from app.duplicates import (
     DEFAULT_DUPLICATE_THRESHOLD, MIN_DUPLICATE_THRESHOLD,
     MAX_DUPLICATE_THRESHOLD, MergeConflict, detect,
@@ -38,7 +39,7 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(
     title="FAQBot API",
-    description="TF-IDF tabanlı SSS ve yerel kayıt yönetimi",
+    description="Yerel SSS ve opsiyonel çevrimdışı embedding yönetimi",
     version="1.4.0",
     lifespan=lifespan,
 )
@@ -267,14 +268,41 @@ def save_duplicate_settings(payload: DuplicateSettings, _: LocalEditor):
     return {"threshold": set_threshold(payload.threshold)}
 
 
+class SemanticSettingsRequest(BaseModel):
+    method: Literal["tfidf", "embedding"]
+    model_path: str = Field(min_length=1, max_length=1000)
+
+
+@app.get("/settings/semantic")
+def read_semantic_settings(_: LocalEditor):
+    info = get_semantic_settings()
+    return {**info, **model_status(info["model_path"])}
+
+
+@app.put("/settings/semantic")
+def update_semantic_settings(payload: SemanticSettingsRequest, _: LocalEditor):
+    try:
+        result = set_semantic_settings(payload.method, payload.model_path)
+    except (ValueError, EmbeddingUnavailable) as error:
+        raise HTTPException(status_code=422, detail=str(error))
+    return {**result, **model_status(result["model_path"])}
+
+
 @app.get("/faqs/duplicates")
 def find_duplicate_faqs(_: LocalEditor):
     """Yalnızca aday önerir; hiç kayıt değiştirmez."""
     cutoff = get_threshold()
     all_faqs = load_faqs()
-    suggestions = detect(all_faqs, cutoff, max_results=150)
+    config = get_semantic_settings()
+    try:
+        suggestions = detect(
+            all_faqs, cutoff, max_results=150,
+            method=config["method"], model_path=config["model_path"]
+        )
+    except EmbeddingUnavailable as error:
+        raise HTTPException(status_code=409, detail=str(error))
     return {"threshold": cutoff, "total": len(suggestions), "candidates": suggestions,
-            "method": "char_word_tfidf", "truncated": len(suggestions) == 150}
+            "method": config["method"], "truncated": len(suggestions) == 150}
 
 
 @app.post("/faqs/duplicates/merge")
@@ -284,7 +312,7 @@ def apply_duplicate_merge(payload: DuplicateMergeRequest, _: LocalEditor):
             payload.keep_id, payload.remove_id,
             payload.expected_keep, payload.expected_remove, payload.confirm,
         )
-    except MergeConflict as error:
+    except (MergeConflict, EmbeddingUnavailable) as error:
         raise HTTPException(status_code=409, detail=str(error))
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error))
