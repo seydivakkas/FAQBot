@@ -4,6 +4,7 @@ import json
 import os
 import sqlite3
 from pathlib import Path
+from datetime import date, datetime, timezone
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = ROOT / "data" / "faqs.json"
@@ -25,6 +26,10 @@ def _connect() -> sqlite3.Connection:
 def _as_faq(row: sqlite3.Row) -> dict:
     item = dict(row)
     item["alternative_questions"] = json.loads(item["alternative_questions"])
+    if item.get("valid_until"):
+        item["validity_status"] = "expired" if date.fromisoformat(item["valid_until"]) < date.today() else "current"
+    else:
+        item["validity_status"] = "unspecified"
     return item
 
 
@@ -49,6 +54,18 @@ def init_db() -> int:
             )
             """
         )
+        # Eski SQLite kayıtlarına dokunmadan yeni sütunları ekle.
+        columns = {row["name"] for row in conn.execute("PRAGMA table_info(faqs)")}
+        for name, definition in (
+            ("source_title", "TEXT NOT NULL DEFAULT ''"),
+            ("source_url", "TEXT NOT NULL DEFAULT ''"),
+            ("valid_until", "TEXT"),
+            ("verification_status", "TEXT NOT NULL DEFAULT 'unverified'"),
+            ("verified_at", "TEXT"),
+        ):
+            if name not in columns:
+                conn.execute(f"ALTER TABLE faqs ADD COLUMN {name} {definition}")
+
         conn.execute(
             """
             CREATE TABLE IF NOT EXISTS app_metadata (
@@ -124,7 +141,7 @@ def init_db() -> int:
 def load_faqs() -> list[dict]:
     with _connect() as conn:
         rows = conn.execute(
-            "SELECT id, question, answer, category, alternative_questions "
+            "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at "
             "FROM faqs ORDER BY id"
         ).fetchall()
     return [_as_faq(row) for row in rows]
@@ -133,34 +150,65 @@ def load_faqs() -> list[dict]:
 def get_faq(faq_id: int) -> dict | None:
     with _connect() as conn:
         row = conn.execute(
-            "SELECT id, question, answer, category, alternative_questions "
+            "SELECT id, question, answer, category, alternative_questions, source_title, source_url, valid_until, verification_status, verified_at "
             "FROM faqs WHERE id = ?", (faq_id,)
         ).fetchone()
     return _as_faq(row) if row is not None else None
 
 
-def add_faq(question: str, answer: str, category: str, alternatives: list[str]) -> dict:
+def _verified_timestamp(value: str) -> str | None:
+    return datetime.now(timezone.utc).isoformat() if value == "verified" else None
+
+
+def add_faq(
+    question: str, answer: str, category: str, alternatives: list[str],
+    source_title: str = "", source_url: str = "", valid_until: str | None = None,
+    verification_status: str = "unverified",
+) -> dict:
     with _connect() as conn:
         cursor = conn.execute(
-            "INSERT INTO faqs (question, answer, category, alternative_questions) "
-            "VALUES (?, ?, ?, ?)",
-            (question, answer, category, json.dumps(alternatives, ensure_ascii=False)),
+            "INSERT INTO faqs (question, answer, category, alternative_questions, "
+            "source_title, source_url, valid_until, verification_status, verified_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (question, answer, category, json.dumps(alternatives, ensure_ascii=False),
+             source_title, source_url, valid_until, verification_status,
+             _verified_timestamp(verification_status)),
         )
         faq_id = cursor.lastrowid
     return get_faq(faq_id)
 
 
 def update_faq(
-    faq_id: int, question: str, answer: str, category: str, alternatives: list[str]
+    faq_id: int, question: str, answer: str, category: str, alternatives: list[str],
+    source_title: str = "", source_url: str = "", valid_until: str | None = None,
+    verification_status: str = "unverified",
 ) -> dict | None:
     with _connect() as conn:
-        cursor = conn.execute(
-            "UPDATE faqs SET question = ?, answer = ?, category = ?, "
-            "alternative_questions = ? WHERE id = ?",
-            (question, answer, category, json.dumps(alternatives, ensure_ascii=False), faq_id),
+        previous = conn.execute(
+            "SELECT question, answer, category, alternative_questions, "
+            "source_title, source_url, valid_until, verification_status, verified_at "
+            "FROM faqs WHERE id=?", (faq_id,)
+        ).fetchone()
+        if previous is None:
+            return None
+        old = dict(previous)
+        unchanged = (
+            old["question"] == question and old["answer"] == answer
+            and old["category"] == category
+            and json.loads(old["alternative_questions"]) == alternatives
+            and old["source_title"] == source_title and old["source_url"] == source_url
+            and old["valid_until"] == valid_until
+            and old["verification_status"] == verification_status
         )
-        changed = cursor.rowcount > 0
-    return get_faq(faq_id) if changed else None
+        verified_at = old["verified_at"] if unchanged else _verified_timestamp(verification_status)
+        conn.execute(
+            "UPDATE faqs SET question=?, answer=?, category=?, alternative_questions=?, "
+            "source_title=?, source_url=?, valid_until=?, verification_status=?, "
+            "verified_at=? WHERE id=?",
+            (question, answer, category, json.dumps(alternatives, ensure_ascii=False),
+             source_title, source_url, valid_until, verification_status, verified_at, faq_id),
+        )
+    return get_faq(faq_id)
 
 
 def delete_faq(faq_id: int) -> bool:
