@@ -4,6 +4,7 @@ import io
 import json
 import zipfile
 from pathlib import Path
+from datetime import datetime, timezone
 from openpyxl import load_workbook
 from pydantic import ValidationError
 from app.database import _connect
@@ -19,6 +20,10 @@ ALIASES = {
     "alternative_questions": "alternative_questions",
     "alternatif_sorular": "alternative_questions",
     "alternatif sorular": "alternative_questions",
+    "source_title": "source_title", "kaynak_basligi": "source_title",
+    "source_url": "source_url", "kaynak_url": "source_url",
+    "valid_until": "valid_until", "gecerlilik_tarihi": "valid_until",
+    "verification_status": "verification_status", "dogrulama_durumu": "verification_status",
 }
 
 
@@ -67,6 +72,10 @@ def _parse_rows(iterator):
         record["alternative_questions"] = [
             phrase.strip() for phrase in alternatives.split("|") if phrase.strip()
         ]
+        if not record.get("valid_until"):
+            record["valid_until"] = None
+        if not record.get("verification_status"):
+            record["verification_status"] = "unverified"
         result.append({"row_number": number, "values": record})
     return result
 
@@ -127,6 +136,8 @@ def analyze(records, existing, faq_model):
         try:
             model = faq_model.model_validate(raw)
             payload = model.model_dump()
+            if payload.get("valid_until") is not None:
+                payload["valid_until"] = payload["valid_until"].isoformat()
             phrases = [payload["question"], *payload["alternative_questions"]]
             keys = [normalize(phrase) for phrase in phrases]
             if not all(keys):
@@ -174,9 +185,16 @@ def commit_records(records, faq_model):
         for item in checked:
             row = item["data"]
             conn.execute(
-                "INSERT INTO faqs (question, answer, category, alternative_questions) "
-                "VALUES (?, ?, ?, ?)",
-                (row["question"], row["answer"], row["category"],
-                 json.dumps(row["alternative_questions"], ensure_ascii=False)),
+                "INSERT INTO faqs (question, answer, category, alternative_questions, "
+                "source_title, source_url, valid_until, verification_status, verified_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    row["question"], row["answer"], row["category"],
+                    json.dumps(row["alternative_questions"], ensure_ascii=False),
+                    row.get("source_title", ""), row.get("source_url", ""),
+                    row.get("valid_until"), row.get("verification_status", "unverified"),
+                    datetime.now(timezone.utc).isoformat()
+                    if row.get("verification_status") == "verified" else None,
+                ),
             )
     return len(checked)
