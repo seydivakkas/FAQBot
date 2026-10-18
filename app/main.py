@@ -3,6 +3,8 @@
 import ipaddress
 import sqlite3
 from contextlib import asynccontextmanager
+from datetime import date
+from urllib.parse import urlparse
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -37,7 +39,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="TF-IDF tabanlı SSS ve yerel kayıt yönetimi",
-    version="1.3.2",
+    version="1.4.0",
     lifespan=lifespan,
 )
 
@@ -62,6 +64,11 @@ class ChatResponse(BaseModel):
     category: str | None
     match_type: str
     match_score: float
+    source_title: str = ""
+    source_url: str = ""
+    valid_until: str | None = None
+    verification_status: str = "unverified"
+    validity_status: str = "unspecified"
 
 
 class FAQInput(BaseModel):
@@ -69,6 +76,24 @@ class FAQInput(BaseModel):
     answer: str = Field(min_length=2, max_length=3000)
     category: Literal["kargo", "iade", "odeme", "hesap", "siparis", "urun", "kampanya", "destek"]
     alternative_questions: list[str] = Field(default_factory=list, max_length=15)
+    source_title: str = Field(default="", max_length=250)
+    source_url: str = Field(default="", max_length=500)
+    valid_until: date | None = None
+    verification_status: Literal["unverified", "review_needed", "verified"] = "unverified"
+
+    @field_validator("source_title", "source_url")
+    @classmethod
+    def trim_source(cls, value: str) -> str:
+        return value.strip()
+
+    @field_validator("source_url")
+    @classmethod
+    def safe_source_url(cls, value: str) -> str:
+        if value and (urlparse(value).scheme not in ("http", "https")
+                      or not urlparse(value).netloc
+                      or any(ch in value for ch in "\r\n\t")):
+            raise ValueError("Kaynak adresi geçerli bir http/https URL olmalıdır.")
+        return value
 
     @field_validator("question", "answer")
     @classmethod
@@ -92,7 +117,27 @@ class FAQInput(BaseModel):
         normalized = [normalize(item) for item in phrases]
         if len(set(normalized)) != len(phrases):
             raise ValueError("Ana soru ve alternatif sorular birbirinden farklı olmalı.")
+        if self.verification_status == "verified" and not (
+            self.source_title and self.source_url
+        ):
+            raise ValueError("Elle doğrulandı seçimi için kaynak başlığı ve URL gereklidir.")
         return self
+
+
+def _payload_fields(payload: FAQInput) -> dict:
+    data = payload.model_dump()
+    if data.get("valid_until") is not None:
+        data["valid_until"] = data["valid_until"].isoformat()
+    return data
+
+
+def _info(faq: dict | None) -> dict:
+    if faq is None:
+        return {"source_title": "", "source_url": "", "valid_until": None,
+                "verification_status": "unverified", "validity_status": "unspecified"}
+    return {key: faq.get(key) for key in (
+        "source_title", "source_url", "valid_until", "verification_status", "validity_status"
+    )}
 
 
 def _is_loopback(host: str | None) -> bool:
@@ -145,7 +190,8 @@ def export_faqs(_: LocalEditor):
     """Güncel kayıtların indirilebilir JSON yedeği."""
     faqs = load_faqs()
     cleaned = [
-        {key: item[key] for key in ("question", "answer", "category", "alternative_questions")}
+        {key: item[key] for key in ("question", "answer", "category", "alternative_questions",
+                             "source_title", "source_url", "valid_until", "verification_status")}
         for item in faqs
     ]
     return JSONResponse(
@@ -247,9 +293,7 @@ def apply_duplicate_merge(payload: DuplicateMergeRequest, _: LocalEditor):
 @app.post("/faqs", status_code=status.HTTP_201_CREATED)
 def create_faq(payload: FAQInput, _: LocalEditor):
     try:
-        return add_faq(
-            payload.question, payload.answer, payload.category, payload.alternative_questions
-        )
+        return add_faq(**_payload_fields(payload))
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=409, detail="Bu ana soru zaten kayıtlı.")
 
@@ -257,10 +301,7 @@ def create_faq(payload: FAQInput, _: LocalEditor):
 @app.put("/faqs/{faq_id}")
 def edit_faq(faq_id: int, payload: FAQInput, _: LocalEditor):
     try:
-        item = update_faq(
-            faq_id, payload.question, payload.answer, payload.category,
-            payload.alternative_questions,
-        )
+        item = update_faq(faq_id, **_payload_fields(payload))
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=409, detail="Bu ana soru başka bir kayıtta mevcut.")
     if item is None:
@@ -294,6 +335,7 @@ def chat(request: ChatRequest):
         category=faq["category"],
         match_type=match["match_type"],
         match_score=match["match_score"],
+        **_info(faq),
     )
 
 
