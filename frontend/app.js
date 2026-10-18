@@ -28,6 +28,13 @@ const cancelFaqButton = document.getElementById("cancelFaqButton");
 const newFaqButton = document.getElementById("newFaqButton");
 const exportFaqButton = document.getElementById("exportFaqButton");
 const editFormTitle = document.getElementById("editFormTitle");
+const trashSearch = document.getElementById("trashSearch");
+const trashStatus = document.getElementById("trashStatus");
+const trashCount = document.getElementById("trashCount");
+const trashItems = document.getElementById("trashItems");
+const refreshTrashButton = document.getElementById("refreshTrashButton");
+let deletedFaqs = [];
+let trashBusy = false;
 
 const reviewLoggingToggle = document.getElementById("reviewLoggingToggle");
 const reviewStatusFilter = document.getElementById("reviewStatusFilter");
@@ -433,6 +440,7 @@ function openSettings() {
     loadSemanticSettings();
     loadReviewSettings();
     loadReviewList();
+    loadFaqTrash();
     editQuestion.focus();
 }
 
@@ -524,14 +532,15 @@ faqEditForm.addEventListener("submit", async (event) => {
 
 async function deleteFaqRecord(id) {
     if (!id || settingsBusy) return;
-    if (!window.confirm("Bu soru ve cevap silinsin mi? (Geri yükleme daha sonraki aşamada eklenecek.)")) return;
+    if (!window.confirm("Bu soruyu Çöp Kutusu’na taşımak istiyor musunuz? Gerekirse Ayarlar’dan geri yükleyebilirsiniz.")) return;
     setSettingsBusy(true);
     editFeedback("Siliniyor...");
     try {
         await apiWrite("/faqs/" + encodeURIComponent(id), "DELETE");
         await loadFaqs();
         if (editingFaqId.value === String(id)) resetFaqForm();
-        editFeedback("Kayıt silindi.");
+        editFeedback("Kayıt Çöp Kutusu’na taşındı.");
+        await loadFaqTrash();
     } catch (error) {
         editFeedback(error.message, true);
     } finally {
@@ -1147,3 +1156,100 @@ reviewEvaluate.addEventListener("click", async () => {
         reviewEvaluate.disabled = false;
     }
 });
+
+
+/* v1.6: Silinen FAQ kayıtları, geri yükleme ve çakışma geri bildirimi */
+function showTrashMessage(message, error = false) {
+    trashStatus.textContent = message;
+    trashStatus.classList.toggle("error", error);
+}
+
+function renderTrashItems() {
+    const query = trashSearch.value.trim().toLocaleLowerCase("tr-TR");
+    const matches = deletedFaqs.filter(faq =>
+        (faq.question + " " + faq.answer).toLocaleLowerCase("tr-TR").includes(query)
+    );
+    trashCount.textContent = deletedFaqs.length + " silinmiş kayıt · " +
+        matches.length + " görüntüleniyor";
+    const nodes = document.createDocumentFragment();
+    if (!matches.length) {
+        const empty = document.createElement("p");
+        empty.className = "faq-notice";
+        empty.textContent = deletedFaqs.length === 0 ?
+            "Çöp kutusu boş." : "Aramanıza uygun silinmiş soru bulunamadı.";
+        nodes.appendChild(empty);
+    }
+    for (const faq of matches) {
+        const card = document.createElement("article");
+        card.className = "trash-item";
+        const title = document.createElement("strong");
+        title.textContent = "#" + faq.id + " · " + faq.question;
+        const when = document.createElement("small");
+        when.textContent = "Silinme zamanı (UTC): " + faq.deleted_at +
+            " · Kategori: " + (categoryNames[faq.category] || faq.category);
+        const answer = document.createElement("p");
+        answer.textContent = faq.answer;
+        const meta = document.createElement("small");
+        meta.textContent = "Alternatif ifadeler: " + faq.alternative_questions.length +
+            (faq.source_title ? " · Kaynak: " + faq.source_title : "") +
+            " · Durum: " + faq.verification_status;
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "settings-primary";
+        action.textContent = "Geri yükle";
+        action.setAttribute("aria-label", faq.question + " kaydını geri yükle");
+        action.addEventListener("click", () => restoreDeletedFaq(faq.id));
+        card.append(title, when, answer, meta, action);
+        nodes.appendChild(card);
+    }
+    trashItems.replaceChildren(nodes);
+}
+
+async function loadFaqTrash() {
+    refreshTrashButton.disabled = true;
+    try {
+        const response = await fetch("/faqs/trash");
+        const data = await response.json();
+        if (!response.ok) throw new Error(
+            typeof data.detail === "string" ? data.detail : "Çöp kutusu alınamadı."
+        );
+        deletedFaqs = data.faqs || [];
+        renderTrashItems();
+    } catch (error) {
+        showTrashMessage(error.message, true);
+    } finally {
+        refreshTrashButton.disabled = false;
+    }
+}
+
+async function restoreDeletedFaq(id) {
+    if (trashBusy || settingsBusy) return;
+    const candidate = deletedFaqs.find(faq => faq.id === id);
+    if (!candidate) return;
+    if (!window.confirm("Bu soruyu yeniden etkinleştirmek istiyor musunuz?\n\n" +
+        candidate.question + "\n\nEski cevap, kaynak ve alternatif ifadeler korunacaktır.")) return;
+    trashBusy = true;
+    showTrashMessage("Çakışmalar kontrol ediliyor...");
+    try {
+        const response = await fetch("/faqs/trash/" + encodeURIComponent(id) + "/restore", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({confirm: true})
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(typeof data.detail === "string" ?
+                data.detail : "Geri yükleme başarısız oldu.");
+        }
+        await loadFaqs();
+        await loadFaqTrash();
+        showTrashMessage("Kayıt #" + data.id + " geri yüklendi ve aktif SSS listesine eklendi.");
+    } catch (error) {
+        showTrashMessage(error.message, true);
+    } finally {
+        trashBusy = false;
+    }
+}
+
+refreshTrashButton.addEventListener("click", loadFaqTrash);
+trashSearch.addEventListener("input", renderTrashItems);

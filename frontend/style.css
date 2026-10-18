@@ -207,3 +207,19 @@ body.faq-open{overflow:hidden}
 .review-evaluation-result{display:flex;flex-direction:column;gap:7px}
 .review-evaluation-result p{font-size:12px;margin:0}
 .review-evaluation-result small{font-size:11px;color:#7b8fa5;line-height:1.6}
+
+
+/* Çöp kutusu: tüm kayıtlar geri yüklenebilir ve kart içeriği metin olarak gösterilir */
+.trash-section{margin:18px 0;padding:18px;background:#f8faff;border:1px solid #d6e4f5;border-radius:14px;display:flex;flex-direction:column;gap:10px}
+.trash-heading h3{margin:0;color:#244c7e;font-size:15px}
+.trash-heading p,.trash-section>small{font-size:12px;color:#6a7f99;line-height:1.6;margin:7px 0 0}
+.trash-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.trash-controls label{font-size:12px;font-weight:650;color:#526b89}
+.trash-controls input{flex:1;min-width:155px;border-radius:8px;border:1px solid #cbd8e9;padding:9px;font-size:12px}
+.trash-count{color:#365f94;font-size:12px;font-weight:700;margin:0}
+.trash-items{max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+.trash-item{background:#fff;border:1px solid #d9e6f6;border-radius:10px;padding:12px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.trash-item strong{font-size:12px;color:#234a78;overflow-wrap:anywhere}
+.trash-item small{font-size:11px;color:#7d8fa4;overflow-wrap:anywhere}
+.trash-item p{font-size:12px;color:#425c7a;line-height:1.55;margin:0;overflow-wrap:anywhere}
+.trash-item button{font-size:12px}

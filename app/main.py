@@ -224,7 +224,7 @@ async def preview_faq_import(_: LocalEditor, file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=str(error))
     finally:
         await file.close()
-    return summarize(analyze(source_rows, load_faqs(), FAQInput))
+    return summarize(analyze(source_rows, load_faqs() + list_deleted_faqs(), FAQInput))
 
 
 @app.post("/faqs/import/commit")

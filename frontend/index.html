@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.5.0</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.6.0</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -119,6 +119,22 @@
                     <button type="button" id="newFaqButton" class="settings-primary">+ Yeni soru</button>
                     <button type="button" id="exportFaqButton" class="settings-secondary">JSON yedeği indir</button>
                 </div>
+
+                <section id="trashSection" class="trash-section" aria-labelledby="trashHeading">
+                    <div class="trash-heading">
+                        <h3 id="trashHeading">Çöp Kutusu — Silinen Soru ve Cevaplar</h3>
+                        <p>Silinen SSS kayıtları sohbetten ve aktif listeden çıkarılır; içerikleri burada saklanır. Geri yükleme, kayıt çakışmaları kontrol edilerek yapılır.</p>
+                    </div>
+                    <div class="trash-controls">
+                        <label for="trashSearch">Silinen kayıtlarda ara</label>
+                        <input id="trashSearch" type="search" placeholder="Soruda veya cevapta ara...">
+                        <button id="refreshTrashButton" type="button" class="settings-secondary">Çöp kutusunu yenile</button>
+                    </div>
+                    <p id="trashStatus" role="status" class="edit-status"></p>
+                    <p id="trashCount" class="trash-count"></p>
+                    <div id="trashItems" class="trash-items" aria-live="polite"></div>
+                    <small>Silme geri alınabilir. Kalıcı silme bu sürümde sunulmuyor. Aynı soruyu silinmişken yeniden eklemek yerine bu listeden geri yükleyin.</small>
+                </section>
 
                 <section id="reviewSection" class="review-section" aria-labelledby="reviewTitle">
                     <h3 id="reviewTitle">Hatalı Eşleşme İncelemesi</h3>
