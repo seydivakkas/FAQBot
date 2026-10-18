@@ -10,7 +10,7 @@
 
 - 8 kategoride toplam **110 farklı demo müşteri ihtiyacı**, 2 veya daha fazla alternatif soru ifadesi
 - **Arayüzde “Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
-- **Ayarlar / SSS Yönetimi**: soru-cevap CRUD, yedek alma, CSV/XLSX toplu aktarım, eşik kontrollü benzer soru önerileri ve açık onayla kayıt birleştirme
+- **Ayarlar / SSS Yönetimi**: soru-cevap CRUD, yedek alma, CSV/XLSX toplu aktarım, benzer soru önerileri, kayıt birleştirme ve insan etiketli hatalı eşleşme incelemesi
 - SQLite depolama: ilk 20 kayıt korunur, v1.3 için 90 yeni aday kayıt bir kerelik eklenir; kullanıcı düzenlemeleri yeniden başlatmada korunur
 - Türkçe metin normalizasyonu; önce birebir eşleşme
 - scikit-learn ile karakter n-gram TF-IDF + cosine similarity
@@ -20,6 +20,22 @@
 - GitHub Actions CI
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
+
+## v1.5 — Hatalı Eşleşme İnceleme Paneli
+
+**Ayarlar → Hatalı Eşleşme İncelemesi** bölümünde sohbet eşleşmelerini yönetici kontrolünde inceleyebilirsiniz.
+
+- Günlük toplama **varsayılan olarak kapalıdır**. Ayarlardan etkinleştirildiğinde yalnızca bu bilgisayardan gönderilen yeni sohbetlerin sorusu, eşleşen SSS kimliği, tarih, verilen cevap, eşleştirme türü (`exact`, `tfidf`, `none`) ve skor kaydedilir.
+- Veriler **yalnızca SQLite** içindedir; IP, cihaz/oturum bilgisi veya çerez alanı saklanmaz. Açıkça görünen e-posta, URL veya uzun numara içeren bazı mesajlar kayıt dışı bırakılır; **kişisel veri temizleme garantisi yoktur**. Gerçek kişilerle testte açık bilgilendirme ve izin gereklidir.
+- En son **1.000 sohbet kaydı** tutulur; limit aşılırsa en eski kayıtlar silinir. Günlük kapatılınca eski kayıtlar korunur, yeni kayıt eklenmez.
+- Her kayda `Bekleyen`, `Doğru`, `Yanlış` veya `Kararsız` etiketi verilebilir. Yanlış işaretlenen kayıtta beklenen doğru SSS veya **cevap verilmemeliydi** seçilir. Etiketsiz ve kararsız sorular başarı metriğine katılmaz.
+- **TF-IDF / embedding performansını hesapla**: aynı insan etiketli sorular GÜNCEL bilgi tabanında yeniden değerlendirilir. Sohbet TF-IDF eşiği **0.40**, karşılaştırma embedding eşiği **0.70** olarak gösterilir. Bu farklı eşikler kalibre edilmiş olasılıklar değildir.
+- Yerel embedding kurulmamışsa karşılaştırma arayüzü bunu belirtir; yalnızca TF-IDF sonucu hesaplanabilir. Model hiçbir zaman otomatik indirilmez.
+- İnsan etiketine göre güncel SSS kimliği silinmiş kayıtlar kapsam dışı bırakılır. Yanıtlar eğitim kümesinden seçilmiş veya az sayıda ise başarı oranı **genelleştirilemez**.
+- **Günlüğü temizle** seçeneği ikinci kez onay alarak bütün yerel inceleme etiketlerini ve kayıtlarını siler. Otomatik silme geri alma bu aşamada yoktur.
+- Yalnızca localhost yönetim API uç noktaları: `GET/PUT /reviews/settings`, `GET /reviews`, `PATCH /reviews/{id}`, `POST /reviews/evaluate`, `DELETE /reviews` (onaylı).
+
+**Not:** Günlükler sadece yönetici tarafından açıldıktan sonra oluşur. Kullanıcı sorularını kayıt altında tutmadan önce gerçek kullanım bağlamında kişisel veri ve izin gerekliliklerini değerlendirin. Gerçek model performansı henüz bağımsız gerçek veriyle doğrulanmadı.
 
 ## v1.4 — Yerel embedding ve kaynak bilgileri
 
@@ -231,7 +247,7 @@ setup_windows.bat  Windows tek tıkla kurulum
 - Küçük veri seti için her /chat isteğinde TF-IDF yeniden oluşturulur; daha büyük veri setinde indeksleme ve cache gerekir.
 - SQLite kullanımı demo için yeterlidir; yoğun eşzamanlı prod ortamı hedeflenmemiştir.
 - Eşik (0.40) örnek amaçlıdır; bağımsız Türkçe değerlendirme seti üzerinde kalibre edilmelidir.
-- Gerçek sipariş sistemi, kullanıcı girişi veya kişisel müşteri verisi kullanılmaz.
+- Gerçek sipariş sistemi, kullanıcı girişi veya canlı müşteri sistemi kullanılmaz. İnceleme günlüğü açıkken sohbet metinleri kişisel veri içerebileceğinden kullanım öncesi izin ve gizlilik değerlendirmesi gerekir.
 - Bu eğitim projesi internet üzerinde üretim dağıtımına hazır bir müşteri destek sistemi değildir.
 - LICENSE eklenmemiştir; yeniden kullanım lisansı ayrıca kararlaştırılmalıdır.
 
