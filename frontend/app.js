@@ -28,6 +28,14 @@ const cancelFaqButton = document.getElementById("cancelFaqButton");
 const newFaqButton = document.getElementById("newFaqButton");
 const exportFaqButton = document.getElementById("exportFaqButton");
 const editFormTitle = document.getElementById("editFormTitle");
+const editSourceTitle = document.getElementById("editSourceTitle");
+const editSourceUrl = document.getElementById("editSourceUrl");
+const editValidUntil = document.getElementById("editValidUntil");
+const editVerificationStatus = document.getElementById("editVerificationStatus");
+const dupMethod = document.getElementById("dupMethod");
+const dupModelPath = document.getElementById("dupModelPath");
+const dupMethodSave = document.getElementById("dupMethodSave");
+const dupMethodStatus = document.getElementById("dupMethodStatus");
 const dupThresholdRange = document.getElementById("dupThresholdRange");
 const dupThresholdNumber = document.getElementById("dupThresholdNumber");
 const dupThresholdLabel = document.getElementById("dupThresholdLabel");
@@ -68,7 +76,7 @@ let activeCategory = "all";
 let faqsLoaded = false;
 let previousFocus = null;
 
-function addMessage(text, role, category) {
+function addMessage(text, role, category, meta = null) {
     const row = document.createElement("div");
     row.className = "message-row " + role;
     const bubble = document.createElement("div");
@@ -82,6 +90,33 @@ function addMessage(text, role, category) {
         label.className = "category";
         label.textContent = "Kategori: " + (categoryNames[category] || category);
         bubble.appendChild(label);
+    }
+    if (meta && role === "bot") {
+        const info = document.createElement("small");
+        info.className = "source-information";
+        const ver = {
+            unverified: "Doğrulanmadı",
+            review_needed: "İnceleme gerekli",
+            verified: "Elle doğrulandı"
+        };
+        info.textContent = (ver[meta.verification_status] || "Doğrulanmadı") +
+            (meta.valid_until ? " · Geçerlilik: " + meta.valid_until : " · Geçerlilik tarihi yok") +
+            (meta.validity_status === "expired" ? " · SÜRESİ DOLDU" : "");
+        bubble.appendChild(info);
+        if (meta.source_url && /^https?:\/\//i.test(meta.source_url)) {
+            const link = document.createElement("a");
+            link.textContent = "Kaynak: " + (meta.source_title || meta.source_url);
+            link.href = meta.source_url;
+            link.rel = "noopener noreferrer";
+            link.target = "_blank";
+            link.className = "source-link";
+            bubble.appendChild(link);
+        } else if (meta.source_title) {
+            const label = document.createElement("small");
+            label.className = "source-information";
+            label.textContent = "Kaynak: " + meta.source_title;
+            bubble.appendChild(label);
+        }
     }
     row.appendChild(bubble);
     messages.appendChild(row);
@@ -114,7 +149,7 @@ async function sendMessage(raw) {
         if (typeof data.answer !== "string") {
             throw new Error("Beklenmeyen API yanıtı");
         }
-        addMessage(data.answer, "bot", data.category);
+        addMessage(data.answer, "bot", data.category, data);
         status.textContent = "Yanıt geldi.";
     } catch (error) {
         console.error("FAQBot bağlantı hatası:", error);
@@ -180,6 +215,14 @@ function renderFaqs() {
             summary.textContent = "Yanıtı önizle";
             const answer = document.createElement("p");
             answer.textContent = faq.answer;
+            const source = document.createElement("small");
+            source.className = "faq-provenance";
+            source.textContent = (faq.verification_status === "verified" ? "Elle doğrulandı" :
+                faq.verification_status === "review_needed" ? "İnceleme gerekli" : "Doğrulanmadı") +
+                (faq.valid_until ? " · Bitiş: " + faq.valid_until : "") +
+                (faq.validity_status === "expired" ? " · SÜRESİ DOLDU" : "") +
+                (faq.source_title ? " · Kaynak: " + faq.source_title : "");
+            details.appendChild(source);
             details.append(summary, answer);
             item.append(askButton, details);
             group.appendChild(item);
@@ -308,6 +351,10 @@ function editExistingFaq(faq) {
     editAnswer.value = faq.answer;
     editCategory.value = faq.category;
     editAlternatives.value = faq.alternative_questions.join("\n");
+    editSourceTitle.value = faq.source_title || "";
+    editSourceUrl.value = faq.source_url || "";
+    editValidUntil.value = faq.valid_until || "";
+    editVerificationStatus.value = faq.verification_status || "unverified";
     editFormTitle.textContent = "Soruyu düzenle";
     saveFaqButton.textContent = "Değişiklikleri kaydet";
     deleteFaqButton.hidden = false;
@@ -337,7 +384,10 @@ function renderManageList() {
         const name = document.createElement("strong");
         name.textContent = faq.question;
         const meta = document.createElement("small");
-        meta.textContent = categoryNames[faq.category] || faq.category;
+        const verification = {unverified:"Doğrulanmadı",review_needed:"İncele",verified:"Elle doğrulandı"};
+        meta.textContent = (categoryNames[faq.category] || faq.category) + " · " +
+            (verification[faq.verification_status] || "Doğrulanmadı") +
+            (faq.validity_status === "expired" ? " · Süresi doldu" : "");
         copy.append(name, meta);
         const button = document.createElement("button");
         button.type = "button";
@@ -368,6 +418,7 @@ function openSettings() {
     if (!faqsLoaded) loadFaqs();
     renderManageList();
     loadDuplicateThreshold();
+    loadSemanticSettings();
     editQuestion.focus();
 }
 
@@ -436,7 +487,11 @@ faqEditForm.addEventListener("submit", async (event) => {
         question: editQuestion.value.trim(),
         answer: editAnswer.value.trim(),
         category: editCategory.value,
-        alternative_questions: alternatives
+        alternative_questions: alternatives,
+        source_title: editSourceTitle.value.trim(),
+        source_url: editSourceUrl.value.trim(),
+        valid_until: editValidUntil.value || null,
+        verification_status: editVerificationStatus.value
     };
     const id = editingFaqId.value;
     setSettingsBusy(true);
@@ -753,6 +808,13 @@ async function scanDuplicatePairs() {
         const settings = await fetch("/settings/duplicates");
         if (!settings.ok) throw new Error("Kayıtlı eşik okunamadı.");
         const saved = await settings.json();
+        const methodResponse = await fetch("/settings/semantic");
+        if (!methodResponse.ok) throw new Error("Benzerlik yöntemi okunamadı.");
+        const methodSettings = await methodResponse.json();
+        if (dupMethod.value !== methodSettings.method ||
+            dupModelPath.value.trim() !== methodSettings.model_path) {
+            throw new Error("Benzerlik yöntemini veya model yolunu önce kaydedin.");
+        }
         if (Math.round(saved.threshold * 100) !== percent) {
             duplicateCandidates.replaceChildren();
             throw new Error("Eşik henüz kaydedilmedi. Önce 'Eşiği kaydet' düğmesini kullanın.");
@@ -815,3 +877,37 @@ async function mergeDuplicatePair(item, keep, remove) {
         duplicateWorking = false;
     }
 }
+
+
+/* Yalnızca yerel dosyadaki embedding modeli kullanılır, çevrimiçi API yok. */
+async function loadSemanticSettings() {
+    try {
+        const response = await fetch("/settings/semantic");
+        if (!response.ok) throw new Error("Model ayarları okunamadı.");
+        const settings = await response.json();
+        dupMethod.value = settings.method;
+        dupModelPath.value = settings.model_path;
+        dupMethodStatus.textContent = settings.ready_to_load
+            ? "Yerel model dosyaları ve Python bağımlılığı bulundu."
+            : "Model hazır değil. TF-IDF kullanabilir veya isteğe bağlı modeli kurabilirsiniz.";
+    } catch (error) {
+        dupMethodStatus.textContent = error.message;
+    }
+}
+dupMethodSave.addEventListener("click", async () => {
+    const response = await fetch("/settings/semantic", {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({method: dupMethod.value, model_path: dupModelPath.value.trim()})
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        dupMethodStatus.textContent = typeof data.detail === "string" ? data.detail :
+            "Model ayarları kaydedilemedi.";
+        return;
+    }
+    duplicateCandidates.replaceChildren();
+    dupMethodStatus.textContent = data.method === "embedding"
+        ? "Yerel embedding yöntemi kaydedildi. Benzerleri tara düğmesine basın."
+        : "TF-IDF yöntemi kaydedildi.";
+});

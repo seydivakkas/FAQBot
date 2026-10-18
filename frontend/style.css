@@ -168,3 +168,15 @@ body.faq-open{overflow:hidden}
 .duplicate-actions{display:flex;flex-wrap:wrap;gap:8px}
 .duplicate-actions button{flex:1;min-width:130px}
 @media(max-width:500px){.duplicate-compare{grid-template-columns:1fr}}
+
+/* SSS kaynak/geçerlilik ve yerel embedding yöntemi */
+.provenance-fields{border:1px solid #d9e5f5;border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:9px;margin:12px 0}
+.provenance-fields legend{font-size:13px;font-weight:700;color:#315780}
+.provenance-fields small{line-height:1.6;color:#72849b}
+.source-information,.source-link,.faq-provenance{display:block;margin-top:8px;font-size:11px;line-height:1.6;color:#6d829e;overflow-wrap:anywhere}
+.source-link{color:#286fc5;text-decoration:underline}
+.semantic-settings{display:flex;flex-direction:column;gap:10px;padding:13px;background:#f0f6ff;border-radius:12px}
+.semantic-settings label{font-size:12px;color:#35516d;font-weight:650}
+.semantic-settings input,.semantic-settings select{min-width:0;width:100%;padding:10px;border:1px solid #c5d7ec;border-radius:9px;background:#fff;font-size:12px}
+.semantic-settings button{align-self:flex-start}
+.semantic-settings small{font-size:11px;color:#697e99;line-height:1.6}
