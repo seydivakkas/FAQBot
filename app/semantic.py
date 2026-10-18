@@ -1,0 +1,106 @@
+"""Tamamen yerel Sentence-Transformers embedding arayüzü.
+
+Model kaydı yerel klasöre işaret eder. Buradaki hiçbir işlem model indirmez.
+Kurulum eksikse açık hata döndürür; TF-IDF'e sessiz geçiş yapmaz.
+"""
+import importlib.util
+from functools import lru_cache
+from pathlib import Path
+
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+from app.database import ROOT, _connect
+
+DEFAULT_MODEL_PATH = ROOT / "models" / "paraphrase-multilingual-MiniLM-L12-v2"
+
+
+class EmbeddingUnavailable(RuntimeError):
+    pass
+
+
+def get_settings():
+    with _connect() as conn:
+        items = conn.execute(
+            "SELECT key, value FROM app_metadata WHERE key IN "
+            "('duplicate_method', 'embedding_model_path')"
+        ).fetchall()
+    values = {row["key"]: row["value"] for row in items}
+    return {
+        "method": values.get("duplicate_method", "tfidf"),
+        "model_path": values.get("embedding_model_path", str(DEFAULT_MODEL_PATH)),
+    }
+
+
+def model_status(path):
+    resolved = Path(path).expanduser()
+    exists = resolved.is_absolute() and resolved.is_dir() and (
+        resolved / "modules.json"
+    ).is_file()
+    installed = importlib.util.find_spec("sentence_transformers") is not None
+    return {
+        "path_exists": bool(exists),
+        "dependency_installed": bool(installed),
+        "ready_to_load": bool(exists and installed),
+    }
+
+
+def set_settings(method, model_path):
+    if method not in ("tfidf", "embedding"):
+        raise ValueError("Yöntem tfidf veya embedding olmalıdır.")
+    if not model_path or len(model_path) > 1000:
+        raise ValueError("Geçerli bir yerel model klasörü belirtin.")
+    directory = Path(model_path).expanduser()
+    if not directory.is_absolute():
+        raise ValueError("Model klasörü mutlak yerel yol olmalıdır.")
+    if str(directory).startswith("\\\\"):
+        raise ValueError("Ağ klasörü desteklenmiyor; modeli yerel diske kaydedin.")
+    if method == "embedding" and not model_status(str(directory))["ready_to_load"]:
+        raise EmbeddingUnavailable(
+            "Yerel model veya sentence-transformers kurulumu eksik. "
+            "Önce isteğe bağlı embedding kurulumunu tamamlayın."
+        )
+    with _connect() as conn:
+        for key, value in (
+            ("duplicate_method", method),
+            ("embedding_model_path", str(directory)),
+        ):
+            conn.execute(
+                "INSERT INTO app_metadata (key, value) VALUES (?, ?) "
+                "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                (key, value),
+            )
+    return get_settings()
+
+
+@lru_cache(maxsize=2)
+def _get_model(model_path):
+    path = Path(model_path)
+    if not model_status(model_path)["ready_to_load"]:
+        raise EmbeddingUnavailable("Model veya sentence-transformers yerelde bulunamadı.")
+    try:
+        from sentence_transformers import SentenceTransformer
+        return SentenceTransformer(
+            str(path), device="cpu", local_files_only=True, trust_remote_code=False
+        )
+    except Exception as exc:
+        raise EmbeddingUnavailable(
+            "Yerel embedding modeli yüklenemedi; kurulum ve model dosyalarını inceleyin."
+        ) from exc
+
+
+def similarity_matrix(phrases, model_path):
+    if not phrases:
+        return np.zeros((0, 0))
+    model = _get_model(model_path)
+    try:
+        vectors = np.asarray(model.encode(
+            phrases, convert_to_numpy=True, normalize_embeddings=True,
+            show_progress_bar=False,
+        ), dtype=np.float32)
+    except Exception as exc:
+        raise EmbeddingUnavailable("Yerel embedding üretilemedi.") from exc
+    if vectors.ndim != 2 or vectors.shape[0] != len(phrases):
+        raise EmbeddingUnavailable("Model beklenmeyen boyutta embedding üretti.")
+    scores = cosine_similarity(vectors)
+    return np.clip(scores, -1.0, 1.0)
