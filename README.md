@@ -10,7 +10,7 @@
 
 - 8 kategoride toplam **110 farklı demo müşteri ihtiyacı**, 2 veya daha fazla alternatif soru ifadesi
 - **Arayüzde “Soruyu Gör” paneli**: kategori filtreleme, arama, yanıt önizleme ve tek tıkla soru gönderme
-- **Ayarlar / SSS Yönetimi**: soru-cevap CRUD, yedek alma, CSV/XLSX toplu aktarım, benzer soru önerileri, kayıt birleştirme ve insan etiketli hatalı eşleşme incelemesi
+- **Ayarlar / SSS Yönetimi**: soru-cevap CRUD, yedek alma, CSV/XLSX toplu aktarım, benzer soru önerileri, kayıt birleştirme insan etiketli hatalı eşleşme incelemesi ve geri alınabilir silme
 - SQLite depolama: ilk 20 kayıt korunur, v1.3 için 90 yeni aday kayıt bir kerelik eklenir; kullanıcı düzenlemeleri yeniden başlatmada korunur
 - Türkçe metin normalizasyonu; önce birebir eşleşme
 - scikit-learn ile karakter n-gram TF-IDF + cosine similarity
@@ -20,6 +20,15 @@
 - GitHub Actions CI
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
+
+## v1.6 — SSS Çöp Kutusu ve Geri Yükleme
+
+- Ayarlar'da **Çöp Kutusu — Silinen Soru ve Cevaplar** ekranı; silinmiş soruların cevapları, kategori bilgileri ve UTC silinme zamanları görünür.
+- **Sil** artık kalıcı silme değil, `deleted_at` zaman damgası ekleyen *soft delete* işlemidir.
+- **Geri yükle** ile kayıt orijinal ID ve tüm alanlarıyla geri alınır; diğer aktif kayıtlardaki aynı ana/alternatif sorularla çakışmada HTTP 409 verilir.
+- Sohbet, arama, JSON yedeği ve benzer soru tespiti yalnızca etkin SSS'leri içerir.
+- Çöp Kutusu'ndaki ana sorular aynı metinle yeniden oluşturulamaz; önce çöp kutusundan geri yükleme yapılmalıdır. Kalıcı silme bu sürümde yoktur.
+- **Kılavuz:** [Çöp Kutusu ve güvenli geri yükleme](docs/cop_kutusu_ve_geri_yukleme.md).
 
 ## v1.5 — Hatalı Eşleşme İnceleme Paneli
 
