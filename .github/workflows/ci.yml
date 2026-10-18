@@ -26,7 +26,7 @@ jobs:
       - name: Check frontend JavaScript syntax
         run: node --check frontend/app.js
       - name: FAQVec-TR offline training on bundled demo FAQs
-        run: python -m scripts.train_faqvec_tr --epochs 2 --output "${{ runner.temp }}/faqvec-tr-ci"
+        run: python -m scripts.train_faqvec_tr --epochs 30 --output "${{ runner.temp }}/faqvec-tr-ci"
       - name: Comparison demo
         run: python -m scripts.compare
 
@@ -45,4 +45,4 @@ jobs:
         run: call setup_windows.bat --check-only
       - name: FAQVec-TR offline training on Windows
         shell: cmd
-        run: call .venv\Scripts\python.exe -m scripts.train_faqvec_tr --epochs 2 --output "%RUNNER_TEMP%\faqvec-tr-ci"
+        run: call "%USERPROFILE%\Projects\FAQBot\.venv\Scripts\python.exe" -m scripts.train_faqvec_tr --epochs 2 --output "%RUNNER_TEMP%\faqvec-tr-ci"
