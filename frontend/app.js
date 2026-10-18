@@ -28,6 +28,18 @@ const cancelFaqButton = document.getElementById("cancelFaqButton");
 const newFaqButton = document.getElementById("newFaqButton");
 const exportFaqButton = document.getElementById("exportFaqButton");
 const editFormTitle = document.getElementById("editFormTitle");
+
+const reviewLoggingToggle = document.getElementById("reviewLoggingToggle");
+const reviewStatusFilter = document.getElementById("reviewStatusFilter");
+const reviewRefresh = document.getElementById("reviewRefresh");
+const reviewDeleteAll = document.getElementById("reviewDeleteAll");
+const reviewCounts = document.getElementById("reviewCounts");
+const reviewStatus = document.getElementById("reviewStatus");
+const reviewItems = document.getElementById("reviewItems");
+const reviewIncludeEmbedding = document.getElementById("reviewIncludeEmbedding");
+const reviewEvaluate = document.getElementById("reviewEvaluate");
+const reviewEvaluationResult = document.getElementById("reviewEvaluationResult");
+
 const editSourceTitle = document.getElementById("editSourceTitle");
 const editSourceUrl = document.getElementById("editSourceUrl");
 const editValidUntil = document.getElementById("editValidUntil");
@@ -419,6 +431,8 @@ function openSettings() {
     renderManageList();
     loadDuplicateThreshold();
     loadSemanticSettings();
+    loadReviewSettings();
+    loadReviewList();
     editQuestion.focus();
 }
 
@@ -910,4 +924,226 @@ dupMethodSave.addEventListener("click", async () => {
     dupMethodStatus.textContent = data.method === "embedding"
         ? "Yerel embedding yöntemi kaydedildi. Benzerleri tara düğmesine basın."
         : "TF-IDF yöntemi kaydedildi.";
+});
+
+
+/* Yerel ve isteğe bağlı eşleşme inceleme paneli */
+function reviewMessage(text, error = false) {
+    reviewStatus.textContent = text;
+    reviewStatus.classList.toggle("error", error);
+}
+
+async function reviewFetchJson(path, options = {}) {
+    const response = await fetch(path, options);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        const detail = data.detail;
+        throw new Error(typeof detail === "string" ? detail : "İstek başarısız: HTTP " + response.status);
+    }
+    return data;
+}
+
+async function loadReviewSettings() {
+    try {
+        const data = await reviewFetchJson("/reviews/settings");
+        reviewLoggingToggle.checked = data.enabled;
+    } catch (error) {
+        reviewMessage(error.message, true);
+    }
+}
+
+reviewLoggingToggle.addEventListener("change", async () => {
+    const enabled = reviewLoggingToggle.checked;
+    reviewLoggingToggle.disabled = true;
+    try {
+        const data = await reviewFetchJson("/reviews/settings", {
+            method: "PUT", headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({enabled})
+        });
+        reviewLoggingToggle.checked = data.enabled;
+        reviewMessage(data.enabled
+            ? "Yeni sohbetlerin yerel kayıtları açık. Kişisel bilgi içeren sorular sormayın."
+            : "Sohbet günlüğüne yeni kayıt eklenmeyecek.");
+    } catch (error) {
+        reviewLoggingToggle.checked = !enabled;
+        reviewMessage(error.message, true);
+    } finally {
+        reviewLoggingToggle.disabled = false;
+    }
+});
+
+function buildReviewItem(item) {
+    const box = document.createElement("article");
+    box.className = "review-item";
+    const h = document.createElement("strong");
+    h.textContent = "#" + item.id + " · " + item.created_at + " · " +
+        item.match_method.toUpperCase() + " · Skor: %" +
+        (item.match_score * 100).toFixed(1);
+    box.appendChild(h);
+    for (const [label, value] of [
+        ["Sorulan", item.question],
+        ["Eşleşen SSS", item.matched_question || "Hiçbir soru eşleşmedi"],
+        ["Verilen cevap", item.answer],
+    ]) {
+        const line = document.createElement("p");
+        const title = document.createElement("b");
+        title.textContent = label + ": ";
+        line.append(title, document.createTextNode(value));
+        box.appendChild(line);
+    }
+    const grid = document.createElement("div");
+    grid.className = "review-edit-grid";
+    const statusLabel = document.createElement("label");
+    statusLabel.textContent = "İnceleme sonucu";
+    const state = document.createElement("select");
+    state.setAttribute("aria-label", "İnceleme sonucu");
+    for (const [value, label] of [
+        ["pending","Beklemede"],["correct","Doğru"],
+        ["incorrect","Yanlış"],["unsure","Kararsız"],
+    ]) {
+        const opt = document.createElement("option");
+        opt.value = value; opt.textContent = label;
+        state.appendChild(opt);
+    }
+    state.value = item.review_status;
+    const expectedLabel = document.createElement("label");
+    expectedLabel.textContent = "Beklenen doğru cevap";
+    const expected = document.createElement("select");
+    expected.setAttribute("aria-label", "Beklenen doğru SSS");
+    const fallback = document.createElement("option");
+    fallback.value = ""; fallback.textContent = "Cevap verilmemeliydi (fallback)";
+    expected.appendChild(fallback);
+    for (const faq of faqs) {
+        const option = document.createElement("option");
+        option.value = String(faq.id);
+        option.textContent = "#" + faq.id + " · " + faq.question;
+        expected.appendChild(option);
+    }
+    expected.value = item.expected_faq_id === null ? "" : String(item.expected_faq_id);
+    const noteLabel = document.createElement("label");
+    noteLabel.textContent = "İnceleme notu";
+    const note = document.createElement("textarea");
+    note.rows = 2; note.maxLength = 500;
+    note.value = item.review_note || "";
+    const save = document.createElement("button");
+    save.type = "button"; save.className = "settings-primary";
+    save.textContent = "Değerlendirmeyi kaydet";
+    const updateVisibility = () => {
+        expected.disabled = state.value !== "incorrect";
+        if (state.value === "correct") expected.value = item.matched_faq_id === null
+            ? "" : String(item.matched_faq_id);
+    };
+    state.addEventListener("change", updateVisibility);
+    updateVisibility();
+    save.addEventListener("click", async () => {
+        save.disabled = true;
+        try {
+            const data = await reviewFetchJson("/reviews/" + item.id, {
+                method: "PATCH", headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({
+                    status: state.value,
+                    expected_faq_id: expected.value ? Number(expected.value) : null,
+                    note: note.value.trim(),
+                }),
+            });
+            reviewMessage("Kayıt #" + data.id + " değerlendirildi.");
+            await loadReviewList();
+        } catch (error) {
+            reviewMessage(error.message, true);
+            save.disabled = false;
+        }
+    });
+    grid.append(statusLabel, state, expectedLabel, expected, noteLabel, note, save);
+    box.appendChild(grid);
+    return box;
+}
+
+async function loadReviewList() {
+    reviewRefresh.disabled = true;
+    try {
+        if (!faqsLoaded) await loadFaqs();
+        const data = await reviewFetchJson(
+            "/reviews?status=" + encodeURIComponent(reviewStatusFilter.value) + "&limit=100"
+        );
+        const counts = data.counts;
+        reviewCounts.textContent = "Toplam " + data.total +
+            " · Bekleyen " + counts.pending + " · Doğru " + counts.correct +
+            " · Yanlış " + counts.incorrect + " · Kararsız " + counts.unsure;
+        const fragment = document.createDocumentFragment();
+        if (data.rows.length === 0) {
+            const p = document.createElement("p");
+            p.className = "faq-notice";
+            p.textContent = "Bu filtrede kayıt yok. Önce yerel günlüğü açıp sohbet edin.";
+            fragment.appendChild(p);
+        }
+        for (const item of data.rows) fragment.appendChild(buildReviewItem(item));
+        reviewItems.replaceChildren(fragment);
+    } catch (error) {
+        reviewMessage(error.message, true);
+    } finally {
+        reviewRefresh.disabled = false;
+    }
+}
+
+reviewRefresh.addEventListener("click", loadReviewList);
+reviewStatusFilter.addEventListener("change", loadReviewList);
+
+reviewDeleteAll.addEventListener("click", async () => {
+    if (!window.confirm("Tüm sohbet inceleme günlüğü kalıcı olarak silinsin mi?")) return;
+    if (!window.confirm("Son onay: Bu işlem bütün etiketleri ve değerlendirme verilerini siler.")) return;
+    reviewDeleteAll.disabled = true;
+    try {
+        const data = await reviewFetchJson("/reviews", {
+            method: "DELETE", headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({confirm:true})
+        });
+        await loadReviewList();
+        reviewEvaluationResult.replaceChildren();
+        reviewMessage(data.deleted + " inceleme kaydı silindi.");
+    } catch (error) {
+        reviewMessage(error.message, true);
+    } finally {
+        reviewDeleteAll.disabled = false;
+    }
+});
+
+function makeMetric(label, entry) {
+    const el = document.createElement("p");
+    el.className = "review-metric";
+    el.textContent = label + ": " +
+        (entry && entry.status === "unavailable" ? "Kurulu değil: " + entry.reason :
+        entry && entry.status === "not_requested" ? "Seçilmedi" :
+        entry && entry.accuracy !== null ?
+        "%" + (entry.accuracy * 100).toFixed(1) +
+        " (" + entry.correct + "/" + entry.total + ", eşik %" +
+        (entry.threshold * 100).toFixed(0) + ")" :
+        "Yeterli insan etiketi yok");
+    return el;
+}
+
+reviewEvaluate.addEventListener("click", async () => {
+    reviewEvaluate.disabled = true;
+    reviewMessage("İnsan etiketli sorular güncel SSS tabanında karşılaştırılıyor...");
+    try {
+        const result = await reviewFetchJson("/reviews/evaluate", {
+            method: "POST", headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({include_embedding:reviewIncludeEmbedding.checked})
+        });
+        const fragment = document.createDocumentFragment();
+        const intro = document.createElement("p");
+        intro.textContent = "İncelenen " + result.reviewed +
+            " · Karşılaştırılan " + result.compared +
+            " · Silinen hedef nedeniyle atlanan " + result.skipped_missing_faq;
+        fragment.append(intro, makeMetric("TF-IDF", result.tfidf),
+            makeMetric("Yerel embedding", result.embedding));
+        const note = document.createElement("small");
+        note.textContent = result.note;
+        fragment.appendChild(note);
+        reviewEvaluationResult.replaceChildren(fragment);
+        reviewMessage("Değerlendirme hazır.");
+    } catch (error) {
+        reviewMessage(error.message, true);
+    } finally {
+        reviewEvaluate.disabled = false;
+    }
 });

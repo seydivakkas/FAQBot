@@ -180,3 +180,30 @@ body.faq-open{overflow:hidden}
 .semantic-settings input,.semantic-settings select{min-width:0;width:100%;padding:10px;border:1px solid #c5d7ec;border-radius:9px;background:#fff;font-size:12px}
 .semantic-settings button{align-self:flex-start}
 .semantic-settings small{font-size:11px;color:#697e99;line-height:1.6}
+
+
+/* Yerel sohbet inceleme paneli */
+.review-section{margin:20px 0;padding:18px;border:1px solid #cddcf0;border-radius:15px;background:#fbfcff;display:flex;flex-direction:column;gap:12px}
+.review-section h3{font-size:16px;color:#213f65;margin:0}
+.review-section>p,.review-evaluate p{font-size:12px;color:#71849c;line-height:1.6;margin:0}
+.review-section>small{font-size:11px;color:#8493a6;line-height:1.6}
+.review-toggle{font-size:12px;display:flex;align-items:center;gap:10px;line-height:1.4;color:#3a5474}
+.review-toggle input{accent-color:#3778e7;width:16px;height:16px}
+.review-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.review-actions label{font-size:12px;color:#56718f}
+.review-actions select{padding:9px;border-radius:8px;border:1px solid #c8d6e7;font-size:12px}
+.review-counts{font-size:12px;font-weight:700;color:#285e9e!important}
+.review-items{max-height:550px;overflow:auto;display:flex;flex-direction:column;gap:9px}
+.review-item{padding:14px;border:1px solid #dbe6f5;border-radius:12px;background:white}
+.review-item>strong{display:block;color:#215c9d;font-size:12px;overflow-wrap:anywhere}
+.review-item>p{font-size:12px;line-height:1.55;overflow-wrap:anywhere;margin:9px 0;color:#445b78}
+.review-edit-grid{margin-top:12px;display:grid;grid-template-columns:1fr;gap:8px}
+.review-edit-grid label{font-weight:700;font-size:11px;color:#45627e}
+.review-edit-grid select,.review-edit-grid textarea{width:100%;min-width:0;font-size:12px;padding:9px;border-radius:8px;border:1px solid #d1dcea;background:white;color:#2b415e}
+.review-edit-grid button{justify-self:start}
+.review-evaluate{border-top:1px solid #dce7f5;padding-top:15px;display:flex;flex-direction:column;gap:10px}
+.review-evaluate h4{font-size:14px;color:#294e81;margin:0}
+.review-evaluate>button{align-self:flex-start}
+.review-evaluation-result{display:flex;flex-direction:column;gap:7px}
+.review-evaluation-result p{font-size:12px;margin:0}
+.review-evaluation-result small{font-size:11px;color:#7b8fa5;line-height:1.6}

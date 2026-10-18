@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.4.0</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.5.0</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -119,6 +119,41 @@
                     <button type="button" id="newFaqButton" class="settings-primary">+ Yeni soru</button>
                     <button type="button" id="exportFaqButton" class="settings-secondary">JSON yedeği indir</button>
                 </div>
+
+                <section id="reviewSection" class="review-section" aria-labelledby="reviewTitle">
+                    <h3 id="reviewTitle">Hatalı Eşleşme İncelemesi</h3>
+                    <p>Sohbet sorusunu, eşleşen cevabı ve skoru inceleyip beklenen doğru SSS kaydını belirleyin. Kayıtlar bu cihazdaki SQLite dosyasında kalır.</p>
+                    <label class="review-toggle">
+                        <input id="reviewLoggingToggle" type="checkbox">
+                        Yeni sohbet sorularını inceleme günlüğüne kaydet
+                    </label>
+                    <small>Başlangıçta kapalıdır. E-posta, URL ve uzun sayısal bilgi içeren bazı mesajlar hiç kaydedilmez. Tam anonimlik garantisi yoktur; kişisel bilgi paylaşmayın. En son 1.000 kayıt tutulur.</small>
+                    <div class="review-actions">
+                        <label for="reviewStatusFilter">Durum</label>
+                        <select id="reviewStatusFilter">
+                            <option value="all">Tümü</option>
+                            <option value="pending">Bekleyenler</option>
+                            <option value="correct">Doğru</option>
+                            <option value="incorrect">Yanlış</option>
+                            <option value="unsure">Kararsız</option>
+                        </select>
+                        <button id="reviewRefresh" class="settings-secondary" type="button">Kayıtları yenile</button>
+                        <button id="reviewDeleteAll" class="settings-danger" type="button">Günlüğü temizle</button>
+                    </div>
+                    <p id="reviewCounts" class="review-counts">Henüz inceleme verisi yüklenmedi.</p>
+                    <p id="reviewStatus" class="edit-status" role="status"></p>
+                    <div id="reviewItems" class="review-items" aria-live="polite"></div>
+                    <div class="review-evaluate">
+                        <h4>Yöntem karşılaştırması</h4>
+                        <p>Yalnızca insan tarafından doğru/yanlış olarak etiketlenmiş soruların, güncel SSS tabanındaki tahminleri karşılaştırılır.</p>
+                        <label class="review-toggle">
+                            <input id="reviewIncludeEmbedding" type="checkbox">
+                            Kurulu yerel embedding modelini de değerlendir
+                        </label>
+                        <button id="reviewEvaluate" type="button" class="settings-primary">TF-IDF / embedding performansını hesapla</button>
+                        <div id="reviewEvaluationResult" class="review-evaluation-result"></div>
+                    </div>
+                </section>
 
                 <section id="duplicatesSection" class="duplicates-section" aria-labelledby="duplicatesHeading">
                     <div class="duplicates-heading">
