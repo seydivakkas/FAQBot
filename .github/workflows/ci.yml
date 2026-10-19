@@ -49,5 +49,7 @@ jobs:
       - name: D02 Windows reviewer preparation script check (no download)
         shell: cmd
         run: call setup_faqvec_d02_windows.bat --check-only
+      - name: Bağımlılıkları Windows üzerinde kur
+        run: python -m pip install -r requirements.txt
       - name: Özgün veri taslağının Windows kontrolleri
         run: python -m scripts.build_faqvec_original --check-only
