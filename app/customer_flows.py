@@ -4,6 +4,8 @@ Harici servis, kullanıcı hesabı, gerçek sipariş ya da ödeme verisi yoktur.
 Veriler mevcut SQLite dosyasında saklanır ve yalnız localhost'tan yönetilir.
 """
 import sqlite3
+import re
+import unicodedata
 from datetime import datetime, timezone
 
 from app.database import _connect
@@ -37,6 +39,62 @@ DEMO_ORDERS = {
         ],
     },
 }
+
+# Sabit kurgusal zamanlar gerçek müşteri/kurye olayını temsil etmez.
+DEMO_EVENT_TIMES = {
+    "DEMO-1001": ("2026-10-14T09:00:00+00:00", "2026-10-14T11:30:00+00:00"),
+    "DEMO-1002": (
+        "2026-10-12T10:00:00+00:00", "2026-10-12T14:30:00+00:00",
+        "2026-10-13T09:15:00+00:00", "2026-10-13T13:30:00+00:00",
+    ),
+    "DEMO-1003": (
+        "2026-10-08T08:00:00+00:00", "2026-10-09T09:30:00+00:00",
+        "2026-10-10T14:00:00+00:00",
+    ),
+}
+
+
+def ticket_code(subject, ticket_id):
+    """Sabit konu adından güvenli, okunur BİLET_KONUADI_NO kimliği."""
+    cleaned = unicodedata.normalize("NFKC", subject).translate(
+        str.maketrans({"ı": "i", "İ": "I", "ş": "s", "Ş": "S", "ğ": "g",
+                        "Ğ": "G", "ü": "u", "Ü": "U", "ö": "o", "Ö": "O",
+                        "ç": "c", "Ç": "C"})
+    )
+    slug = re.sub(r"[^A-Za-z0-9]+", "_", cleaned.upper()).strip("_")[:36].strip("_")
+    if not slug:
+        slug = "DESTEK"
+    return f"BİLET_{slug}_{ticket_id:06d}"
+
+
+def _linked_ticket(row):
+    if row is None:
+        return None
+    result = dict(row)
+    result["ticket_code"] = ticket_code(result["subject"], result["id"])
+    result["demo_local_only"] = True
+    return result
+
+
+def _enrich_return(row):
+    if row is None:
+        return None
+    result = dict(row)
+    order = DEMO_ORDERS.get(result["order_code"])
+    if order is None:
+        raise ValueError("İade kaydı artık geçerli bir demo siparişe bağlı değil.")
+    result["return_code"] = f"İADE_{result['order_code']}_{result['id']:06d}"
+    result["order_ref"] = {
+        "order_code": order["code"],
+        "product": order["item"],
+        "order_status": order["status"],
+        "shipment_status": order["shipment"],
+        "tracking_id": "KURGU-" + order["code"],
+        "is_demo": True,
+    }
+    result["demo"] = True
+    return result
+
 TICKET_STATES = ("open", "in_progress", "resolved")
 RETURN_STATES = ("requested", "reviewing", "approved", "rejected")
 
@@ -97,7 +155,7 @@ def _row(row):
 def _with_history(conn, row, *, table, owner_column):
     if row is None:
         return None
-    result = dict(row)
+    result = _linked_ticket(row) if table == "ticket_history" else _enrich_return(row)
     result["history"] = [
         dict(item) for item in conn.execute(
             f"SELECT status,created_at FROM {table} WHERE {owner_column}=? ORDER BY id",
@@ -198,11 +256,52 @@ def demo_order(order_code):
     order = DEMO_ORDERS.get(order_code)
     if not order:
         return None
-    return {**order, "demo": True, "real_tracking": False}
+    times = DEMO_EVENT_TIMES[order_code]
+    assert len(times) == len(order["events"])
+    tracking_id = "KURGU-" + order_code
+    events = [
+        {
+            **event,
+            "event_id": f"{order_code}-E{index:02d}",
+            "order_code": order_code,
+            "tracking_id": tracking_id,
+            "sequence": index,
+            "occurred_at": times[index - 1],
+            "source": "offline_demo",
+        }
+        for index, event in enumerate(order["events"], start=1)
+    ]
+    with _connect() as conn:
+        found = conn.execute(
+            "SELECT id,status,created_at FROM demo_returns WHERE order_code=?",
+            (order_code,),
+        ).fetchone()
+    return {
+        **order,
+        "events": events,
+        "demo": True,
+        "real_tracking": False,
+        "order_metadata": {
+            "order_code": order_code,
+            "product_code": "URUN-" + order_code,
+            "created_at": times[0],
+            "demo": True,
+        },
+        "shipment_metadata": {
+            "tracking_id": tracking_id,
+            "order_code": order_code,
+            "carrier": "Kurgu Lojistik (demo)",
+            "status": order["shipment"],
+            "last_event_id": events[-1]["event_id"],
+            "last_updated_at": events[-1]["occurred_at"],
+            "real_tracking": False,
+        },
+        "return_request": dict(found) if found is not None else None,
+    }
 
 
 def create_demo_return(order_code, reason):
-    order = demo_order(order_code)
+    order = DEMO_ORDERS.get(order_code)
     if order is None:
         raise LookupError("Kurgusal sipariş bulunamadı.")
     if order["status"] != "delivered":
