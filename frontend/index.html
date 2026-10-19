@@ -11,7 +11,7 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Uygulama bilgisi">
-            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.6.2</small></span></div>
+            <div class="brand"><span class="brand-icon">F</span><span>FAQBot <small>v1.7 P1–P2</small></span></div>
             <div class="sidebar-content">
                 <span class="eyebrow">E-TİCARET DESTEK</span>
                 <h1>Sorularınıza<br><em>hızlı yanıt.</em></h1>
@@ -62,6 +62,56 @@
                        placeholder="Bir soru sorun...">
                 <button id="sendButton" type="submit" aria-label="Mesajı gönder">Gönder ↗</button>
             </form>
+
+            <!-- P1: destek isteği ve geri bildirim yalnız yerel SQLite'tadır. -->
+            <section class="customer-tools" aria-label="Yerel destek işlemleri">
+                <details id="supportSection" class="customer-tool">
+                    <summary>Destek talebi oluştur ve takip et</summary>
+                    <p class="tool-notice">Yalnız yerel demo kaydıdır. Gerçek müşteri temsilcisine gönderilmez. Kişisel bilgi girmeyin.</p>
+                    <form id="supportForm" class="customer-form">
+                        <label for="supportSubject">Konu</label>
+                        <input id="supportSubject" required minlength="8" maxlength="180" placeholder="Örn. Kargo sorum yanıtlanmadı">
+                        <label for="supportDetail">Açıklama (isteğe bağlı)</label>
+                        <textarea id="supportDetail" rows="2" maxlength="700" placeholder="Telefon, e-posta, adres veya gerçek sipariş bilgisi paylaşmayın."></textarea>
+                        <button class="settings-primary" type="submit">Yerel talep oluştur</button>
+                    </form>
+                    <p id="supportMessage" class="customer-message" role="status"></p>
+                    <div class="customer-tool-actions">
+                        <button id="loadSupportTickets" class="settings-secondary" type="button">Yerel talepleri listele</button>
+                    </div>
+                    <div id="supportTickets" class="customer-result" aria-live="polite"></div>
+                </details>
+
+                <!-- P2: Gerçek mağaza ya da kargo entegrasyonu bulunmaz. -->
+                <details id="demoOrderSection" class="customer-tool">
+                    <summary>Demo sipariş, kargo ve iade takibi</summary>
+                    <p class="tool-notice">Tamamı kurgusal. Gerçek sipariş numarası veya kişisel bilgi girmeyin.</p>
+                    <form id="demoOrderForm" class="customer-form">
+                        <label for="demoOrderCode">Örnek sipariş seç</label>
+                        <select id="demoOrderCode">
+                            <option value="DEMO-1001">DEMO-1001 — Hazırlanıyor</option>
+                            <option value="DEMO-1002">DEMO-1002 — Kargoda</option>
+                            <option value="DEMO-1003">DEMO-1003 — Teslim edildi</option>
+                        </select>
+                        <button class="settings-primary" type="submit">Siparişi ve kargoyu göster</button>
+                    </form>
+                    <div id="demoOrderResult" class="customer-result" aria-live="polite"></div>
+                    <form id="demoReturnForm" class="customer-form" hidden>
+                        <label for="demoReturnReason">Demo iade nedeni</label>
+                        <select id="demoReturnReason">
+                            <option value="changed_mind">Vazgeçtim</option>
+                            <option value="wrong_item">Yanlış ürün</option>
+                            <option value="damaged">Hasarlı ürün</option>
+                            <option value="other">Diğer</option>
+                        </select>
+                        <button class="settings-secondary" type="submit">Demo iade talebi oluştur</button>
+                    </form>
+                    <p id="demoOrderMessage" class="customer-message" role="status"></p>
+                    <button id="loadDemoReturns" class="settings-secondary" type="button">Demo iadelerimi listele</button>
+                    <div id="demoReturns" class="customer-result" aria-live="polite"></div>
+                </details>
+            </section>
+
             <p id="status" class="sr-only" role="status"></p>
             <footer class="disclaimer">Kurgusal mağaza verileri kullanılır; gerçek sipariş veya müşteri hesabı bulunmaz.</footer>
         </main>
