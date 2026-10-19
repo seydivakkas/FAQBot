@@ -251,3 +251,18 @@ body.faq-open{overflow:hidden}
 .answer-actions>span{font-size:11px;color:#58728e}
 .answer-ticket-button{background:#edf9f3;color:#216c4b;border-color:#b4e1cb}
 @media(max-width:720px){.customer-tools{padding:8px 11px;max-height:200px;flex-direction:column;flex-wrap:nowrap}.customer-tool{flex:none;width:100%}.customer-tool[open]{min-width:0}.customer-form button{width:100%}}
+
+
+/* P1/P2: belirgin öneri sorusu, oy düğmeleri, olay ve metadata dizisi. */
+.answer-tools>.tool-notice:first-child{font-size:12px;font-weight:800;letter-spacing:.035em;color:#225889}
+.answer-actions{margin-top:3px;padding-top:6px;border-top:1px dashed #d5e2ee}
+.answer-action-button{display:inline-flex;align-items:center;gap:4px;border-radius:999px;font-weight:700;padding:7px 12px}
+.answer-action-button[aria-label="Beğendim"]{border-color:#a6ddc0;color:#196b47;background:#effaf3}
+.answer-action-button[aria-label="Beğenmedim"]{border-color:#efb8b8;color:#a23a3a;background:#fff4f4}
+.answer-action-button:disabled,.answer-suggestion:disabled{opacity:.55;cursor:default}
+.customer-shipment-meta{font-weight:700;color:#225b81!important}
+.shipment-timeline,.customer-history{border-left:2px solid #b8d1eb;padding:0 0 0 16px!important;margin:8px 0 8px 8px!important;list-style:decimal}
+.shipment-timeline li,.customer-history li{padding:3px 0 10px 5px;color:#28527c;line-height:1.5}
+.shipment-timeline li strong,.shipment-timeline li small{display:block}
+.shipment-timeline li small{color:#697f98;margin-top:2px;font-size:11px}
+.customer-mini-card>button{align-self:flex-start;font-size:11px}
