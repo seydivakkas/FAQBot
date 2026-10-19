@@ -53,10 +53,15 @@ def test_licensed_manifest_enforces_explicit_commercial_rights(tmp_path):
     samples = [row("a", "train")]
     content = (json.dumps(samples[0])+"\n").encode()
     (tmp_path/"sample.jsonl").write_bytes(content)
+    evidence = b"Bu veri senaryo yazari tarafindan sifirdan uretilmistir; kaynak yok."
+    (tmp_path/"rights.txt").write_bytes(evidence)
     manifest = {"schema_version":1, "sources":[{
-        "id":"test","origin_url":"https://example.org/licensed-data",
-        "license_spdx":"MIT","reviewed_by":"human reviewer",
-        "evidence_sha256":"a"*64,"commercial_training_approved":False,
+        "id":"test","origin_url":"local://original-faq-test",
+        "license_spdx":"OWNED","reviewed_by":"human reviewer",
+        "origin_kind":"self_authored","rights_review_complete":True,
+        "rights_evidence_path":"rights.txt",
+        "evidence_sha256":hashlib.sha256(evidence).hexdigest(),
+        "commercial_training_approved":False,
     }],"files":[{"path":"sample.jsonl",
                  "sha256":hashlib.sha256(content).hexdigest()}]}
     file = tmp_path/"manifest.json"
@@ -69,7 +74,7 @@ def test_licensed_manifest_enforces_explicit_commercial_rights(tmp_path):
     file.write_text(json.dumps(manifest),encoding="utf-8")
     with pytest.raises(d.DatasetError):
         d.load_approved_sources(file,for_commercial=True)
-    manifest["sources"][0]["license_spdx"] = "MIT"
+    manifest["sources"][0]["license_spdx"] = "OWNED"
     manifest["files"][0]["path"] = "../outside.jsonl"
     file.write_text(json.dumps(manifest),encoding="utf-8")
     with pytest.raises(d.DatasetError):

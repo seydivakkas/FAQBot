@@ -6,7 +6,8 @@ from pathlib import Path
 from app.matching import normalize
 from app.database import DATA_PATH, V13_DATA_PATH
 
-ALLOWED_LICENSES = {"MIT", "Apache-2.0", "BSD-3-Clause", "CC0-1.0"}
+ALLOWED_LICENSES = {"OWNED", "CC0-1.0"}
+ALLOWED_ORIGINS = {"OWNED": "self_authored", "CC0-1.0": "verified_cc0"}
 SPLITS = ("train", "validation", "test")
 
 
@@ -66,21 +67,37 @@ def load_approved_sources(manifest_path, for_commercial=False):
     for source in sources:
         if not all(source.get(k) for k in ("id", "origin_url", "license_spdx", "reviewed_by")):
             raise DatasetError("Kaynak kökeni/lisansı/incelemeci eksik.")
-        if source["license_spdx"] not in ALLOWED_LICENSES and source["license_spdx"] != "OWNED":
-            raise DatasetError(f"İzin verilenler dışı/verifiye edilmemiş lisans: {source['id']}")
-        if not source.get("evidence_sha256") or len(source["evidence_sha256"]) != 64:
-            raise DatasetError("Kaynak kanıt SHA-256 alanı gerekli.")
-        # D02: The original Turkish paraphrase corpus lacks independently
-        # verified underlying-text provenance and dual human review. A local
-        # manifest checkbox cannot bypass this dataset-specific HOLD.
-        if for_commercial and (
+        # Önce eski D01/D02 kaynağını her kullanım türünde reddet.
+        if (
             source["id"] == "turkish-paraphrase-candidate"
             or "dogukanvzr/ml-paraphrase-tr" in source["origin_url"].lower()
         ):
             raise DatasetError(
-                "FAQVec-TR D02 veri hakları ve çift uzman kabulü HOLD. "
-                "Bu kaynağın ticari E5 eğitimine alınması engellendi."
+                "D02 kullanımdan kaldırıldı: üçüncü taraf veri kaynağı "
+                "kullanıcı veri politikası gereği YASAK."
             )
+        if source["license_spdx"] not in ALLOWED_LICENSES:
+            raise DatasetError(
+                "Yalnız kendi özgün verimiz (OWNED) veya doğrulanmış CC0 kabul edilir: "
+                + str(source["id"])
+            )
+        if source.get("origin_kind") != ALLOWED_ORIGINS[source["license_spdx"]]:
+            raise DatasetError("Verinin gerçek köken türü eksik veya lisansla uyuşmuyor.")
+        if source.get("rights_review_complete") is not True:
+            raise DatasetError("Veri hakkı ve özgün köken incelemesi belgelenmemiş.")
+        proof_name = source.get("rights_evidence_path")
+        if not isinstance(proof_name, str) or not proof_name:
+            raise DatasetError("Özgün üretim / CC0 kanıt dosyası gerekli.")
+        proof_rel = Path(proof_name)
+        if proof_rel.is_absolute() or ".." in proof_rel.parts:
+            raise DatasetError("Kanıt dosyası manifest dışına çıkamaz.")
+        proof = (path.parent / proof_rel).resolve()
+        if not proof.is_relative_to(path.parent) or not proof.is_file():
+            raise DatasetError("Kanıt dosyası yerel manifest dizininde bulunamadı.")
+        if hashlib.sha256(proof.read_bytes()).hexdigest() != source.get("evidence_sha256"):
+            raise DatasetError("Özgün üretim / CC0 kanıt dosyası SHA-256 uyuşmuyor.")
+
+            raise DatasetError(f"İzin verilenler dışı/verifiye edilmemiş lisans: {source['id']}")
         if for_commercial and not source.get("commercial_training_approved", False):
             raise DatasetError(f"Ticari veri kullanımı onaylanmamış: {source['id']}")
         index[source["id"]] = source

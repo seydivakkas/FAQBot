@@ -333,6 +333,10 @@ def main():
     assess.add_argument("--output", required=True)
     args = p.parse_args()
     if args.command == "prepare":
+        raise SystemExit(
+            "D02 üçüncü taraf kaynak işleme hattı kullanıcının telifsiz veri "
+            "politikasıyla durduruldu. Yalnız kendi veya doğrulanmış CC0 veriyi kullanın."
+        )
         bundle, freeze, summary = generate_bundle(
             args.input, verify_pin=not args.fixture_only,
             neg_limit=args.negative_limit

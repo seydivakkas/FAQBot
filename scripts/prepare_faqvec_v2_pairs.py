@@ -228,6 +228,7 @@ def main():
     parser.add_argument("--card-path", help="Kaynak README.md dosyası; SHA kanıtı")
     parser.add_argument("--output", default="reports/faqvec_v2_pairs")
     args = parser.parse_args()
+    raise SystemExit("Eski üçüncü taraf çift hazırlama hattı devre dışı; yalnız OWNED/CC0 veriler kullanılabilir.")
     rows, negatives, report = prepare_pairs(read_pairs(args.source_file))
     path = save_candidate_package(
         rows, negatives, report, source_file=args.source_file,
