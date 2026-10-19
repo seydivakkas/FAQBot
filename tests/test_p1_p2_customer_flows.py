@@ -61,6 +61,7 @@ def test_support_tickets_persist_and_have_trackable_status(client):
     assert ticket["status"] == "open"
     assert ticket["demo_local_only"] is True
     assert ticket["id"] > 0
+    assert ticket["ticket_code"] == "BİLET_GONDERIM_HAKKINDA_BILGI_ISTIYORUM_000001"
     assert [event["status"] for event in ticket["history"]] == ["open"]
     detail=client.get("/support/tickets/"+str(ticket["id"]))
     assert detail.status_code == 200
@@ -107,6 +108,20 @@ def test_kurgusal_order_and_shipping_statuses(client):
     assert by_code["DEMO-1002"]["shipment"] == "in_transit"
     assert by_code["DEMO-1003"]["shipment"] == "delivered"
     assert len(by_code["DEMO-1002"]["events"]) > 2
+    for order in orders:
+        metadata = order["shipment_metadata"]
+        assert metadata["tracking_id"] == "KURGU-" + order["code"]
+        assert metadata["order_code"] == order["code"]
+        assert metadata["real_tracking"] is False
+        assert metadata["status"] == order["shipment"]
+        assert metadata["last_event_id"] == order["events"][-1]["event_id"]
+        assert all(ev["order_code"] == order["code"] and
+                   ev["tracking_id"] == metadata["tracking_id"] and
+                   ev["source"] == "offline_demo" for ev in order["events"])
+        assert [ev["sequence"] for ev in order["events"]] == list(range(1,len(order["events"])+1))
+        assert [ev["occurred_at"] for ev in order["events"]] == sorted(
+            ev["occurred_at"] for ev in order["events"])
+        assert order["return_request"] is None
     assert client.get("/demo/orders/DEMO-1002").json()["code"] == "DEMO-1002"
     assert client.get("/demo/orders/REAL-1002").status_code == 404
 
@@ -124,6 +139,10 @@ def test_demo_return_is_only_for_delivered_order_and_trackable(client):
     request=res.json()
     assert request["demo"] is True
     assert request["status"] == "requested"
+    assert request["return_code"] == "İADE_DEMO-1003_000001"
+    assert request["order_ref"]["order_code"] == "DEMO-1003"
+    assert request["order_ref"]["tracking_id"] == "KURGU-DEMO-1003"
+    assert client.get("/demo/orders/DEMO-1003").json()["return_request"]["id"] == request["id"]
     assert [x["status"] for x in request["history"]] == ["requested"]
     assert client.post("/demo/returns",json={
         "order_code":"DEMO-1003","reason":"damaged"
@@ -142,6 +161,7 @@ def test_demo_return_is_only_for_delivered_order_and_trackable(client):
     assert len(duplicate.json()["history"]) == 3
     assert client.get("/demo/returns/999999").status_code == 404
     assert client.patch("/demo/returns/999999",json={"status":"approved"}).status_code == 404
+    assert client.get("/demo/orders/DEMO-1003").json()["return_request"]["status"] == "approved"
 
 
 def test_untrusted_web_origin_cannot_mutate_local_tickets_returns_feedback(client):
@@ -169,4 +189,8 @@ def test_frontend_connects_all_p1_p2_controls(client):
                 "/demo/returns"):
         assert uri in js
     assert "showAnswerTools(" in js
+    assert "BUNU MU DEMEK İSTEDİNİZ?" in js
+    assert "👍 Like" in js and "👎 Dislike" in js
+    assert "ticket_code" in js and "BİLET_" in client.post("/support/tickets",json={"subject":"Kargo durumu ne oldu?"}).json()["ticket_code"]
+    assert "shipment_metadata" in js and "return_code" in js
     assert "customer-tools" in css
