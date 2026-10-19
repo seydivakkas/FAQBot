@@ -44,7 +44,13 @@ def download_model(name, destination=None):
     if folder.exists() and any(folder.iterdir()):
         raise FileExistsError("Model klasörü boş olmalı; var olan indirme korunuyor.")
     from huggingface_hub import model_info, snapshot_download
-    info=model_info(repo,files_metadata=False)
+    # BGE-M3 main uses pytorch_model.bin without safetensors. Historical
+    # b28ce2a commit contains model.safetensors and preserves safe loading.
+    pinned_revision = (
+        "b28ce2a6fcc9c75ef1c0619575d0ec19af760082"
+        if name == "bge-m3" else None
+    )
+    info=model_info(repo,revision=pinned_revision,files_metadata=False)
     license_id=getattr(getattr(info,"card_data",None),"license",None)
     if not license_id or str(license_id).lower()!=expected.lower():
         raise ValueError("Açık lisans kartı doğrulanmadı: "+repo)
@@ -69,6 +75,7 @@ def download_model(name, destination=None):
         raise ValueError("Güvenli safetensors model ağırlığı bulunamadı.")
     metadata={
         "repo":repo, "resolved_revision":commit,
+        "source_revision_selection":"pinned_bge_safetensors" if pinned_revision else "model_card_resolved_commit",
         "declared_license":expected,
         "weights":[{"path":str(p.relative_to(folder)).replace("\\","/"),
                     "bytes":p.stat().st_size,"sha256":sha256_file(p)}
