@@ -1487,7 +1487,8 @@ demoOrderForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     demoReturnForm.hidden = true;
     demoOrderResult.replaceChildren();
-    demoOrderMessage.textContent = "";
+    // Programatik yenileme, başarıyla oluşturulan iade kodunu silmez.
+    if (event.submitter) demoOrderMessage.textContent = "";
     try {
         const data = await customerApi("/demo/orders/" +
             encodeURIComponent(demoOrderCode.value));
