@@ -41,6 +41,8 @@ def train():
     parser.add_argument("--manifest", help="Ticari incelemesi yapılmış JSONL veri kaynak manifesti")
     parser.add_argument("--ai-owned-research", action="store_true",
                         help="Sıfırdan yazılan ve AI tarafından incelenmiş D03 v02 ile yalnız araştırma eğitimi")
+    parser.add_argument("--d05-owned-expansion", action="store_true",
+                        help="Yalnız AI-denetimli kendi 24 eğitim niyeti + her train niyetinin ikinci parafrazını kullan; val/test aynı kalır")
     parser.add_argument("--include-ai-negatives", action="store_true",
                         help="Sadece araştırmada, AI seçimi 28 hard adayın train bölümündekilerini kullan")
     parser.add_argument("--demo", action="store_true",
@@ -57,6 +59,10 @@ def train():
     args = parser.parse_args()
     if sum((bool(args.demo), bool(args.manifest), bool(args.ai_owned_research))) != 1:
         parser.error("Tam olarak biri seçilmeli: --ai-owned-research, --manifest veya --demo.")
+    if args.d05_owned_expansion and not args.ai_owned_research:
+        parser.error("D05 eğitim genişletmesi yalnız --ai-owned-research için.")
+    if args.d05_owned_expansion and args.commercial:
+        parser.error("Özgün D05 AI taslağı ticari eğitime onaylı değildir.")
     if args.ai_owned_research and args.commercial:
         parser.error("AI değerlendirmesi bağımsız insan/hukuki onay değildir; ticari eğitim yasak.")
     if args.include_ai_negatives and not args.ai_owned_research:
@@ -96,7 +102,11 @@ def train():
     split_stats = validate_intents(rows)
     if min(split_stats.values()) < 1:
         raise RuntimeError("Train/validation/test niyet gruplarının her biri dolu olmalı.")
-    pairs = positive_pairs(rows)
+    if args.d05_owned_expansion:
+        from scripts.faqvec_d05_owned_data import augmented_positive_pairs
+        pairs = augmented_positive_pairs()
+    else:
+        pairs = positive_pairs(rows)
     if len(pairs) < 8:
         raise RuntimeError("En az 8 farklı niyetten pozitif eğitim çifti gerekli.")
     if args.ai_owned_research:
@@ -193,6 +203,9 @@ def train():
         "ai_negative_candidates_used": len(triplets) if args.ai_owned_research else 0,
         "commercial_training_approved": bool(args.commercial),
         "commercial_acceptance": "HOLD",
+        "d05_owned_expansion": bool(args.d05_owned_expansion),
+        "d05_train_auxiliary_intents": 24 if args.d05_owned_expansion else 0,
+        "d05_train_only_no_test_leak": bool(args.d05_owned_expansion),
         "train_pairs": len(pairs), "approved_triplets": len(triplets),
         "split_intents": split_stats, "epochs": args.epochs,
         "data_manifest": str(Path(args.manifest).resolve()) if args.manifest else None,
