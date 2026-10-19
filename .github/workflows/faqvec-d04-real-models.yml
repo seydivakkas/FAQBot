@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - ".github/workflows/faqvec-d04-real-models.yml"
+      - "scripts/download_faqvec_model_weights.py"
   workflow_dispatch:
 permissions:
   contents: read
