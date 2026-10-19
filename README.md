@@ -2,6 +2,23 @@
 
 **Eğitim verisi için kesin kural: sadece kendi ürettiğimiz özgün veri veya kökeni bağımsız doğrulanmış gerçek CC0/kamu malı veri.** Üçüncü taraf veri kümesinin Apache-2.0/MIT beyanı bu koşulu tek başına karşılamaz. Eski D01/D02 üçüncü taraf veri indirme hatları devre dışıdır; model eğitimine alınmayacaktır. Geçmiş raporlar yalnız tarihî denetim kayıtlarıdır. [Bağlayıcı veri politikası](docs/VERI_KAYNAGI_KESIN_POLITIKA.md).
 
+## FAQVec-TR — D03 Kendi özgün Türkçe veri taslağı
+
+**Yeni veri yalnız bu proje için yazıldı; dış korpus kullanılmadı.** Mevcut taslak: 96 niyet, 96 kurgu cevap, 192 alternatif soru, 48 zor negatif adayı ve 24 yanıtsız kalma adayı; 12 müşteri destek alanı. Aynı karıştırılabilir niyet ailesinin tamamı tek bölmede: **74 train / 10 validation / 12 test niyeti** (yalnız yapısal ayrım).
+
+- [Sıfırdan yazılan SSS kataloğu](seed/faqvec_tr_ozgun_taslak_v01.json)
+- [Yanıtsız kalma adayları](seed/faqvec_tr_yanitsiz_taslak_v01.json)
+- [Tamamen yerel üretim/inceleme paketleyicisi](scripts/build_faqvec_original.py)
+- [Adımlar ve kabul koşulları](docs/FAQVEC_OZGUN_VERI_D03.md)
+- [Yeni mühendislik takibi — Issue #3](https://github.com/seydivakkas/FAQBot/issues/3)
+
+```powershell
+.venv\Scripts\python.exe -m scripts.build_faqvec_original --check-only
+.venv\Scripts\python.exe -m scripts.build_faqvec_original --output-dir datasets/faqvec_original_v01
+```
+
+**Kritik:** Bu metinler özgün bir *model destekli proje taslağıdır*. Henüz insan tarafından semantik ve özgünlük kontrolü yapılmadı. Negatifler ve yanıtsızlık örnekleri onaylı sayılmaz; oluşturulan manifestte `commercial_training_approved=false`, `rights_review_complete=false`. Önceki demo modelleriyle otomatik eğitim kaldırıldı; gerçek model yarışması ve ticari kabul **HOLD**.
+
 # FAQBot — Türkçe E-Ticaret SSS Chatbotu
 
 ![Python CI](https://github.com/seydivakkas/FAQBot/actions/workflows/ci.yml/badge.svg)
