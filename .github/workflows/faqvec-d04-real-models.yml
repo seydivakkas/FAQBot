@@ -4,6 +4,7 @@ on:
     paths:
       - ".github/workflows/faqvec-d04-real-models.yml"
       - "scripts/download_faqvec_model_weights.py"
+      - "scripts/faqvec_d04_real_benchmark.py"
   workflow_dispatch:
 permissions:
   contents: read
