@@ -103,9 +103,9 @@ Bu bölüm, mevcut ürünün gerçek işlevleri ile daha sonra geliştirilecek f
 
 P1 ilk sürümüne şu ürün işlevleri eklendi:
 
-1. **Birden fazla SSS önerisi:** Güvensiz/kararsız eşleşmelerde en fazla üç **soru başlığı** önerilir. Öneriler hiçbir zaman otomatik kesin cevap olarak gösterilmez; kullanıcı seçerek tekrar sorar.
-2. **Cevap yararlı mı?** Her cevap altında Evet / Hayır geri bildirimi bulunur. Yalnız SQLite'ta geri bildirim sayısı ve ilgili SSS kimliği saklanır, sohbetin tam metni otomatik geri bildirim kaydına alınmaz. Bunlar **insan doğruluğu etiketi değildir**.
-3. **Yerel destek talebi:** Özellikle cevap bulunamadığında kullanıcı destek talebi açabilir. Yerel TKT numarası, durum ve kayıt zamanı ile takip edilir. Talep durumu Açık → İnceleniyor → Çözüldü olarak değiştirilebilir.
+1. **“BUNU MU DEMEK İSTEDİNİZ?”:** Güvensiz/kararsız eşleşmelerde en fazla üç ilgili **SSS soru başlığı** gösterilir. Öneriler otomatik kesin cevap değildir; başlığa tıklanınca soru yeniden gönderilir.
+2. **👍 Like / 👎 Dislike:** Her bot cevabının altında iki erişilebilir düğme bulunur. Evet/Hayır yerine görsel beğenme simgeleri kullanılır. SQLite'a yalnız işaret ve varsa ilgili SSS kimliği kaydedilir; bu **doğruluk için insan etiketi** değildir.
+3. **Yerel destek bileti:** Özellikle cevap bulunamadığında talep açılır. Benzersiz `BİLET_KONUADI_NO` kimliği konudan üretilir: `BİLET_KARGO_GECIKMESI_000001`. Konu, açıklama, Açık → İnceleniyor → Çözüldü durumu ve zaman damgalı işlem geçmişi SQLite'ta ilişkilendirilir.
 
 **Kesin sınır:** Destek talepleri başka bir kişi/şirkete **gönderilmez**; bu modül gerçek müşteri temsilcisi, e-posta veya CRM entegrasyonu içermez. Kişisel bilgi girilmemelidir.
 
@@ -114,9 +114,11 @@ P1 ilk sürümüne şu ürün işlevleri eklendi:
 P2 ilk sürümü tamamen kurgusal işlem simülasyonu olarak geliştirildi:
 
 1. **Örnek sipariş sorgusu:** DEMO-1001 Hazırlanıyor, DEMO-1002 Kargoda, DEMO-1003 Teslim Edildi.
-2. **Kargo zaman çizelgesi:** Örnek siparişin oluşturulmasından kurgusal taşıma/teslim aşamalarına kadar kayıtlar gösterilir.
-3. **İade oluşturma ve takip:** Yalnız teslim edilmiş DEMO-1003 için iade talebi açılabilir. SQLite içinde talep kimliği ve Talep Alındı / İnceleniyor / Onaylandı / Reddedildi durumu korunur. Yinelenen iade engellenir.
+2. **Sipariş–kargo metadatası ve zaman çizelgesi:** Örnek siparişin kodu, ürünü, kurgusal takip kimliği (`KURGU-DEMO-1002`), taşıyıcı, güncel durum, kronolojik olay kimliği/sırası/zamanı aynı API kaydından gösterilir. Olayların `order_code` ve `tracking_id` değerleri siparişle eşleşmeden arayüzde gösterilmez.
+3. **Siparişe bağlı iade ve takip:** Yalnız teslim edilmiş `DEMO-1003` için `İADE_DEMO-1003_000001` biçiminde talep açılır. SQLite katalog ve trigger ile başka/teslim edilmemiş siparişe iade eklenemez; bir siparişe ikinci iade reddedilir. İade yanıtında `order_ref` ve kargo takip kimliği bulunur; güncel durum, tarihli işlem geçmişi ve bağlı siparişi gösteren arayüz düğmesi çalışır.
 4. **Destek takibi:** P1'de oluşturulan destek kayıtları yerel ekranda tekrar görüntülenir ve durumları güncellenir.
+
+**Gerçek arayüz–backend otomasyonu:** [Chromium P1/P2 uçtan uca testi](https://github.com/seydivakkas/FAQBot/actions/workflows/p1-p2-browser-e2e.yml) tarayıcıda öneriye bakma, Like/Dislike, bileti kaydetme ve güncelleme, sipariş metadatası, iade kaydı ve durumu dahil butonlar üzerinden localhost FastAPI → SQLite → güncellenmiş DOM akışını doğrular. Bu Windows Edge fiziksel kabulü değildir.
 
 Kullanım: web arayüzünde sohbet bölümünün altında **Destek talebi oluştur ve takip et** ve **Demo sipariş, kargo ve iade takibi** panelleri. FastAPI rotaları: POST /chat (ilgili SSS önerileri), POST /feedback, GET /feedback/summary, /support/tickets, /demo/orders ve /demo/returns. Düzenleme/izleme API'leri yalnız localhost ve aynı origin'de kullanılabilir; **bu kullanıcı girişi veya gerçek yetkilendirme değildir**. Uygulama internete açık sunulmamalı.
 
