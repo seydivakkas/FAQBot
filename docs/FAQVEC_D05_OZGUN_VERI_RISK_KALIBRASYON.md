@@ -70,4 +70,45 @@ powershell -ExecutionPolicy Bypass -File .\run_faqvec_d05_windows.ps1 -Compare
 
 **Yazılım/veri altyapısı:** Kaynak hash, sızıntı ve 201 eşik testleri CI'da doğrulandığında PASS. **Model performansı:** yalnız gerçek tamamlanmış altılı yarış ve test güvenlik kontrolleriyle ayrı değerlendirilir; başarı garanti edilmez. **Ticari yayın:** kaynak veri hakları, bağımsız gerçek müşteri testleri, lisans NOTICE/SBOM ve Windows fiziksel kabul sağlanana kadar HOLD.
 
-**Mühendislik kararı:** `D05_ÖZGÜN_TRAIN_VERİSİ_ADAY_PASS / VAL_ONLY_KALİBRASYON_ADAY_PASS / GERÇEK_MODEL_KARŞILAŞTIRMA_KANIT_BEKLİYOR / BAĞIMSIZ_SAHA_HOLD / TİCARİ_YAYIN_HOLD`.
+**Mühendislik kararı:** `D05_ÖZGÜN_VERİ_OLUŞTURULDU / VAL_ONLY_POLICY_DOĞRULANDI / GERÇEK_MODEL_YARIŞI_TAMAMLANDI / BAĞIMSIZ_SAHA_HOLD / TİCARİ_YAYIN_HOLD`.
+
+## 7. Tamamlanan D05 gerçek model yarışı (19 Ekim 2026)
+
+**Koşu: [GitHub Actions #39212163090](https://github.com/seydivakkas/FAQBot/actions/runs/39212163090) — SUCCESS.** Tüm ölçümler gerçek ağırlıklarla Linux CPU üzerinde yapıldı; Windows/RTX 4070 fiziksel kabul değildir. Karşılaştırmada D04 test galerisi ve doğrulama/test kayıtları değiştirilmedi.
+
+| Gerçek model | Recall@1 (eşikten önce) | D05 pozitif abstention | D05 yanlış eşleşme | D05 OOS yanlış cevap | D05 genel doğruluk | D05 test güvenlik sınırı |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| TF-IDF | %20,83 | %70,83 | %25,00 | %9,09 | %31,43 | FAIL |
+| E5-base | %58,33 | %45,83 | %20,83 | %9,09 | %51,43 | FAIL |
+| **FAQVec-D04 kontrol** | **%70,83** | **%70,83** | **%4,17** | **%9,09** | **%45,71** | PASS |
+| **FAQVec-D05 yeni** | **%70,83** | **%54,17** | **%8,33** | **%9,09** | **%54,29** | PASS |
+| MiniLM | %33,33 | %62,50 | %20,83 | %0,00 | %42,86 | FAIL |
+| BGE-M3 | %87,50 | %4,17 | %12,50 | %18,18 | %82,86 | FAIL |
+
+*D05 eşikleri yalnız validation'da seçildi. PASS/FAIL son sütunu, **gözlenen aynı küçük sentetik testte** iki hata oranının ayrı ayrı en fazla %10 olması anlamındadır. Gerçek kullanıcı trafiği için garanti veya ürün kabulü değildir.*
+
+**Testte sayım (FAQVec-D05):** 24 pozitifin 13'ü reddedildi, 2'sine yanlış niyet yanıtı verildi, 9'u doğru niyete eşleşti; 11 OOS sorunun 1'ine yanlış cevap verildi. Böylece toplam doğru karar 19/35 (%54,29). FAQVec-D04 için 17 pozitif reddi, 1 yanlış niyet, 6 doğru niyet ve 1 OOS yanlış yanıt: 16/35 (%45,71).
+
+**D05 modelinin eğitimi:** 74 eski train niyetinin iki alternatifi + 24 yeni train-only niyetin iki alternatifi = **196 pozitif çift** ile 1 epoch (ilk aşama kaybı 0,1460); ayrıca **AI'nin seçtiği, yalnız train bölmesine ait zor negatif adayları** ile ikinci 1 epoch aşaması (eğitim kaybı 0,3456). Bu eğitim kayıpları model başarımının göstergesi olarak kullanılmaz.
+
+### Aynı modelde eşik farkı
+
+| Model | D04 ceza eşiği | D04 eşik genel doğruluk | D05 risk eşiği | D05 eşik genel doğruluk |
+| --- | ---: | ---: | ---: | ---: |
+| FAQVec-D04 | 0,830 | %45,71 | 0,830 | %45,71 |
+| FAQVec-D05 | 0,770 | %42,86 | 0,735 | %54,29 |
+| BGE-M3 | 0,760 | %80,00 | 0,730 | %82,86 |
+
+**Kritik yorum:** BGE-M3, D05'in daha gevşek seçilen 0,730 eşiğinde test güvenliği kapısını aşmıştır; ancak eski 0,760 eşiğinde **yanlış niyet %8,33 ve OOS yanlış cevap %9,09** ile kapıyı karşılayıp **%80,00 genel doğruluk** sağlar. Dolayısıyla BGE-M3'ü güvenlik açısından tamamen başarısız saymak yanlış olur. Ticari pilotta otomatik eşik dağıtımı hâlâ uygun değildir.
+
+FAQVec-D05'in D04'e göre **Recall@1 artışı 0,00** (aynı 24 pozitif sorgunun top-1 sıralaması değişmedi; eşleştirilmiş 12-niyet bootstrap farkı [0,00; 0,00]). Kazanım skor dağılımı ve doğrulama eşik kararında görülmüştür. FAQVec-D05–E5 Recall@1 farkı +12,50 yüzde puan, %95 bootstrap aralığı [0; 25] puan; FAQVec-D05–BGE farkı −16,67 puan, %95 aralığı [−41,67; +4,17] puan. Yalnız 12 test niyeti nedeniyle genel üstünlük iddiası yapılamaz.
+
+### CPU ölçüm kaynakları
+
+Aynı Ubuntu CPU koşusunda, yalnız **8 tek sorgu örneğinin** p95 göstergeleri yaklaşık: TF-IDF 0,43 ms; E5 56,38 ms; FAQVec-D04 57,16 ms; FAQVec-D05 57,17 ms; MiniLM 17,57 ms; BGE-M3 187,78 ms. Bu sayıların istatistiksel kararlılığı ve Windows GPU ölçümleri doğrulanmış değildir. Model dosya toplamları yaklaşık FAQVec-D05 1,13 GB; MiniLM 0,50 GB; BGE-M3 2,29 GB'dır.
+
+**Kanıt dosyası:** GitHub Actions run #39212163090 → `faqvec-d05-metrics-and-rights-only` artifact. İçerik: JSON metrikler, D04/D05 eğitim manifestleri ve üç açık lisanslı orijinal ağırlığın köken kayıtları. **Model ağırlıkları veya dış soru korpusu artifact'a eklenmedi.**
+
+**Testler:** [Python CI #39212454129](https://github.com/seydivakkas/FAQBot/actions/runs/39212454129), Ubuntu **175 PASS** / Windows **175 PASS**, 1 uyarı. Bunlar sentetik yazılım/CI kontrolleri; fiziksel Windows/Edge kabulü değil.
+
+**Yeni mühendislik kararı:** `D05_ÖZGÜN_24_NİYET_PASS / E5_D05_GERÇEK_EĞİTİM_PASS / ALTILI_MODEL_ÖLÇÜM_PASS / CEVAPSIZLIK_İYİLEŞTİ / D05_TEST_GÜVENLİK_KAPISI_SINIRLI_PASS / BGE_D04_EŞİK_PRATİK_LİDER / BAĞIMSIZ_MÜŞTERİ_PERFORMANSI_HOLD / WINDOWS_GPU_KABUL_HOLD / TİCARİ_YAYIN_HOLD`.
