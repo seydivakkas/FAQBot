@@ -142,6 +142,7 @@ function addMessage(text, role, category, meta = null) {
     row.appendChild(bubble);
     messages.appendChild(row);
     messages.scrollTop = messages.scrollHeight;
+    return bubble;
 }
 
 function setBusy(value) {
@@ -170,7 +171,8 @@ async function sendMessage(raw) {
         if (typeof data.answer !== "string") {
             throw new Error("Beklenmeyen API yanıtı");
         }
-        addMessage(data.answer, "bot", data.category, data);
+        const bubble = addMessage(data.answer, "bot", data.category, data);
+        showAnswerTools(bubble, data, message);
         status.textContent = "Yanıt geldi.";
     } catch (error) {
         console.error("FAQBot bağlantı hatası:", error);
@@ -1270,3 +1272,292 @@ async function restoreDeletedFaq(id) {
 
 refreshTrashButton.addEventListener("click", loadFaqTrash);
 trashSearch.addEventListener("input", renderTrashItems);
+
+
+
+/* P1 / P2: yalnız localhost üzerinde çalışan yerel ürün prototipleri. */
+const supportSection = document.getElementById("supportSection");
+const supportForm = document.getElementById("supportForm");
+const supportSubject = document.getElementById("supportSubject");
+const supportDetail = document.getElementById("supportDetail");
+const supportMessage = document.getElementById("supportMessage");
+const supportTickets = document.getElementById("supportTickets");
+const loadSupportTicketsButton = document.getElementById("loadSupportTickets");
+const demoOrderForm = document.getElementById("demoOrderForm");
+const demoOrderCode = document.getElementById("demoOrderCode");
+const demoOrderResult = document.getElementById("demoOrderResult");
+const demoReturnForm = document.getElementById("demoReturnForm");
+const demoReturnReason = document.getElementById("demoReturnReason");
+const demoOrderMessage = document.getElementById("demoOrderMessage");
+const demoReturns = document.getElementById("demoReturns");
+const loadDemoReturnsButton = document.getElementById("loadDemoReturns");
+
+async function customerApi(url, options = {}) {
+    const response = await fetch(url, {
+        ...options,
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(typeof data.detail === "string" ? data.detail :
+            "İşlem gerçekleştirilemedi (" + response.status + ").");
+    }
+    return data;
+}
+
+function makeCustomerText(tagName, value, cssClass = "") {
+    const item = document.createElement(tagName);
+    item.textContent = value;
+    if (cssClass) item.className = cssClass;
+    return item;
+}
+
+function showAnswerTools(bubble, data, question) {
+    const actions = document.createElement("div");
+    actions.className = "answer-tools";
+    if (Array.isArray(data.suggestions) && data.suggestions.length) {
+        const title = makeCustomerText("small",
+            "Diğer ilgili SSS önerileri (otomatik yanıt değildir):", "tool-notice");
+        actions.appendChild(title);
+        for (const item of data.suggestions) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "answer-suggestion";
+            button.textContent = item.question;
+            button.addEventListener("click", () => sendMessage(item.question));
+            actions.appendChild(button);
+        }
+    }
+
+    const controls = document.createElement("div");
+    controls.className = "answer-actions";
+    const helpful = makeCustomerText("span", "Bu yanıt faydalı mı?");
+    controls.appendChild(helpful);
+    for (const [good, label] of [[true, "Evet"], [false, "Hayır"]]) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = label;
+        button.className = "answer-action-button";
+        button.addEventListener("click", async () => {
+            for (const b of controls.querySelectorAll("button")) b.disabled = true;
+            try {
+                await customerApi("/feedback", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        faq_id: Number.isInteger(data.faq_id) ? data.faq_id : null,
+                        helpful: good
+                    })
+                });
+                controls.replaceChildren(
+                    makeCustomerText("span", "Geri bildiriminiz yerel olarak kaydedildi.")
+                );
+            } catch (error) {
+                for (const b of controls.querySelectorAll("button")) b.disabled = false;
+                status.textContent = error.message;
+            }
+        });
+        controls.appendChild(button);
+    }
+    actions.appendChild(controls);
+
+    if (data.match_type === "none") {
+        const ticket = document.createElement("button");
+        ticket.className = "answer-ticket-button";
+        ticket.type = "button";
+        ticket.textContent = "Sorunum çözülmedi — destek talebi oluştur";
+        ticket.addEventListener("click", () => {
+            supportSection.open = true;
+            // Önceki mesajı otomatik kaydetme: kullanıcı yeni metni kendisi onaylar.
+            supportSubject.value = "Sorum cevaplanmadı";
+            supportMessage.textContent =
+                "Bu talep yalnız bilgisayarınızda saklanır; gerçek bir temsilciye gönderilmez.";
+            supportSubject.focus();
+        });
+        actions.appendChild(ticket);
+    }
+    bubble.appendChild(actions);
+}
+
+function createStatusSelector(value, choices, updateFn) {
+    const select = document.createElement("select");
+    select.setAttribute("aria-label", "Yerel demo durumunu değiştir");
+    for (const [key, label] of choices) {
+        const option = document.createElement("option");
+        option.value = key; option.textContent = label;
+        select.appendChild(option);
+    }
+    select.value = value;
+    select.addEventListener("change", async () => {
+        select.disabled = true;
+        try {
+            await updateFn(select.value);
+        } catch (error) {
+            status.textContent = error.message;
+            select.value = value;
+        } finally {
+            select.disabled = false;
+        }
+    });
+    return select;
+}
+
+const TICKET_STATUSES = [
+    ["open", "Açık"], ["in_progress", "İnceleniyor"], ["resolved", "Çözüldü"]
+];
+const RETURN_STATUSES = [
+    ["requested", "Talep alındı"], ["reviewing", "İnceleniyor"],
+    ["approved", "Onaylandı"], ["rejected", "Reddedildi"]
+];
+
+function ticketState(value) {
+    return TICKET_STATUSES.find(([key]) => key === value)?.[1] || value;
+}
+function returnState(value) {
+    return RETURN_STATUSES.find(([key]) => key === value)?.[1] || value;
+}
+
+async function renderSupportTickets() {
+    const data = await customerApi("/support/tickets");
+    const frag = document.createDocumentFragment();
+    if (!data.tickets.length) {
+        frag.appendChild(makeCustomerText("p", "Henüz yerel destek talebi yok."));
+    }
+    for (const item of data.tickets) {
+        const card = document.createElement("article");
+        card.className = "customer-mini-card";
+        card.appendChild(makeCustomerText("strong", "TKT-" +
+            String(item.id).padStart(6, "0") + " · " + item.subject));
+        card.appendChild(makeCustomerText("small",
+            "Durum: " + ticketState(item.status) + " · Oluşturulma: " +
+            item.created_at.slice(0, 16).replace("T", " ") + " (UTC)"));
+        if (item.detail) card.appendChild(makeCustomerText("p", item.detail));
+        card.appendChild(createStatusSelector(item.status, TICKET_STATUSES,
+            async (newStatus) => {
+                await customerApi("/support/tickets/" + item.id, {
+                    method: "PATCH", body: JSON.stringify({ status: newStatus })
+                });
+                await renderSupportTickets();
+            }));
+        frag.appendChild(card);
+    }
+    supportTickets.replaceChildren(frag);
+}
+
+supportForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = supportForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+        const saved = await customerApi("/support/tickets", {
+            method: "POST",
+            body: JSON.stringify({
+                subject: supportSubject.value.trim(),
+                detail: supportDetail.value.trim()
+            })
+        });
+        supportMessage.textContent = "Yerel talep oluşturuldu: TKT-" +
+            String(saved.id).padStart(6, "0") +
+            ". Gerçek destek ekibine gönderilmedi.";
+        supportForm.reset();
+        await renderSupportTickets();
+    } catch (error) {
+        supportMessage.textContent = error.message;
+    } finally {
+        button.disabled = false;
+    }
+});
+
+loadSupportTicketsButton.addEventListener("click", () =>
+    renderSupportTickets().catch((error) => {
+        supportMessage.textContent = error.message;
+    })
+);
+
+demoOrderForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    demoReturnForm.hidden = true;
+    demoOrderResult.replaceChildren();
+    demoOrderMessage.textContent = "";
+    try {
+        const data = await customerApi("/demo/orders/" +
+            encodeURIComponent(demoOrderCode.value));
+        const card = document.createElement("article");
+        card.className = "customer-mini-card";
+        card.appendChild(makeCustomerText("strong",
+            data.code + " — " + data.item + " (KURGUSAL)"));
+        const orderLabels = {
+            preparing: "Hazırlanıyor", shipped: "Kargoya verildi",
+            delivered: "Teslim edildi"
+        };
+        const shipmentLabels = {
+            not_shipped: "Henüz kargoya verilmedi",
+            in_transit: "Kurgusal taşıma sürecinde",
+            delivered: "Kurgusal teslim edildi"
+        };
+        card.appendChild(makeCustomerText("p",
+            "Sipariş: " + (orderLabels[data.status] || data.status) +
+            " · Kargo: " + (shipmentLabels[data.shipment] || data.shipment)));
+        const list = document.createElement("ol");
+        for (const ev of data.events) {
+            list.appendChild(makeCustomerText("li", ev.label));
+        }
+        card.appendChild(list);
+        demoOrderResult.replaceChildren(card);
+        demoReturnForm.hidden = data.status !== "delivered";
+    } catch (error) {
+        demoOrderMessage.textContent = error.message;
+    }
+});
+
+demoReturnForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = demoReturnForm.querySelector("button");
+    button.disabled = true;
+    try {
+        const row = await customerApi("/demo/returns", {
+            method: "POST",
+            body: JSON.stringify({
+                order_code: demoOrderCode.value,
+                reason: demoReturnReason.value
+            })
+        });
+        demoOrderMessage.textContent = "Kurgusal iade #" + row.id +
+            " oluşturuldu. Durum: " + returnState(row.status) + ".";
+        await renderDemoReturns();
+    } catch (error) {
+        demoOrderMessage.textContent = error.message;
+    } finally {
+        button.disabled = false;
+    }
+});
+
+async function renderDemoReturns() {
+    const data = await customerApi("/demo/returns");
+    const frag = document.createDocumentFragment();
+    if (!data.returns.length) {
+        frag.appendChild(makeCustomerText("p", "Henüz demo iade talebi yok."));
+    }
+    for (const item of data.returns) {
+        const card = document.createElement("article");
+        card.className = "customer-mini-card";
+        card.appendChild(makeCustomerText("strong",
+            "Demo iade #" + item.id + " · " + item.order_code));
+        card.appendChild(makeCustomerText("small",
+            "Durum: " + returnState(item.status) + " · Neden: " + item.reason));
+        card.appendChild(createStatusSelector(item.status, RETURN_STATUSES,
+            async (newStatus) => {
+                await customerApi("/demo/returns/" + item.id, {
+                    method: "PATCH", body: JSON.stringify({status: newStatus})
+                });
+                await renderDemoReturns();
+            }));
+        frag.appendChild(card);
+    }
+    demoReturns.replaceChildren(frag);
+}
+
+loadDemoReturnsButton.addEventListener("click", () =>
+    renderDemoReturns().catch((error) => {
+        demoOrderMessage.textContent = error.message;
+    })
+);
