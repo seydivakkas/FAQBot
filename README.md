@@ -19,6 +19,18 @@
 
 **Kritik:** Bu metinler özgün bir *model destekli proje taslağıdır*. Henüz insan tarafından semantik ve özgünlük kontrolü yapılmadı. Negatifler ve yanıtsızlık örnekleri onaylı sayılmaz; oluşturulan manifestte `commercial_training_approved=false`, `rights_review_complete=false`. Önceki demo modelleriyle otomatik eğitim kaldırıldı; gerçek model yarışması ve ticari kabul **HOLD**.
 
+## D03-02 — İnsan yerine açıkça AI değerlendirmesi
+
+Kullanıcının kararıyla, bağımsız insan etiketi beklemeden 96 niyetin tamamı AI tarafından araştırma kullanımı yönünden gözden geçirildi. 11 ifade düzeltmesi, 28 olası zor negatif / 20 sıradan negatif ayrımı ve 22 yanıtsızlık / 2 gerçekdışı soru dışlaması kaydedildi.
+
+- [AI kararlarının gerekçeleri ve sınırları](docs/faqvec_d03_02_ai_inceleme_kararlari.md)
+- [Sabit kaynak SHA kontrolü, düzeltilmiş kurgusal veri ve AI kayıtlarını hazırlama](scripts/faqvec_d03_ai_review.py)
+- `.venv\Scripts\python.exe -m scripts.faqvec_d03_ai_review --check-only`
+- `.venv\Scripts\python.exe -m scripts.faqvec_d03_ai_review --output-dir datasets/faqvec_ai_review_v02`
+- Araştırma için yerel E5 eğitim betiği `--ai-owned-research` seçeneğini destekler; **henüz gerçek ağırlıklarla çalıştırılmadı**.
+
+**AI incelemesi bağımsız insan değerlendirmesi değildir. Ticari yayın, bağımsız müşteri sorusu testi ve gerçek model performansı HOLD.** Veri kaynağı kuralı: yalnız proje için özgün üretilmiş metinler veya kökeni doğrulanmış gerçek CC0.
+
 # FAQBot — Türkçe E-Ticaret SSS Chatbotu
 
 ![Python CI](https://github.com/seydivakkas/FAQBot/actions/workflows/ci.yml/badge.svg)
