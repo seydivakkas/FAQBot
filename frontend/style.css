@@ -266,3 +266,6 @@ body.faq-open{overflow:hidden}
 .shipment-timeline li strong,.shipment-timeline li small{display:block}
 .shipment-timeline li small{color:#697f98;margin-top:2px;font-size:11px}
 .customer-mini-card>button{align-self:flex-start;font-size:11px}
+
+/* P1/P2 hidden sözleşmesi */
+[hidden]{display:none!important}
