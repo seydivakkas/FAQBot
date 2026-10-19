@@ -29,6 +29,14 @@ jobs:
         run: python -m scripts.build_faqvec_original --check-only
       - name: D03-02 yapay zekâ inceleme kayıtlarının kaynak doğrulaması
         run: python -m scripts.faqvec_d03_ai_review --check-only
+      - name: D04 gerçek TF-IDF araştırma ölçümü (sıfır model indirme)
+        run: python -m scripts.faqvec_d04_real_benchmark --ai-owned-research --latency-samples 6 --output "${{ runner.temp }}/faqvec_d04_tfidf.json"
+      - name: D04 ölçüm raporu - dış model ağırlıkları olmadan
+        uses: actions/upload-artifact@v4
+        with:
+          name: faqvec-d04-tfidf-measured
+          path: ${{ runner.temp }}/faqvec_d04_tfidf.json
+          retention-days: 30
       - name: Comparison demo
         run: python -m scripts.compare
 
