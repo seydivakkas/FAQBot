@@ -19,6 +19,18 @@
 
 **Kritik:** Bu metinler özgün bir *model destekli proje taslağıdır*. Henüz insan tarafından semantik ve özgünlük kontrolü yapılmadı. Negatifler ve yanıtsızlık örnekleri onaylı sayılmaz; oluşturulan manifestte `commercial_training_approved=false`, `rights_review_complete=false`. Önceki demo modelleriyle otomatik eğitim kaldırıldı; gerçek model yarışması ve ticari kabul **HOLD**.
 
+## D04 — Gerçek E5 ince ayarı ve rakip modellerle araştırma ölçümü
+
+- [Gerçek model yarışının iş akışı](https://github.com/seydivakkas/FAQBot/actions/workflows/faqvec-d04-real-models.yml)
+- [D04 mühendislik ve yeniden üretim belgesi](docs/FAQVEC_D04_GERCEK_MODEL_YARISI.md)
+- [Güvenli MIT/Apache model ağırlıkları indirme](scripts/download_faqvec_model_weights.py)
+- [Gerçek TF-IDF ve yerel E5/FAQVec/MiniLM/BGE-M3 ölçüm aracı](scripts/faqvec_d04_real_benchmark.py)
+- [Windows RTX için toplu PowerShell](run_faqvec_d04_windows.ps1)
+
+**Gerçek araştırma kaydı:** MIT E5-base model ağırlıkları indirilerek 74 özgün train niyeti üzerinde **1 epoch / 37 eğitim adımı**, 29,89 sn gerçek fine-tune çalıştırıldı. Bu eğitim sonucu ticari kabul değildir. TF-IDF ilk testinde 96 soruluk galeri, 24 test pozitif ve 11 OOS kullanıldı; Recall@1 (eşik öncesi) **%20,83** olarak ölçüldü. Diğer embedding modellerinin tam kıyaslaması yalnız biten gerçek koşunun sayılarıyla yayımlanır.
+
+**Veri politikası:** Üçüncü taraf soru korpusu yok; yalnız kendi özgün proje metinleri. Model ağırlıklarının ilk indirmesi açık onayla, model çıkarımı ve eğitim çevrimdışı. AI etiketi ile bağımsız insan etiketi aynı değildir. TİCARİ_YAYIN_HOLD.
+
 ## D03-02 — İnsan yerine açıkça AI değerlendirmesi
 
 Kullanıcının kararıyla, bağımsız insan etiketi beklemeden 96 niyetin tamamı AI tarafından araştırma kullanımı yönünden gözden geçirildi. 11 ifade düzeltmesi, 28 olası zor negatif / 20 sıradan negatif ayrımı ve 22 yanıtsızlık / 2 gerçekdışı soru dışlaması kaydedildi.
