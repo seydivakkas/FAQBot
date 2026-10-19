@@ -1317,7 +1317,7 @@ function showAnswerTools(bubble, data, question) {
     actions.className = "answer-tools";
     if (Array.isArray(data.suggestions) && data.suggestions.length) {
         const title = makeCustomerText("small",
-            "Diğer ilgili SSS önerileri (otomatik yanıt değildir):", "tool-notice");
+            "BUNU MU DEMEK İSTEDİNİZ?", "tool-notice");
         actions.appendChild(title);
         for (const item of data.suggestions) {
             const button = document.createElement("button");
@@ -1333,11 +1333,13 @@ function showAnswerTools(bubble, data, question) {
     controls.className = "answer-actions";
     const helpful = makeCustomerText("span", "Bu yanıt faydalı mı?");
     controls.appendChild(helpful);
-    for (const [good, label] of [[true, "Evet"], [false, "Hayır"]]) {
+    for (const [good, label, accessible] of [[true, "👍 Like", "Beğendim"], [false, "👎 Dislike", "Beğenmedim"]]) {
         const button = document.createElement("button");
         button.type = "button";
         button.textContent = label;
         button.className = "answer-action-button";
+        button.setAttribute("aria-label", accessible);
+        button.setAttribute("title", accessible);
         button.addEventListener("click", async () => {
             for (const b of controls.querySelectorAll("button")) b.disabled = true;
             try {
@@ -1425,8 +1427,7 @@ async function renderSupportTickets() {
     for (const item of data.tickets) {
         const card = document.createElement("article");
         card.className = "customer-mini-card";
-        card.appendChild(makeCustomerText("strong", "TKT-" +
-            String(item.id).padStart(6, "0") + " · " + item.subject));
+        card.appendChild(makeCustomerText("strong", item.ticket_code + " · " + item.subject));
         card.appendChild(makeCustomerText("small",
             "Durum: " + ticketState(item.status) + " · Oluşturulma: " +
             item.created_at.slice(0, 16).replace("T", " ") + " (UTC)"));
@@ -1465,9 +1466,8 @@ supportForm.addEventListener("submit", async (event) => {
                 detail: supportDetail.value.trim()
             })
         });
-        supportMessage.textContent = "Yerel talep oluşturuldu: TKT-" +
-            String(saved.id).padStart(6, "0") +
-            ". Gerçek destek ekibine gönderilmedi.";
+        supportMessage.textContent = "Yerel destek bileti oluşturuldu: " +
+            saved.ticket_code + ". Gerçek destek ekibine gönderilmedi.";
         supportForm.reset();
         await renderSupportTickets();
     } catch (error) {
@@ -1507,13 +1507,41 @@ demoOrderForm.addEventListener("submit", async (event) => {
         card.appendChild(makeCustomerText("p",
             "Sipariş: " + (orderLabels[data.status] || data.status) +
             " · Kargo: " + (shipmentLabels[data.shipment] || data.shipment)));
+        const metadata = data.shipment_metadata;
+        const tracking = makeCustomerText("p",
+            "Sipariş kodu: " + data.order_metadata.order_code +
+            " · Ürün: " + data.order_metadata.product_code +
+            " · Kargo takip: " + metadata.tracking_id);
+        tracking.className = "customer-shipment-meta";
+        card.appendChild(tracking);
+        card.appendChild(makeCustomerText("small",
+            "Taşıyıcı: " + metadata.carrier + " · Son olay: " +
+            metadata.last_updated_at.replace("T", " ").slice(0, 16) + " UTC"));
+        const header = makeCustomerText("strong", "Kargo zaman çizelgesi");
+        card.appendChild(header);
         const list = document.createElement("ol");
+        list.className = "shipment-timeline";
         for (const ev of data.events) {
-            list.appendChild(makeCustomerText("li", ev.label));
+            if (ev.order_code !== data.code ||
+                    ev.tracking_id !== metadata.tracking_id) {
+                throw new Error("Sipariş ve kargo metadatası eşleşmiyor.");
+            }
+            const event = document.createElement("li");
+            event.appendChild(makeCustomerText("strong", ev.label));
+            event.appendChild(makeCustomerText("small",
+                ev.occurred_at.replace("T", " ").slice(0, 16) +
+                " UTC · " + ev.event_id));
+            list.appendChild(event);
         }
         card.appendChild(list);
+        if (data.return_request) {
+            card.appendChild(makeCustomerText("p",
+                "Bu siparişe bağlı iade talebi #" + data.return_request.id +
+                " · " + returnState(data.return_request.status)));
+        }
         demoOrderResult.replaceChildren(card);
-        demoReturnForm.hidden = data.status !== "delivered";
+        demoReturnForm.hidden = data.status !== "delivered" ||
+            Boolean(data.return_request);
     } catch (error) {
         demoOrderMessage.textContent = error.message;
     }
@@ -1531,9 +1559,15 @@ demoReturnForm.addEventListener("submit", async (event) => {
                 reason: demoReturnReason.value
             })
         });
-        demoOrderMessage.textContent = "Kurgusal iade #" + row.id +
-            " oluşturuldu. Durum: " + returnState(row.status) + ".";
+        if (!row.order_ref || row.order_ref.order_code !== demoOrderCode.value) {
+            throw new Error("İade ile sipariş referansı eşleşmedi.");
+        }
+        demoOrderMessage.textContent = row.return_code +
+            " oluşturuldu. Sipariş: " + row.order_ref.order_code +
+            " · Durum: " + returnState(row.status) + ".";
+        demoReturnForm.hidden = true;
         await renderDemoReturns();
+        demoOrderForm.requestSubmit();
     } catch (error) {
         demoOrderMessage.textContent = error.message;
     } finally {
@@ -1551,9 +1585,12 @@ async function renderDemoReturns() {
         const card = document.createElement("article");
         card.className = "customer-mini-card";
         card.appendChild(makeCustomerText("strong",
-            "Demo iade #" + item.id + " · " + item.order_code));
+            item.return_code + " · " + item.order_ref.product));
         card.appendChild(makeCustomerText("small",
-            "Durum: " + returnState(item.status) + " · Neden: " + item.reason));
+            "Sipariş: " + item.order_ref.order_code +
+            " · Kargo takip: " + item.order_ref.tracking_id +
+            " · Durum: " + returnState(item.status) +
+            " · Neden: " + item.reason));
         if (Array.isArray(item.history)) {
             const history = document.createElement("ol");
             history.className = "customer-history";
@@ -1564,6 +1601,15 @@ async function renderDemoReturns() {
             }
             card.appendChild(history);
         }
+        const viewOrder = document.createElement("button");
+        viewOrder.type = "button";
+        viewOrder.className = "settings-secondary";
+        viewOrder.textContent = "Bağlı siparişi göster";
+        viewOrder.addEventListener("click", () => {
+            demoOrderCode.value = item.order_ref.order_code;
+            demoOrderForm.requestSubmit();
+        });
+        card.appendChild(viewOrder);
         card.appendChild(createStatusSelector(item.status, RETURN_STATUSES,
             async (newStatus) => {
                 await customerApi("/demo/returns/" + item.id, {
