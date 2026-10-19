@@ -1,3 +1,7 @@
+# FAQBot — Veri kökenine ilişkin kesin kullanıcı kararı
+
+**Eğitim verisi için kesin kural: sadece kendi ürettiğimiz özgün veri veya kökeni bağımsız doğrulanmış gerçek CC0/kamu malı veri.** Üçüncü taraf veri kümesinin Apache-2.0/MIT beyanı bu koşulu tek başına karşılamaz. Eski D01/D02 üçüncü taraf veri indirme hatları devre dışıdır; model eğitimine alınmayacaktır. Geçmiş raporlar yalnız tarihî denetim kayıtlarıdır. [Bağlayıcı veri politikası](docs/VERI_KAYNAGI_KESIN_POLITIKA.md).
+
 # FAQBot — Türkçe E-Ticaret SSS Chatbotu
 
 ![Python CI](https://github.com/seydivakkas/FAQBot/actions/workflows/ci.yml/badge.svg)
