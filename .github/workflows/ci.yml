@@ -29,6 +29,21 @@ jobs:
         run: python -m scripts.build_faqvec_original --check-only
       - name: D03-02 yapay zekâ inceleme kayıtlarının kaynak doğrulaması
         run: python -m scripts.faqvec_d03_ai_review --check-only
+      - name: D05 Windows özgün eğitim ve güvenlik denetimi
+        run: |
+          python -m scripts.faqvec_d05_owned_data
+          python -m scripts.faqvec_d05_safety_slices
+      - name: D05 Windows PowerShell betiği sözdizimi
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $pwd 'run_faqvec_d05_windows.ps1'),[ref]$tokens,[ref]$parseErrors) | Out-Null
+          if ($parseErrors.Count -gt 0) {
+            $parseErrors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
       - name: D04 gerçek TF-IDF araştırma ölçümü (sıfır model indirme)
         run: python -m scripts.faqvec_d04_real_benchmark --ai-owned-research --latency-samples 6 --output "${{ runner.temp }}/faqvec_d04_tfidf.json"
       - name: D04 ölçüm raporu - dış model ağırlıkları olmadan
@@ -37,6 +52,12 @@ jobs:
           name: faqvec-d04-tfidf-measured
           path: ${{ runner.temp }}/faqvec_d04_tfidf.json
           retention-days: 30
+      - name: D05 özgün 24 eğitim niyeti ve 196 çift kontrolü
+        run: python -m scripts.faqvec_d05_owned_data
+      - name: D05 cevap-yok güvenlik dilimlerini doğrula
+        run: python -m scripts.faqvec_d05_safety_slices
+      - name: D05 güvenlik politikası TF-IDF canlı raporu (model indirme yok)
+        run: python -m scripts.faqvec_d05_real_benchmark --ai-owned-research --latency-samples 4 --output "${{ runner.temp }}/faqvec_d05_tfidf.json"
       - name: Comparison demo
         run: python -m scripts.compare
 
