@@ -512,7 +512,7 @@ class SupportStateInput(BaseModel):
 
 class FeedbackInput(BaseModel):
     faq_id: int | None = Field(default=None, gt=0)
-    helpful: bool
+    helpful: bool = Field(strict=True)
 
 
 @app.post("/support/tickets", status_code=status.HTTP_201_CREATED)
