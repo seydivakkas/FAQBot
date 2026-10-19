@@ -1,0 +1,1449 @@
+{
+  "schema_version": 1,
+  "title": "FAQVec-TR özgün sentetik Türkçe müşteri destek taslağı",
+  "origin_kind": "project_authored_draft",
+  "commercial_training_approved": false,
+  "schema_note": "Bu örnekler dış korpustan alınmadı; sıfırdan bu projeye yazıldı. Bağımsız insan ve hak kontrolü yapılmadı.",
+  "records": [
+    {
+      "intent_id": "siparis-01",
+      "domain": "siparis",
+      "family_id": "siparis-grup-1",
+      "question": "Siparişimin sisteme kaydedilip kaydedilmediğini nasıl anlarım?",
+      "alternatives": [
+        "Sipariş oluşturduğumdan nasıl emin olurum?",
+        "Siparişim kayıtlı mı kontrol edebilir miyim?"
+      ],
+      "answer": "Siparişler ekranında bir kayıt ve sipariş numarası görünüyorsa işlem kaydedilmiştir; görünmüyorsa ödeme ve hesap hareketlerini kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-02",
+      "domain": "siparis",
+      "family_id": "siparis-grup-1",
+      "question": "Sipariş onayı mesajı gelmediyse ne yapmalıyım?",
+      "alternatives": [
+        "Sipariş verdim ama onay e-postası gelmedi, ne yapacağım?",
+        "Sipariş bildirimini bulamazsam nasıl doğrularım?"
+      ],
+      "answer": "Önce spam klasörünü ve siparişler ekranını kontrol edin; kayıt mevcutsa onay iletisi için destek talebi oluşturun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-03",
+      "domain": "siparis",
+      "family_id": "siparis-grup-2",
+      "question": "Henüz hazırlanmayan siparişimi iptal edebilir miyim?",
+      "alternatives": [
+        "Paketlenmemiş siparişi nasıl iptal ettirebilirim?",
+        "Ürün yola çıkmadan siparişten vazgeçebilir miyim?"
+      ],
+      "answer": "Sipariş ayrıntılarında iptal seçeneği görünüyorsa talep oluşturun; işlem yapılabilirliği sipariş durumuna bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-04",
+      "domain": "siparis",
+      "family_id": "siparis-grup-2",
+      "question": "Siparişimdeki ürün sayısını değiştirebilir miyim?",
+      "alternatives": [
+        "Verdiğim siparişte adedi artırabilir miyim?",
+        "Sipariş miktarını sonradan azaltmanın yolu var mı?"
+      ],
+      "answer": "Sipariş henüz işlenmediyse değişiklik talebi açın; işleme alındıysa ayrı sipariş veya iptal süreci gerekebilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-05",
+      "domain": "siparis",
+      "family_id": "siparis-grup-3",
+      "question": "Sipariş numaramı nereden bulabilirim?",
+      "alternatives": [
+        "Sipariş referans kodu hangi ekranda?",
+        "Kayıtlı siparişimin numarasına nasıl ulaşırım?"
+      ],
+      "answer": "Siparişlerim bölümündeki ayrıntı kartında sipariş referansını arayın; bulamazsanız destek kaydında tarih bilgisini paylaşın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-06",
+      "domain": "siparis",
+      "family_id": "siparis-grup-3",
+      "question": "Siparişlerim listesinde eski alışverişim görünmüyor, neden?",
+      "alternatives": [
+        "Önceki siparişim neden hesabımda yok?",
+        "Eski alışveriş kaydım listeden kayboldu, ne yapmalıyım?"
+      ],
+      "answer": "Doğru hesapta oturum açtığınızı ve filtreleri kontrol edin; kayıt bulunmuyorsa sipariş referansı ile inceleme isteyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-07",
+      "domain": "siparis",
+      "family_id": "siparis-grup-4",
+      "question": "Yanlışlıkla iki kez sipariş verdim, nasıl düzeltebilirim?",
+      "alternatives": [
+        "Aynı üründen mükerrer sipariş açtım, ne yapayım?",
+        "Çift siparişimi nasıl fark edip iptal edebilirim?"
+      ],
+      "answer": "İki ayrı sipariş numarası olup olmadığını kontrol edin; mükerrer olan için uygun durumda iptal talebi oluşturun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "siparis-08",
+      "domain": "siparis",
+      "family_id": "siparis-grup-4",
+      "question": "Misafir olarak verdiğim siparişi nasıl görebilirim?",
+      "alternatives": [
+        "Hesap açmadan yaptığım alışverişi nereden takip ederim?",
+        "Üye olmadan sipariş detaylarını nasıl öğrenirim?"
+      ],
+      "answer": "Sipariş referansı ve sipariş sırasında verdiğiniz iletişim bilgisini kullanarak misafir sipariş sorgusunu veya desteği deneyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-01",
+      "domain": "kargo",
+      "family_id": "kargo-grup-1",
+      "question": "Paketimin güncel konumunu nasıl öğrenirim?",
+      "alternatives": [
+        "Kargom şu anda nerede görünüyor?",
+        "Gönderimin hangi aşamada olduğunu nasıl izleyebilirim?"
+      ],
+      "answer": "Gönderi takip bağlantısı veya takip kodu varsa taşıyıcı durumunu kontrol edin; henüz kod oluşmadıysa sipariş hazırlığında olabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-02",
+      "domain": "kargo",
+      "family_id": "kargo-grup-1",
+      "question": "Kargo takip numarası henüz neden oluşmadı?",
+      "alternatives": [
+        "Takip kodum neden boş görünüyor?",
+        "Kargo kodu ne zaman sisteme eklenir?"
+      ],
+      "answer": "Takip kodu çoğu süreçte gönderi taşıyıcıya devredildikten sonra oluşur; kesin zaman sipariş durumundan doğrulanmalıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-03",
+      "domain": "kargo",
+      "family_id": "kargo-grup-2",
+      "question": "Gönderim teslim edildi görünüyor ama elime ulaşmadı, ne yapayım?",
+      "alternatives": [
+        "Teslim edildi yazan kargoyu almadım, nasıl bildireyim?",
+        "Kargo teslim edilmiş görünüyor ama paket yok, ne yapmalıyım?"
+      ],
+      "answer": "Teslim alan ve teslimat yeri bilgilerini kontrol edin; bulamazsanız teslimat itirazı kaydı açın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-04",
+      "domain": "kargo",
+      "family_id": "kargo-grup-2",
+      "question": "Kargo geciktiğinde nasıl destek kaydı açarım?",
+      "alternatives": [
+        "Teslimat tarihi geçti, nereye başvuracağım?",
+        "Kargom tahminden daha geç geliyor, nasıl şikâyet oluştururum?"
+      ],
+      "answer": "Sipariş ve takip koduyla gecikme kaydı açın; güncel tahmini tarih için taşıyıcı bilgisini esas alın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-05",
+      "domain": "kargo",
+      "family_id": "kargo-grup-3",
+      "question": "Gönderim kargoya çıktıktan sonra teslimat adresini değiştirebilir miyim?",
+      "alternatives": [
+        "Yola çıkan kargonun adresini düzenlemek mümkün mü?",
+        "Dağıtımdayken farklı adrese teslim isteyebilir miyim?"
+      ],
+      "answer": "Gönderi taşıyıcıya aktarıldıysa adres değişikliği taşıyıcının hizmetlerine bağlıdır; takip ekranından talep seçeneklerini kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-06",
+      "domain": "kargo",
+      "family_id": "kargo-grup-3",
+      "question": "Dağıtıcı kurye ile nasıl iletişime geçebilirim?",
+      "alternatives": [
+        "Paketi getiren görevliye mesaj atabilir miyim?",
+        "Teslimatı yapan kurye ile görüşmenin yolu var mı?"
+      ],
+      "answer": "Kurye iletişim seçeneği taşıyıcı tarafından sağlanıyorsa takip sayfasında gösterilir; yoksa taşıyıcı destek kanalını kullanın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-07",
+      "domain": "kargo",
+      "family_id": "kargo-grup-4",
+      "question": "Bir siparişim neden birden fazla kargoyla geliyor?",
+      "alternatives": [
+        "Ürünlerim ayrı paketlere bölünmüş, nedeni ne?",
+        "Tek siparişimin farklı takip kodları olması normal mi?"
+      ],
+      "answer": "Ürünler farklı hazırlık noktalarından veya zamanlarda sevk edilebilir; her paketin takip numarasını ayrı kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kargo-08",
+      "domain": "kargo",
+      "family_id": "kargo-grup-4",
+      "question": "Kargo paketim yolda zarar görmüşse ne yapmalıyım?",
+      "alternatives": [
+        "Hasarlı teslimat kutusunu nasıl bildirebilirim?",
+        "Ezilmiş paket tesliminde hangi işlem yapılır?"
+      ],
+      "answer": "Dış ambalaj ve ürünün fotoğraflarını saklayın; taşıyıcının hasar bildirimine ve satıcının destek sürecine başvurun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-01",
+      "domain": "iade",
+      "family_id": "iade-grup-1",
+      "question": "Ürünü geri göndermek için nereden talep oluştururum?",
+      "alternatives": [
+        "İade başvurusunu hangi ekrandan açabilirim?",
+        "Aldığım ürünü geri verme sürecini nasıl başlatırım?"
+      ],
+      "answer": "Sipariş ayrıntılarında varsa iade başlat seçeneğini açın; ilgili ürün ve gerekçeyi seçerek başvurun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-02",
+      "domain": "iade",
+      "family_id": "iade-grup-1",
+      "question": "İade başvurusunun son tarihini nasıl öğrenebilirim?",
+      "alternatives": [
+        "İade talebini en geç ne zaman verebilirim?",
+        "Ürün için iade süresini nereden kontrol edeceğim?"
+      ],
+      "answer": "Ürün türü, sipariş tarihi ve geçerli sözleşme/kurallara göre süre değişebilir; siparişin iade bilgilendirmesini kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-03",
+      "domain": "iade",
+      "family_id": "iade-grup-2",
+      "question": "İade kargo etiketi nereden alınır?",
+      "alternatives": [
+        "Geri göndermek için kargo barkodunu nerede bulurum?",
+        "İade gönderim kodumu nasıl çıkarabilirim?"
+      ],
+      "answer": "Onaylı iade talebinin ayrıntı sayfasında varsa gönderim etiketi veya kodunu görüntüleyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-04",
+      "domain": "iade",
+      "family_id": "iade-grup-2",
+      "question": "İade paketini hangi kargo firmasına teslim etmeliyim?",
+      "alternatives": [
+        "İade ürünü hangi taşıyıcıya bırakacağım?",
+        "Geri gönderimde hangi kargoyu kullanmam gerekiyor?"
+      ],
+      "answer": "İade talebinin yönlendirdiği gönderim kanalını kullanın; anlaşmalı taşıyıcı seçeneği yoksa destekten yöntem öğrenin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-05",
+      "domain": "iade",
+      "family_id": "iade-grup-3",
+      "question": "İade ettiğim ürünün ücretini nasıl takip ederim?",
+      "alternatives": [
+        "Geri ödeme hangi aşamada görünüyor?",
+        "İade tutarımın durumunu nerede görebilirim?"
+      ],
+      "answer": "İade kaydının ödeme durumunu kontrol edin; bankaya yansıma süresi ödeme yöntemine bağlı olabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-06",
+      "domain": "iade",
+      "family_id": "iade-grup-3",
+      "question": "İade ücretim onaylandığı hâlde hesabımda görünmüyor, ne yapmalıyım?",
+      "alternatives": [
+        "İade tamamlandı yazıyor ama para gelmedi, nereye sorayım?",
+        "Geri ödeme banka hesabıma düşmediyse nasıl kontrol ederim?"
+      ],
+      "answer": "Ödeme hareketleri ve iade işlem referansını kontrol edin; gecikme sürüyorsa ödeme kuruluşu ve destekle görüşün.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-07",
+      "domain": "iade",
+      "family_id": "iade-grup-4",
+      "question": "Paketini açtığım ürünü iade edebilir miyim?",
+      "alternatives": [
+        "Ambalajı açılmış ürün için iade mümkün mü?",
+        "Kutusunu açtığım ürünü geri vermek istiyorum, olur mu?"
+      ],
+      "answer": "Uygunluk ürünün türüne, durumuna ve ilgili iade koşullarına bağlıdır; talep ekranındaki açıklamaları esas alın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "iade-08",
+      "domain": "iade",
+      "family_id": "iade-grup-4",
+      "question": "İade başvurumu yanlış ürün için açtım, nasıl değiştiririm?",
+      "alternatives": [
+        "İade talebinde yanlış ürünü seçtim, ne yapacağım?",
+        "Hatalı iade kaydını nasıl düzeltebilirim?"
+      ],
+      "answer": "Talep düzenleme veya iptal seçeneğini kontrol edin; yoksa destek aracılığıyla düzeltme isteyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-01",
+      "domain": "degisim",
+      "family_id": "degisim-grup-1",
+      "question": "Aldığım ürünün bedenini değiştirebilir miyim?",
+      "alternatives": [
+        "Yanlış beden geldi, bir büyük bedene çevirebilir miyim?",
+        "Beden değişimi isteğini nereden oluştururum?"
+      ],
+      "answer": "Değişim seçeneği sunuluyorsa sipariş ayrıntısından beden tercihinizi belirtin; stok durumunu kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-02",
+      "domain": "degisim",
+      "family_id": "degisim-grup-1",
+      "question": "Ürünün rengini başka bir renkle değiştirmek istiyorum, nasıl olur?",
+      "alternatives": [
+        "Satın aldığım ürünün farklı rengine geçebilir miyim?",
+        "Renk değişimi başvurusunu nasıl açarım?"
+      ],
+      "answer": "Değişim talebinde istenen rengi seçin; mevcut seçenekler ve stokla sınırlı olabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-03",
+      "domain": "degisim",
+      "family_id": "degisim-grup-2",
+      "question": "Değişim istediğim yeni ürün stokta yoksa ne olur?",
+      "alternatives": [
+        "Beden değişiminde istediğim beden tükenmiş, ne yapayım?",
+        "Değişim ürünü bulunmuyor, alternatifim var mı?"
+      ],
+      "answer": "Stokta olmayan seçenekler için bekleme, başka ürün veya iade seçenekleri ilgili işletmenin koşullarına göre değerlendirilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-04",
+      "domain": "degisim",
+      "family_id": "degisim-grup-2",
+      "question": "Değişim sırasında kargo ücretini kim öder?",
+      "alternatives": [
+        "Ürün değiştirme kargosu ücretli mi?",
+        "Değişim gönderiminde taşıma masrafı olacak mı?"
+      ],
+      "answer": "Değişim nedeni ve işlem koşullarına göre ücretlendirme farklı olabilir; talep adımındaki ücret bilgisini kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-05",
+      "domain": "degisim",
+      "family_id": "degisim-grup-3",
+      "question": "Değişim talebimin hangi aşamada olduğunu nasıl görürüm?",
+      "alternatives": [
+        "Beden değiştirme başvurumun durumuna nereden bakarım?",
+        "Değişim işleminin ilerleyişini takip edebilir miyim?"
+      ],
+      "answer": "Talep numaranızın bulunduğu değişim ekranında işlem adımlarını kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-06",
+      "domain": "degisim",
+      "family_id": "degisim-grup-3",
+      "question": "Yanlış ürün teslim edildiğinde değişim talebini nasıl açarım?",
+      "alternatives": [
+        "Sipariş etmediğim ürün geldi, doğru ürünle nasıl değiştiririm?",
+        "Kutudan farklı ürün çıktı, ne yapmalıyım?"
+      ],
+      "answer": "Gönderi ve ürün fotoğraflarını saklayın; yanlış ürün seçeneğiyle destek veya değişim kaydı açın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-07",
+      "domain": "degisim",
+      "family_id": "degisim-grup-4",
+      "question": "Üründe üretim kusuru fark ettim, hangi değişim yolunu izleyeyim?",
+      "alternatives": [
+        "Bozuk teslim edilen ürünü değiştirmek için ne yapmalıyım?",
+        "Arızalı çıkan ürün için değişim sürecini nasıl başlatırım?"
+      ],
+      "answer": "Kusuru açıklayan kayıt ve mümkünse görsel hazırlayın; ayıplı ürün değerlendirmesi için destek kanalına başvurun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "degisim-08",
+      "domain": "degisim",
+      "family_id": "degisim-grup-4",
+      "question": "Değişim talebini geri çekebilir miyim?",
+      "alternatives": [
+        "Açtığım değişim başvurusundan nasıl vazgeçebilirim?",
+        "Değişim isteğimi iptal etmek istiyorum, ne yapmalıyım?"
+      ],
+      "answer": "Talep iptal seçeneğini kontrol edin; ürün işleme alındıysa destek üzerinden değerlendirme gerekebilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-01",
+      "domain": "odeme",
+      "family_id": "odeme-grup-1",
+      "question": "Ödeme sırasında hata alırsam nasıl yeniden deneyebilirim?",
+      "alternatives": [
+        "Kartla ödeme başarısız oldu, nasıl çözebilirim?",
+        "Ödeme ekranı işlemi reddetti, ne yapacağım?"
+      ],
+      "answer": "Tekrar denemeden önce sipariş oluşup oluşmadığını ve banka hareketlerini kontrol edin; sonra uygun bir ödeme yöntemi kullanın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-02",
+      "domain": "odeme",
+      "family_id": "odeme-grup-1",
+      "question": "Hesabımdan iki ödeme çekildiyse ne yapmalıyım?",
+      "alternatives": [
+        "Aynı sipariş için iki kez ücret alındı, nasıl bildireyim?",
+        "Mükerrer kart çekimini nasıl çözebilirim?"
+      ],
+      "answer": "İşlem tarihleri ve referanslarını karşılaştırın; yinelenen tahsilat varsa ödeme incelemesi talebi oluşturun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-03",
+      "domain": "odeme",
+      "family_id": "odeme-grup-2",
+      "question": "Taksit seçeneklerini nerede görebilirim?",
+      "alternatives": [
+        "Siparişi kaç taksitle ödeyebileceğimi nasıl öğrenirim?",
+        "Kartım için taksit imkânı var mı nereden bakarım?"
+      ],
+      "answer": "Ödeme adımında sunulan seçenekleri kontrol edin; taksit koşulları kart ve satıcıya göre değişebilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-04",
+      "domain": "odeme",
+      "family_id": "odeme-grup-2",
+      "question": "Kartımda bekleyen provizyon ne anlama gelir?",
+      "alternatives": [
+        "Bankada görünen bloke tutar tahsilat mı?",
+        "Ödeme provizyonu bekliyor, bu normal mi?"
+      ],
+      "answer": "Bekleyen provizyon tamamlanmış tahsilat anlamına gelmeyebilir; banka hareketleri ile sipariş durumunu birlikte kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-05",
+      "domain": "odeme",
+      "family_id": "odeme-grup-3",
+      "question": "Banka havalesiyle ödeme yaptıysam sipariş ne zaman onaylanır?",
+      "alternatives": [
+        "EFT yaptıktan sonra ödeme kaydı neden bekliyor?",
+        "Transferle ödediğim sipariş hâlâ beklemede, ne yapmalıyım?"
+      ],
+      "answer": "Transfer açıklaması ve işlem referansını kontrol edin; muhasebeleştirme tamamlanmadıysa ödeme desteğine başvurun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-06",
+      "domain": "odeme",
+      "family_id": "odeme-grup-3",
+      "question": "Ödeme yöntemini siparişten sonra değiştirebilir miyim?",
+      "alternatives": [
+        "Kart yerine başka ödeme seçeneğine geçebilir miyim?",
+        "Mevcut siparişimin ödeme türünü düzenlemek istiyorum, olur mu?"
+      ],
+      "answer": "İşlem tamamlandıysa ödeme türü doğrudan değiştirilemeyebilir; sipariş durumuna göre alternatif işlem için destek alın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-07",
+      "domain": "odeme",
+      "family_id": "odeme-grup-4",
+      "question": "Kapıda ödeme seçeneği bulunuyor mu?",
+      "alternatives": [
+        "Ürünü teslim alırken ücret ödeyebilir miyim?",
+        "Siparişte kapıda ödeme kullanmak mümkün mü?"
+      ],
+      "answer": "Teslimatta ödeme seçeneği sunuluyorsa ödeme ekranında görünür; tüm ürün ve bölgelerde bulunmayabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "odeme-08",
+      "domain": "odeme",
+      "family_id": "odeme-grup-4",
+      "question": "Kart bilgilerimi hesabımdan nasıl silebilirim?",
+      "alternatives": [
+        "Kaydedilmiş ödeme kartımı kaldırmak istiyorum, nerede?",
+        "Eski banka kartımı kayıtlı kartlardan nasıl çıkarırım?"
+      ],
+      "answer": "Hesap ödeme yöntemleri bölümünde varsa kayıtlı kartı kaldırın; seçenek görünmüyorsa destekten bilgi alın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-01",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-1",
+      "question": "Yeni kullanıcı hesabını nasıl açabilirim?",
+      "alternatives": [
+        "Siteye üye olma işlemi nereden başlıyor?",
+        "Alışveriş hesabı oluşturmak için ne yapmalıyım?"
+      ],
+      "answer": "Kayıt ekranındaki gerekli alanları doldurun ve varsa doğrulama adımını tamamlayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-02",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-1",
+      "question": "E-posta doğrulama bağlantısı gelmediyse ne yapacağım?",
+      "alternatives": [
+        "Üyelik onay e-postasını alamıyorum, nasıl yeniden isterim?",
+        "Hesap doğrulama mesajı görünmüyor, ne yapmalıyım?"
+      ],
+      "answer": "Adresin doğruluğunu ve istenmeyen klasörünü kontrol edin; varsa yeni doğrulama bağlantısı isteyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-03",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-2",
+      "question": "Şifremi unuttum, yeniden nasıl belirlerim?",
+      "alternatives": [
+        "Giriş parolamı hatırlamıyorum, nasıl sıfırlarım?",
+        "Unuttuğum hesap şifresini nasıl yenileyebilirim?"
+      ],
+      "answer": "Şifre sıfırlama seçeneğini kullanın ve hesabınıza ait doğrulama kanalından işlemi tamamlayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-04",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-2",
+      "question": "Hesabımdaki telefon numarasını nasıl değiştirebilirim?",
+      "alternatives": [
+        "Profilimde kayıtlı cep telefonunu güncellemek istiyorum, nasıl?",
+        "Eski numaramı üyelik bilgilerinden nasıl çıkarırım?"
+      ],
+      "answer": "Profilin iletişim bilgileri alanını kontrol edin; doğrulama gerekirse yeni numarayla tamamlayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-05",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-3",
+      "question": "Üyelik e-posta adresimi değiştirebilir miyim?",
+      "alternatives": [
+        "Hesabımın bağlı olduğu mail adresini nereden düzenlerim?",
+        "Yeni e-posta adresini hesaba nasıl tanımlarım?"
+      ],
+      "answer": "Hesap ayarlarından adres değiştirme seçeneği varsa yeni e-postayı doğrulayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-06",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-3",
+      "question": "Hesabımı kalıcı olarak kapatmak istiyorum, nereden yaparım?",
+      "alternatives": [
+        "Üyeliği silmek için hangi adımları izlemeliyim?",
+        "Kullanıcı hesabımı sonlandırmanın yolu nedir?"
+      ],
+      "answer": "Hesap kapatma seçeneklerini inceleyin; saklanması zorunlu olabilecek işlem kayıtları için gizlilik bilgilendirmesini okuyun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-07",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-4",
+      "question": "Hesabımdaki diğer oturumları nasıl kapatırım?",
+      "alternatives": [
+        "Başka cihazlarda açık hesabımdan nasıl çıkış yaptırırım?",
+        "Tüm cihazlardan çıkış yapabilir miyim?"
+      ],
+      "answer": "Güvenlik ayarlarında varsa tüm oturumları sonlandırın; şüpheli girişte şifre değiştirin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "uyelik-08",
+      "domain": "uyelik",
+      "family_id": "uyelik-grup-4",
+      "question": "Doğru şifreyi girdiğim hâlde hesabıma neden giremiyorum?",
+      "alternatives": [
+        "Giriş denemem kabul edilmiyor, neyi kontrol edeyim?",
+        "Parolam doğru ama oturum açılmıyor, ne yapacağım?"
+      ],
+      "answer": "Hesap doğrulama, kilitlenme veya tarayıcı sorunlarını kontrol edin; sürerse güvenli destek yolunu kullanın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-01",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-1",
+      "question": "İndirim kodunu ödeme sırasında nereye yazmalıyım?",
+      "alternatives": [
+        "Kupon kodu hangi alana giriliyor?",
+        "Promosyon kodunu sepette nasıl kullanırım?"
+      ],
+      "answer": "Sepet veya ödeme ekranında sunulan kupon alanına kodu yazın; sistem uygulanan indirimi ayrı göstermelidir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-02",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-1",
+      "question": "İndirim kodum neden geçersiz görünüyor?",
+      "alternatives": [
+        "Kuponu kabul etmiyor, neyi kontrol etmeliyim?",
+        "Promosyon kodum çalışmıyor, sebebi ne olabilir?"
+      ],
+      "answer": "Kodun yazımı, geçerlilik tarihi, ürün uygunluğu ve minimum tutar koşullarını kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-03",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-2",
+      "question": "Bir siparişte iki indirim kodunu birlikte kullanabilir miyim?",
+      "alternatives": [
+        "İki kuponu aynı sepete eklemek mümkün mü?",
+        "Kampanyaları üst üste uygulayabilir miyim?"
+      ],
+      "answer": "Kampanyaların birlikte kullanılıp kullanılamayacağı kupon koşullarına bağlıdır; ödeme öncesi indirimi doğrulayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-04",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-2",
+      "question": "İndirim kuponumun süresi ne zaman bitiyor?",
+      "alternatives": [
+        "Promosyon kodunun son gününü nereden bulurum?",
+        "Kuponun son kullanma tarihi hangi yerde yazıyor?"
+      ],
+      "answer": "Kupon ayrıntısındaki geçerlilik tarihini ve saat sınırını kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-05",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-3",
+      "question": "Kampanya hangi ürünlerde geçerli?",
+      "alternatives": [
+        "İndirim kuponunu hangi ürünlere uygulayabilirim?",
+        "Promosyonun kapsadığı ürün listesini nerede görürüm?"
+      ],
+      "answer": "Kampanya koşullarında uygun ürün/kategori kapsamını kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-06",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-3",
+      "question": "Puan bakiyemi nereden görebilirim?",
+      "alternatives": [
+        "Alışveriş puanımın toplamı nerede yazar?",
+        "Sadakat puanlarımı hesapta nasıl bulurum?"
+      ],
+      "answer": "Program sunuluyorsa hesap içindeki puanlar veya ödüller bölümünü kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-07",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-4",
+      "question": "Hediye kodunu kullanınca kalan bakiye korunur mu?",
+      "alternatives": [
+        "Hediye çeki bakiyesi bölünerek kullanılabilir mi?",
+        "Hediye kartımın artan tutarını nasıl öğrenirim?"
+      ],
+      "answer": "Kalan bakiyenin kullanılabilirliği hediye kodu koşullarına bağlıdır; ödeme özeti ve bakiye alanını kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "kampanya-08",
+      "domain": "kampanya",
+      "family_id": "kampanya-grup-4",
+      "question": "Doğum günü indirimi neden hesabıma tanımlanmadı?",
+      "alternatives": [
+        "Doğum günü kuponum görünmüyor, ne yapmalıyım?",
+        "Hesabıma doğum günü kampanyası gelmedi, neden?"
+      ],
+      "answer": "Programın etkin olup olmadığını, katılım koşullarını ve hesap bildirim ayarlarını inceleyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-01",
+      "domain": "urun",
+      "family_id": "urun-grup-1",
+      "question": "Beğendiğim ürün yeniden stoğa ne zaman girer?",
+      "alternatives": [
+        "Tükenen ürün tekrar ne zaman satışa çıkar?",
+        "Stokta olmayan ürünün gelişini nasıl öğrenirim?"
+      ],
+      "answer": "Stok bildirimi seçeneği bulunuyorsa kullanın; kesin tedarik tarihi belirtilmediyse tahminde bulunmayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-02",
+      "domain": "urun",
+      "family_id": "urun-grup-1",
+      "question": "Ön sipariş ürününün gönderimi nasıl takip edilir?",
+      "alternatives": [
+        "Ön satıştaki ürün ne zaman yola çıkar?",
+        "Ön siparişimin sevk durumuna nasıl bakarım?"
+      ],
+      "answer": "Ön sipariş ayrıntısındaki planlanan tarih ve durum güncellemelerini kontrol edin; tarihler değişebilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-03",
+      "domain": "urun",
+      "family_id": "urun-grup-2",
+      "question": "Ürünün ölçülerini nereden öğrenebilirim?",
+      "alternatives": [
+        "Bir ürünün en-boy bilgisi nerede yazıyor?",
+        "Ürün fiziksel boyutlarına nasıl ulaşırım?"
+      ],
+      "answer": "Ürün ayrıntılarında ölçü ve teknik özellikler bölümünü kontrol edin; eksikse destekten bilgi isteyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-04",
+      "domain": "urun",
+      "family_id": "urun-grup-2",
+      "question": "Beden tablosunu nerede bulabilirim?",
+      "alternatives": [
+        "Kıyafet ölçü kılavuzu hangi sayfada?",
+        "Hangi bedenin uygun olacağını nasıl belirlerim?"
+      ],
+      "answer": "Ürün sayfasındaki beden tablosunu kendi ölçülerinizle karşılaştırın; marka ve kalıp farklı olabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-05",
+      "domain": "urun",
+      "family_id": "urun-grup-3",
+      "question": "Ürün kutusunda hangi parçalar bulunur?",
+      "alternatives": [
+        "Paket içeriğinde hangi aksesuarlar var?",
+        "Bu ürünle birlikte neler gönderiliyor?"
+      ],
+      "answer": "Ürün açıklamasındaki kutu içeriği listesini esas alın; belirtilmeyen aksesuarı varsaymayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-06",
+      "domain": "urun",
+      "family_id": "urun-grup-3",
+      "question": "Ürün kullanım kılavuzunu nasıl bulabilirim?",
+      "alternatives": [
+        "Cihazın kullanım talimatları nerede yer alıyor?",
+        "Ürüne ait rehberi nereden indirebilirim?"
+      ],
+      "answer": "Ürün sayfasındaki belgeler bölümünü kontrol edin; mevcut değilse model numarasıyla destekten kılavuz isteyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-07",
+      "domain": "urun",
+      "family_id": "urun-grup-4",
+      "question": "Ürün garantisinin kapsamını nereden öğrenirim?",
+      "alternatives": [
+        "Garanti neleri kapsıyor, nasıl kontrol ederim?",
+        "Satın alacağım ürünün garanti koşulları nerede yazıyor?"
+      ],
+      "answer": "Ürünle verilen garanti belgesi ve satıcı/üretici şartlarını inceleyin; kapsam ürüne göre değişir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "urun-08",
+      "domain": "urun",
+      "family_id": "urun-grup-4",
+      "question": "Aynı ürünün farklı renk seçenekleri var mı?",
+      "alternatives": [
+        "Ürünün başka renkleri nerede listeleniyor?",
+        "Bu model için renk alternatiflerini nasıl görürüm?"
+      ],
+      "answer": "Ürün ayrıntılarındaki varyant seçeneklerini ve her varyantın ayrı stok durumunu kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-01",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-1",
+      "question": "Siparişi bir teslim alma noktasından alabilir miyim?",
+      "alternatives": [
+        "Paketimi şubeden teslim almak mümkün mü?",
+        "Ev yerine teslimat noktası seçebilir miyim?"
+      ],
+      "answer": "Teslim alma noktası hizmeti sunuluyorsa ödeme veya takip ekranında uygun konumu seçin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-02",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-1",
+      "question": "Teslimat için belirli bir gün seçebilir miyim?",
+      "alternatives": [
+        "Paketimin geleceği tarihi ben belirleyebilir miyim?",
+        "İleri tarihli teslimatı nasıl ayarlarım?"
+      ],
+      "answer": "Tarih seçme özelliği varsa ödeme veya gönderi takip ekranında uygun zaman aralığını seçin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-03",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-2",
+      "question": "Temassız teslimat talep edebilir miyim?",
+      "alternatives": [
+        "Paketin kapıya bırakılmasını nasıl isterim?",
+        "Kurye ile temas etmeden teslim mümkün mü?"
+      ],
+      "answer": "Temassız teslimat seçeneği sunuluyorsa taşıyıcının yönergelerini izleyin; güvenli teslim koşullarını kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-04",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-2",
+      "question": "Bulunduğum ilçeye teslimat yapılıyor mu?",
+      "alternatives": [
+        "Yaşadığım bölgeye gönderim var mı nasıl anlarım?",
+        "Teslimat kapsamındaki şehirleri nereden kontrol ederim?"
+      ],
+      "answer": "Adres veya posta kodu sorgulamasından servis kapsamını kontrol edin; kesin uygunluk bölgeye bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-05",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-3",
+      "question": "Kargo ücretini sipariş öncesi nasıl öğrenirim?",
+      "alternatives": [
+        "Gönderim bedeli ödeme öncesi nerede yazar?",
+        "Teslimat masrafını nereden görebilirim?"
+      ],
+      "answer": "Teslimat adresini girdikten sonra sepet/ödeme özetindeki taşıma bedelini inceleyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-06",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-3",
+      "question": "Ücretsiz kargo için sepet tutarı sınırı var mı?",
+      "alternatives": [
+        "Kaç liralık siparişte kargo ücretsiz oluyor?",
+        "Kargo bedava koşulu nerede açıklanıyor?"
+      ],
+      "answer": "Varsa güncel ücretsiz gönderim koşullarını kampanya ve teslimat bilgilendirmesinde kontrol edin; sabit eşik varsaymayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-07",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-4",
+      "question": "Teslimat saat aralığı görüntülenebilir mi?",
+      "alternatives": [
+        "Kuryenin yaklaşık hangi saatlerde geleceğini nereden öğrenirim?",
+        "Paketim için zaman aralığı seçeneği var mı?"
+      ],
+      "answer": "Taşıyıcının takip sayfasında sunuluyorsa tahmini saat aralığını görüntüleyin; tahmin kesin saat değildir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "teslimat-08",
+      "domain": "teslimat",
+      "family_id": "teslimat-grup-4",
+      "question": "Adresimde kimse yokken teslimat denenirse ne olur?",
+      "alternatives": [
+        "Kargoyu evde olmadığım için alamazsam nasıl devam eder?",
+        "Başarısız teslimat girişiminden sonra paket nereye gider?"
+      ],
+      "answer": "Taşıyıcının teslim edilemedi bildirimini kontrol edin; yeni deneme veya teslim alma seçenekleri taşıyıcıya bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-01",
+      "domain": "destek",
+      "family_id": "destek-grup-1",
+      "question": "Müşteri destek kaydını nereden açabilirim?",
+      "alternatives": [
+        "Yardım talebi oluşturmak için hangi ekran kullanılır?",
+        "Bir sorun için destek bileti nasıl gönderilir?"
+      ],
+      "answer": "Yardım merkezinde talep oluştur seçeneğini kullanın; konuyu ve ilgili sipariş referansını ekleyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-02",
+      "domain": "destek",
+      "family_id": "destek-grup-1",
+      "question": "Açtığım destek talebinin durumunu nasıl görebilirim?",
+      "alternatives": [
+        "Destek biletimi hangi aşamada olduğunu nereden kontrol ederim?",
+        "Yardım başvurumun ilerleyişini nasıl takip ederim?"
+      ],
+      "answer": "Talep numarasıyla destek kayıtları bölümünden durumu görüntüleyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-03",
+      "domain": "destek",
+      "family_id": "destek-grup-2",
+      "question": "Destek talebim çözülemediyse nasıl üst ekibe aktarılır?",
+      "alternatives": [
+        "Sorunum devam ediyor, başvuruyu nasıl yükseltebilirim?",
+        "Kapatılmayan şikâyetimi üst değerlendirmeye nasıl yönlendiririm?"
+      ],
+      "answer": "Açık başvuruya yeni kanıt ekleyerek ileri inceleme talebinde bulunun; yönlendirme kuralları hizmete bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-04",
+      "domain": "destek",
+      "family_id": "destek-grup-2",
+      "question": "Canlı temsilciyle görüşme seçeneği var mı?",
+      "alternatives": [
+        "Destek çalışanına anlık olarak bağlanabilir miyim?",
+        "Canlı sohbet ile insan desteği nasıl açılır?"
+      ],
+      "answer": "Canlı destek sunuluyorsa yardım ekranında saat ve bağlantı seçeneği görünür; yoksa talep bırakın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-05",
+      "domain": "destek",
+      "family_id": "destek-grup-3",
+      "question": "Destekten yaklaşık ne zaman yanıt gelir?",
+      "alternatives": [
+        "Yardım başvuruma ne kadar sürede cevap verilir?",
+        "Destek yanıt süresi nerede belirtilir?"
+      ],
+      "answer": "Hizmetin yayımladığı yanıt hedeflerine bakın; kesin süre verilmemişse garanti vaat etmeyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-06",
+      "domain": "destek",
+      "family_id": "destek-grup-3",
+      "question": "Destek talebime fotoğraf ekleyebilir miyim?",
+      "alternatives": [
+        "Şikâyet biletine görsel nasıl yüklenir?",
+        "Yardım mesajına ürün fotoğrafını nereden eklerim?"
+      ],
+      "answer": "Talep formunda dosya ekleme varsa desteklenen format ve boyutu kontrol ederek görsel ekleyin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-07",
+      "domain": "destek",
+      "family_id": "destek-grup-4",
+      "question": "Destekten telefonla geri arama isteyebilir miyim?",
+      "alternatives": [
+        "Bir temsilcinin beni aramasını nasıl talep ederim?",
+        "Geri arama talebi hangi kanaldan yapılır?"
+      ],
+      "answer": "Geri arama hizmeti sunuluyorsa yardım formundan uygun iletişim kanalını seçin; kişisel bilgileri açık mesajlarda paylaşmayın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "destek-08",
+      "domain": "destek",
+      "family_id": "destek-grup-4",
+      "question": "Daha önce açtığım destek kaydını yeniden açabilir miyim?",
+      "alternatives": [
+        "Kapanan şikâyetimi tekrar incelemeye nasıl aldırırım?",
+        "Çözüldü görünen talebim için yeniden yazabilir miyim?"
+      ],
+      "answer": "Kayıt yeniden açma seçeneği varsa kullanın; yoksa eski referansı belirterek yeni talep oluşturun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-01",
+      "domain": "fatura",
+      "family_id": "fatura-grup-1",
+      "question": "Siparişimin faturasını nereden indirebilirim?",
+      "alternatives": [
+        "Satın alım faturası PDF olarak nerede?",
+        "E-faturamı hesabımda nasıl bulabilirim?"
+      ],
+      "answer": "Sipariş ayrıntılarında fatura veya belgeler bölümünü kontrol edin; belgenin oluşması işlem durumuna bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-02",
+      "domain": "fatura",
+      "family_id": "fatura-grup-1",
+      "question": "Fatura adresimi sipariş sırasında nasıl düzenlerim?",
+      "alternatives": [
+        "Faturaya yazılacak adresi nereden değiştirebilirim?",
+        "Ödemeden önce fatura adresi seçimi nasıl yapılır?"
+      ],
+      "answer": "Ödeme adımında sunulan fatura adresi alanını gözden geçirin ve işlemi tamamlamadan düzeltin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-03",
+      "domain": "fatura",
+      "family_id": "fatura-grup-2",
+      "question": "Kurumsal fatura bilgilerini nereden girmeliyim?",
+      "alternatives": [
+        "Şirket adına fatura kesilmesini nasıl isterim?",
+        "Firma vergi bilgilerini faturaya nasıl eklerim?"
+      ],
+      "answer": "Kurumsal fatura seçeneği varsa yasal firma bilgilerini ilgili alana girin; gereklilikler mevzuata ve hizmete bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-04",
+      "domain": "fatura",
+      "family_id": "fatura-grup-2",
+      "question": "Faturadaki hatalı bilgiyi nasıl düzelttirebilirim?",
+      "alternatives": [
+        "E-faturada yanlış isim yazıyor, nasıl değiştiririm?",
+        "Fatura düzenlendikten sonra bilgi hatasını nereye bildireceğim?"
+      ],
+      "answer": "Fatura numarası ve hatalı alanla destek/finans incelemesi isteyin; düzenleme şekli vergi kurallarına bağlıdır.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-05",
+      "domain": "fatura",
+      "family_id": "fatura-grup-3",
+      "question": "Siparişte uygulanan vergiyi nereden görebilirim?",
+      "alternatives": [
+        "KDV tutarı fatura üzerinde hangi bölümde?",
+        "Alışverişteki vergi kırılımını nasıl incelerim?"
+      ],
+      "answer": "Fatura toplam ve vergi satırlarını kontrol edin; oran ve hesaplama ürün ile işlem koşullarına göre değişebilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-06",
+      "domain": "fatura",
+      "family_id": "fatura-grup-3",
+      "question": "E-arşiv fatura ile normal fatura arasındaki belgeyi nasıl ayırt ederim?",
+      "alternatives": [
+        "E-arşiv belgem hangi formatta oluşturuldu?",
+        "Elektronik fatura türünü nereden öğrenirim?"
+      ],
+      "answer": "Belge üstündeki düzenleme türünü ve numarayı kontrol edin; hukuki sonuç için yetkili mali birime danışın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-07",
+      "domain": "fatura",
+      "family_id": "fatura-grup-4",
+      "question": "Fatura e-postam gelmediyse nereden isteyebilirim?",
+      "alternatives": [
+        "Sipariş faturası mail adresime ulaşmadı, ne yapayım?",
+        "Fatura gönderimi görünmüyor, tekrar alabilir miyim?"
+      ],
+      "answer": "İletişim adresini ve istenmeyen klasörünü kontrol edin; varsa faturayı yeniden gönder seçeneğini kullanın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "fatura-08",
+      "domain": "fatura",
+      "family_id": "fatura-grup-4",
+      "question": "Banka ödeme dekontu ile satış faturası aynı belge midir?",
+      "alternatives": [
+        "Ödeme makbuzum fatura yerine geçer mi?",
+        "Kart işlem belgesiyle alışveriş faturası farklı mı?"
+      ],
+      "answer": "Banka dekontu ödeme hareketini, satış faturası mal/hizmet işlemini belgeleyebilir; işlemin türüne göre mali birimden teyit alın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-01",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-1",
+      "question": "Hesabımda tutulan kişisel verilerin kopyasını nasıl isteyebilirim?",
+      "alternatives": [
+        "Kendi verilerimi dışa aktarmak için nereye başvururum?",
+        "Kişisel veri erişim talebini nasıl oluştururum?"
+      ],
+      "answer": "Gizlilik başvuru kanalında veri erişim talebi oluşturun; kimlik doğrulama süreci uygulanabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-02",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-1",
+      "question": "Eski destek konuşmalarımın silinmesini nasıl talep edebilirim?",
+      "alternatives": [
+        "Sohbet geçmişimin kaldırılması için ne yapmalıyım?",
+        "Yardım mesajlarımı sildirmek istiyorum, nereye yazayım?"
+      ],
+      "answer": "Gizlilik başvuru kanalından silme talebi iletin; yasal saklama yükümlülükleri bulunabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-03",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-2",
+      "question": "Tanıtım e-postası almak istemiyorum, nasıl kapatırım?",
+      "alternatives": [
+        "Kampanya maillerini nasıl durdurabilirim?",
+        "Pazarlama bildirimi aboneliğinden nasıl çıkarım?"
+      ],
+      "answer": "Bildirim tercihlerinden pazarlama iletilerini kapatın veya ilgili e-postanın abonelikten ayrılma bağlantısını kullanın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-04",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-2",
+      "question": "Hakkımda yanlış kayıtlı kişisel bilgiyi nasıl düzelttiririm?",
+      "alternatives": [
+        "Kişisel veri düzeltme talebi nasıl açılır?",
+        "Hesap bilgilerimde hata var, nasıl güncelleyebilirim?"
+      ],
+      "answer": "Düzenlenebilir profil alanlarını güncelleyin; diğer kayıtlar için resmi veri düzeltme kanalını kullanın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-05",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-3",
+      "question": "Veri işleme iznimi geri çekmek için hangi yolu izlemeliyim?",
+      "alternatives": [
+        "Açık rızamı nasıl iptal edebilirim?",
+        "Veri işleme onayımı geri almak istiyorum, ne yapayım?"
+      ],
+      "answer": "Gizlilik tercihlerinde rıza yönetimi varsa kullanın; yoksa ilgili veri sorumlusu başvuru kanalına başvurun.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-06",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-3",
+      "question": "Gizlilik politikasının güncel sürümünü nereden okuyabilirim?",
+      "alternatives": [
+        "Veri koruma bilgilendirmesi hangi sayfada?",
+        "Kişisel bilgi kullanım şartlarını nereden bulurum?"
+      ],
+      "answer": "Uygulamanın gizlilik veya aydınlatma metni sayfasından sürüm ve güncelleme tarihini kontrol edin.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-07",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-4",
+      "question": "Hesabımda kayıtlı kart bilgilerinin tutulup tutulmadığını nasıl öğrenirim?",
+      "alternatives": [
+        "Ödeme kartı bilgileri saklanıyor mu nereden bakarım?",
+        "Kart verilerim sistemde tutuluyor mu anlamak istiyorum?"
+      ],
+      "answer": "Ödeme yöntemi ekranını ve gizlilik açıklamasını kontrol edin; kart işleme ayrıntıları sağlayıcıya bağlı olabilir.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    },
+    {
+      "intent_id": "gizlilik-08",
+      "domain": "gizlilik",
+      "family_id": "gizlilik-grup-4",
+      "question": "Şüpheli giriş gördüğümde hesap güvenliğimi nasıl sağlamalıyım?",
+      "alternatives": [
+        "Hesabıma izinsiz girilmiş olabilir, ne yapacağım?",
+        "Tanımadığım cihaz oturumu fark ettim, nasıl müdahale ederim?"
+      ],
+      "answer": "Şifrenizi güvenli kanaldan değiştirin, diğer oturumları kapatın ve hesap güvenliği desteğine bildirim yapın.",
+      "source_id": "faqvec-original-project-draft",
+      "authorship": "newly_written_project_draft",
+      "human_review": "pending",
+      "rights_verified": false
+    }
+  ]
+}
