@@ -1,32 +1,28 @@
 @echo off
 setlocal EnableExtensions DisableDelayedExpansion
 chcp 65001 >nul
-set "PYTHONUTF8=1"
-set "PYTHONIOENCODING=utf-8"
-title FAQBot - FAQVec-TR Yerel Model Egitimi
-
 pushd "%~dp0"
-if errorlevel 1 goto :failed
-if not exist ".venv\Scripts\python.exe" (
-    echo [HATA] Once setup_windows.bat dosyasini calistirin.
-    goto :failed
+if errorlevel 1 exit /b 1
+if /I "%~1"=="--check-only" (
+  if not exist "scripts\build_faqvec_original.py" exit /b 1
+  echo [BASARILI] Ozgun veri hazirlama araci mevcut.
+  popd
+  exit /b 0
 )
-echo.
-echo FAQVec-TR kendi modelimiz; hazir model agirligi indirmez.
-echo Egitim yalnizca depodaki kurgusal SSS verilerini kullanir.
-echo Guncel musteri mesajlari egitime otomatik eklenmez.
-echo.
-".venv\Scripts\python.exe" -m scripts.train_faqvec_tr --epochs 30
-if errorlevel 1 goto :failed
-echo.
-echo [BASARILI] Modeller\faqvec-tr-v0.1 model dosyalari olusturuldu.
-echo FAQBot Ayarlar ^> Benzer Sorular ^> FAQVec-TR secerek kaydedin.
+if not exist ".venv\Scripts\python.exe" (
+  echo [HATA] Once setup_windows.bat dosyasini calistirin.
+  goto :fail
+)
+echo [BILGI] FAQVec-TR v0.1 eski demo egitimi veri politikasiyla durduruldu.
+echo [BILGI] Yalniz yeni ozgun veya teyit edilmis CC0 verileri kabul edilir.
+".venv\Scripts\python.exe" -m scripts.build_faqvec_original --check-only
+if errorlevel 1 goto :fail
+echo [BASARILI] Taslak kontrolu tamamlandi. Model egitimi YAPILMADI.
 popd
 pause
 exit /b 0
-
-:failed
-echo [HATA] Yerel egitim tamamlanamadi.
+:fail
+echo [HATA] Kaynak veri kontrolu tamamlanamadi.
 popd
 pause
 exit /b 1
