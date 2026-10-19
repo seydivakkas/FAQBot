@@ -1431,6 +1431,16 @@ async function renderSupportTickets() {
             "Durum: " + ticketState(item.status) + " · Oluşturulma: " +
             item.created_at.slice(0, 16).replace("T", " ") + " (UTC)"));
         if (item.detail) card.appendChild(makeCustomerText("p", item.detail));
+        if (Array.isArray(item.history)) {
+            const history = document.createElement("ol");
+            history.className = "customer-history";
+            for (const record of item.history) {
+                history.appendChild(makeCustomerText("li",
+                    ticketState(record.status) + " · " +
+                    record.created_at.slice(0,16).replace("T", " ") + " UTC"));
+            }
+            card.appendChild(history);
+        }
         card.appendChild(createStatusSelector(item.status, TICKET_STATUSES,
             async (newStatus) => {
                 await customerApi("/support/tickets/" + item.id, {
@@ -1544,6 +1554,16 @@ async function renderDemoReturns() {
             "Demo iade #" + item.id + " · " + item.order_code));
         card.appendChild(makeCustomerText("small",
             "Durum: " + returnState(item.status) + " · Neden: " + item.reason));
+        if (Array.isArray(item.history)) {
+            const history = document.createElement("ol");
+            history.className = "customer-history";
+            for (const record of item.history) {
+                history.appendChild(makeCustomerText("li",
+                    returnState(record.status) + " · " +
+                    record.created_at.slice(0,16).replace("T", " ") + " UTC"));
+            }
+            card.appendChild(history);
+        }
         card.appendChild(createStatusSelector(item.status, RETURN_STATUSES,
             async (newStatus) => {
                 await customerApi("/demo/returns/" + item.id, {
