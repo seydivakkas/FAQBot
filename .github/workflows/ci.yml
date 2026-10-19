@@ -27,6 +27,8 @@ jobs:
         run: node --check frontend/app.js
       - name: Özgün Türkçe veri denetimi (eğitim veya ağ çağrısı yok)
         run: python -m scripts.build_faqvec_original --check-only
+      - name: D03-02 yapay zekâ inceleme kayıtlarının kaynak doğrulaması
+        run: python -m scripts.faqvec_d03_ai_review --check-only
       - name: Comparison demo
         run: python -m scripts.compare
 
@@ -53,3 +55,5 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Özgün veri taslağının Windows kontrolleri
         run: python -m scripts.build_faqvec_original --check-only
+      - name: D03-02 yapay zekâ inceleme kayıtlarının kaynak doğrulaması
+        run: python -m scripts.faqvec_d03_ai_review --check-only
