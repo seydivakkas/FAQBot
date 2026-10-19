@@ -19,6 +19,14 @@ from app.reviews import (
     record_chat, list_reviews, label_review, clear_reviews, evaluate,
     ReviewConflict,
 )
+from app.customer_flows import (
+    initialize as init_customer_flows, create_ticket, list_tickets, get_ticket,
+    set_ticket_status, record_feedback, feedback_summary,
+    DEMO_ORDERS, demo_order, create_demo_return, get_demo_return,
+    list_demo_returns, set_demo_return_status,
+)
+from app.faq_suggestions import suggest_faqs
+
 from app.importer import ImportConflict, ImportFormatError, MAX_FILE_BYTES, analyze, commit_records, parse_file, summarize
 from app.database import (add_faq, delete_faq, get_faq, init_db, load_faqs, update_faq,
                           list_deleted_faqs, restore_faq, RestoreConflict)
@@ -45,6 +53,7 @@ FALLBACK = (
 async def lifespan(_: FastAPI):
     init_db()
     init_reviews()
+    init_customer_flows()
     yield
 
 
@@ -81,6 +90,8 @@ class ChatResponse(BaseModel):
     valid_until: str | None = None
     verification_status: str = "unverified"
     validity_status: str = "unspecified"
+    faq_id: int | None = None
+    suggestions: list[dict] = Field(default_factory=list)
 
 
 class FAQInput(BaseModel):
@@ -444,7 +455,15 @@ def remove_faq(faq_id: int, _: LocalEditor):
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest, http_request: Request):
-    match = find_best_match(request.message, load_faqs())
+    current_faqs = load_faqs()
+    match = find_best_match(request.message, current_faqs)
+    suggestions = (
+        suggest_faqs(
+            request.message, current_faqs, limit=3,
+            exclude_id=match["faq"]["id"] if match else None,
+        )
+        if match is None or match["match_type"] != "exact" else []
+    )
     reply = match["faq"]["answer"] if match else FALLBACK
     # Kayda yalnızca açık yönetici tercihi ve yerel istekle izin ver.
     if _is_loopback(http_request.client.host if http_request.client else None):
@@ -459,6 +478,7 @@ def chat(request: ChatRequest, http_request: Request):
             category=None,
             match_type="none",
             match_score=0.0,
+            suggestions=suggestions,
         )
 
     faq = match["faq"]
@@ -468,8 +488,127 @@ def chat(request: ChatRequest, http_request: Request):
         category=faq["category"],
         match_type=match["match_type"],
         match_score=match["match_score"],
+        faq_id=faq["id"],
+        suggestions=suggestions,
         **_info(faq),
     )
+
+
+
+# P1 — Yerel destek akışı. Bu API gerçek bir müşteri destek sistemine bağlı DEĞİLDİR.
+class SupportTicketInput(BaseModel):
+    subject: str = Field(min_length=8, max_length=180)
+    detail: str = Field(default="", max_length=700)
+
+    @field_validator("subject", "detail")
+    @classmethod
+    def trim_support(cls, value):
+        return value.strip()
+
+
+class SupportStateInput(BaseModel):
+    status: Literal["open", "in_progress", "resolved"]
+
+
+class FeedbackInput(BaseModel):
+    faq_id: int | None = Field(default=None, gt=0)
+    helpful: bool
+
+
+@app.post("/support/tickets", status_code=status.HTTP_201_CREATED)
+def submit_support_ticket(payload: SupportTicketInput, _: LocalEditor):
+    if len(payload.subject) < 8:
+        raise HTTPException(status_code=422, detail="Talep konusu en az 8 karakter olmalı.")
+    return {**create_ticket(payload.subject, payload.detail),
+            "demo_local_only": True}
+
+
+@app.get("/support/tickets")
+def read_support_tickets(_: LocalEditor):
+    return {"tickets": list_tickets(100), "demo_local_only": True}
+
+
+@app.get("/support/tickets/{ticket_id}")
+def read_support_ticket(ticket_id: int, _: LocalEditor):
+    item = get_ticket(ticket_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Yerel destek talebi bulunamadı.")
+    return {**item, "demo_local_only": True}
+
+
+@app.patch("/support/tickets/{ticket_id}")
+def change_support_ticket(ticket_id: int, payload: SupportStateInput, _: LocalEditor):
+    item = set_ticket_status(ticket_id, payload.status)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Yerel destek talebi bulunamadı.")
+    return {**item, "demo_local_only": True}
+
+
+@app.post("/feedback", status_code=status.HTTP_201_CREATED)
+def submit_feedback(payload: FeedbackInput, _: LocalEditor):
+    try:
+        return record_feedback(payload.faq_id, payload.helpful)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
+
+@app.get("/feedback/summary")
+def get_feedback_summary(_: LocalEditor):
+    return feedback_summary()
+
+
+# P2 — Kurgusal sipariş ve kargo durumları. Gerçek şirket API çağrısı yok.
+@app.get("/demo/orders")
+def list_demo_orders(_: LocalEditor):
+    return {"orders": [demo_order(code) for code in DEMO_ORDERS], "demo": True}
+
+
+@app.get("/demo/orders/{order_code}")
+def read_demo_order(order_code: str, _: LocalEditor):
+    order = demo_order(order_code)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Böyle bir kurgusal sipariş yok.")
+    return order
+
+
+class DemoReturnInput(BaseModel):
+    order_code: Literal["DEMO-1001", "DEMO-1002", "DEMO-1003"]
+    reason: Literal["changed_mind", "wrong_item", "damaged", "other"]
+
+
+class DemoReturnStateInput(BaseModel):
+    status: Literal["requested", "reviewing", "approved", "rejected"]
+
+
+@app.post("/demo/returns", status_code=status.HTTP_201_CREATED)
+def request_demo_return(payload: DemoReturnInput, _: LocalEditor):
+    try:
+        return {**create_demo_return(payload.order_code, payload.reason), "demo": True}
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+    except ValueError as error:
+        raise HTTPException(status_code=409, detail=str(error))
+
+
+@app.get("/demo/returns")
+def get_demo_returns(_: LocalEditor):
+    return {"returns": list_demo_returns(), "demo": True}
+
+
+@app.get("/demo/returns/{return_id}")
+def read_demo_return(return_id: int, _: LocalEditor):
+    item = get_demo_return(return_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Kurgusal iade kaydı bulunamadı.")
+    return {**item, "demo": True}
+
+
+@app.patch("/demo/returns/{return_id}")
+def update_demo_return(return_id: int, payload: DemoReturnStateInput, _: LocalEditor):
+    item = set_demo_return_status(return_id, payload.status)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Kurgusal iade kaydı bulunamadı.")
+    return {**item, "demo": True}
 
 
 @app.get("/app", include_in_schema=False)
