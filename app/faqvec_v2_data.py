@@ -97,7 +97,6 @@ def load_approved_sources(manifest_path, for_commercial=False):
         if hashlib.sha256(proof.read_bytes()).hexdigest() != source.get("evidence_sha256"):
             raise DatasetError("Özgün üretim / CC0 kanıt dosyası SHA-256 uyuşmuyor.")
 
-            raise DatasetError(f"İzin verilenler dışı/verifiye edilmemiş lisans: {source['id']}")
         if for_commercial and not source.get("commercial_training_approved", False):
             raise DatasetError(f"Ticari veri kullanımı onaylanmamış: {source['id']}")
         index[source["id"]] = source
