@@ -60,7 +60,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(
     title="FAQBot API",
     description="Yerel SSS ve opsiyonel çevrimdışı embedding yönetimi",
-    version="1.6.2",
+    version="1.7.0",
     lifespan=lifespan,
 )
 
