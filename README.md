@@ -80,6 +80,57 @@ Kullanıcının kararıyla, bağımsız insan etiketi beklemeden 96 niyetin tama
 
 > Bu proje gerçek e-ticaret platformuna bağlı değildir. Ücret, teslimat ve iade koşulları **tamamen kurgusal demo verileridir**.
 
+## Ürün özellikleri ve kritik geliştirme planı (P1/P2)
+
+Bu bölüm, mevcut ürünün gerçek işlevleri ile daha sonra geliştirilecek fikirleri ayırır. FAQVec/E5/BGE araştırmaları ana sohbetin varsayılan motoruna geçmedi; normal sohbet halen TF-IDF kullanır.
+
+### Şu anda FAQBot'ta olanlar
+
+| Özellik | Durum |
+| --- | --- |
+| Türkçe SSS sohbeti, birebir eşleşme, TF-IDF ve güvenli fallback | Var |
+| 8 kategoride 110 kurgusal soru/cevap, kategori filtresi ve arama | Var |
+| SSS ekleme, düzenleme, alternatif sorular ve yanıt önizleme | Var |
+| Excel/CSV toplu aktarımı, JSON yedek indirme | Var |
+| Çöp kutusu ve geri yükleme, tekrarlanan SSS tespiti/birleştirme | Var |
+| SSS kaynak adresi, doğrulama durumu ve geçerlilik süresi | Var |
+| İsteğe bağlı yerel sohbet eşleşmesi inceleme günlüğü | Var |
+| Mobil uyumlu arayüz, SQLite, FastAPI, OpenAPI ve CI | Var |
+| FAQVec-TR, E5-base, MiniLM, BGE-M3 araştırmaları | Deneysel; varsayılan sohbet motoru değil |
+| JSON yedeğini tekrar yükleme, gerçek sipariş hesabı, gerçek temsilci | Henüz yok |
+
+### P1 — Sohbet deneyimi (çok yüksek öncelik)
+
+P1 ilk sürümüne şu ürün işlevleri eklendi:
+
+1. **Birden fazla SSS önerisi:** Güvensiz/kararsız eşleşmelerde en fazla üç **soru başlığı** önerilir. Öneriler hiçbir zaman otomatik kesin cevap olarak gösterilmez; kullanıcı seçerek tekrar sorar.
+2. **Cevap yararlı mı?** Her cevap altında Evet / Hayır geri bildirimi bulunur. Yalnız SQLite'ta geri bildirim sayısı ve ilgili SSS kimliği saklanır, sohbetin tam metni otomatik geri bildirim kaydına alınmaz. Bunlar **insan doğruluğu etiketi değildir**.
+3. **Yerel destek talebi:** Özellikle cevap bulunamadığında kullanıcı destek talebi açabilir. Yerel TKT numarası, durum ve kayıt zamanı ile takip edilir. Talep durumu Açık → İnceleniyor → Çözüldü olarak değiştirilebilir.
+
+**Kesin sınır:** Destek talepleri başka bir kişi/şirkete **gönderilmez**; bu modül gerçek müşteri temsilcisi, e-posta veya CRM entegrasyonu içermez. Kişisel bilgi girilmemelidir.
+
+### P2 — Gerçekçi müşteri işlemleri (çok yüksek öncelik)
+
+P2 ilk sürümü tamamen kurgusal işlem simülasyonu olarak geliştirildi:
+
+1. **Örnek sipariş sorgusu:** DEMO-1001 Hazırlanıyor, DEMO-1002 Kargoda, DEMO-1003 Teslim Edildi.
+2. **Kargo zaman çizelgesi:** Örnek siparişin oluşturulmasından kurgusal taşıma/teslim aşamalarına kadar kayıtlar gösterilir.
+3. **İade oluşturma ve takip:** Yalnız teslim edilmiş DEMO-1003 için iade talebi açılabilir. SQLite içinde talep kimliği ve Talep Alındı / İnceleniyor / Onaylandı / Reddedildi durumu korunur. Yinelenen iade engellenir.
+4. **Destek takibi:** P1'de oluşturulan destek kayıtları yerel ekranda tekrar görüntülenir ve durumları güncellenir.
+
+Kullanım: web arayüzünde sohbet bölümünün altında **Destek talebi oluştur ve takip et** ve **Demo sipariş, kargo ve iade takibi** panelleri. FastAPI rotaları: POST /chat (ilgili SSS önerileri), POST /feedback, GET /feedback/summary, /support/tickets, /demo/orders ve /demo/returns. Düzenleme/izleme API'leri yalnız localhost ve aynı origin'de kullanılabilir; **bu kullanıcı girişi veya gerçek yetkilendirme değildir**. Uygulama internete açık sunulmamalı.
+
+### İleride eklenebilecek ürün özellikleri
+
+| Öncelik | Özellikler |
+| --- | --- |
+| P3 — Yönetici istatistikleri | En çok sorulan ve cevapsız sorular, olumsuz geri bildirimler, yönetici grafikleri, SSS sürüm geçmişi, JSON yedeği geri yükleme |
+| P4 — Entegrasyon ve ürünleştirme | Başka sitelere gömülü widget, rol bazlı giriş, kolay Windows masaüstü kurulumu |
+| P5 — Yapay zekâ | Çok adımlı diyalog, özgün verilerle geliştirilen yerel modelin güvenli sohbet entegrasyonu, ayrıca bağımsız model kabulü |
+| İsteğe bağlı | Çok dilli destek, süresi dolan SSS'ler için yeniden onay uyarıları, kaynaklardan taslak SSS önerileri |
+
+**Bağlayıcı veri kararı:** Eğitimde yalnız projede sıfırdan üretilen özgün metinler veya kullanım hakkı doğrulanmış CC0/kamu malı. Üçüncü taraf kaynağı belirsiz veri ve LLM API anahtarı kullanılmaz. P1/P2'nin kurgusal simülasyonu ile ticari müşterilere açık güvenli ürün farklı şeylerdir; gerçek müşteri testi, Windows/Edge fiziksel kabulü ve ticari yayın hâlâ HOLD.
+
 ## Neler yapıyor?
 
 - 8 kategoride toplam **110 farklı demo müşteri ihtiyacı**, 2 veya daha fazla alternatif soru ifadesi
