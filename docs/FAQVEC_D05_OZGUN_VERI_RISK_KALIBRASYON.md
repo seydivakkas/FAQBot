@@ -89,7 +89,7 @@ powershell -ExecutionPolicy Bypass -File .\run_faqvec_d05_windows.ps1 -Compare
 
 **Testte sayım (FAQVec-D05):** 24 pozitifin 13'ü reddedildi, 2'sine yanlış niyet yanıtı verildi, 9'u doğru niyete eşleşti; 11 OOS sorunun 1'ine yanlış cevap verildi. Böylece toplam doğru karar 19/35 (%54,29). FAQVec-D04 için 17 pozitif reddi, 1 yanlış niyet, 6 doğru niyet ve 1 OOS yanlış yanıt: 16/35 (%45,71).
 
-**D05 modelinin eğitimi:** 74 eski train niyetinin iki alternatifi + 24 yeni train-only niyetin iki alternatifi = **196 pozitif çift** ile 1 epoch (ilk aşama kaybı 0,1460); ayrıca **AI'nin seçtiği, yalnız train bölmesine ait zor negatif adayları** ile ikinci 1 epoch aşaması (eğitim kaybı 0,3456). Bu eğitim kayıpları model başarımının göstergesi olarak kullanılmaz.
+**D05 modelinin eğitimi:** 74 eski train niyetinin iki alternatifi + 24 yeni train-only niyetin iki alternatifi = **196 pozitif çift** ile 1 epoch (ilk aşama kaybı 0,1460); ayrıca **23 AI'nin seçtiği, yalnız train bölmesine ait zor negatif adayı** ile ikinci 1 epoch aşaması (eğitim kaybı 0,3456). Bu eğitim kayıpları model başarımının göstergesi olarak kullanılmaz.
 
 ### Aynı modelde eşik farkı
 
