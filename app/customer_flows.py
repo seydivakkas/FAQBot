@@ -116,6 +116,13 @@ def initialize():
             helpful INTEGER NOT NULL CHECK(helpful IN (0, 1)),
             created_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS demo_order_catalog (
+            code TEXT PRIMARY KEY,
+            item TEXT NOT NULL,
+            status TEXT NOT NULL,
+            shipment_status TEXT NOT NULL,
+            tracking_id TEXT NOT NULL UNIQUE
+        );
         CREATE TABLE IF NOT EXISTS demo_returns (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_code TEXT NOT NULL UNIQUE,
@@ -141,7 +148,32 @@ def initialize():
         CREATE INDEX IF NOT EXISTS ix_tickets_status ON support_tickets(status, id);
         CREATE INDEX IF NOT EXISTS ix_ticket_history ON ticket_history(ticket_id, id);
         CREATE INDEX IF NOT EXISTS ix_return_history ON demo_return_history(return_id, id);
+        CREATE TRIGGER IF NOT EXISTS demo_returns_valid_order_insert
+        BEFORE INSERT ON demo_returns
+        WHEN NOT EXISTS (
+            SELECT 1 FROM demo_order_catalog WHERE
+            code=NEW.order_code AND status='delivered'
+        )
+        BEGIN SELECT RAISE(ABORT, 'Sipariş bulunamadı veya teslim edilmedi'); END;
+        CREATE TRIGGER IF NOT EXISTS demo_returns_valid_order_update
+        BEFORE UPDATE OF order_code ON demo_returns
+        WHEN NOT EXISTS (
+            SELECT 1 FROM demo_order_catalog WHERE
+            code=NEW.order_code AND status='delivered'
+        )
+        BEGIN SELECT RAISE(ABORT, 'Sipariş bulunamadı veya teslim edilmedi'); END;
         """)
+        for order in DEMO_ORDERS.values():
+            conn.execute(
+                "INSERT INTO demo_order_catalog(code,item,status,shipment_status,tracking_id) "
+                "VALUES(?,?,?,?,?) ON CONFLICT(code) DO UPDATE SET "
+                "item=excluded.item,status=excluded.status,"
+                "shipment_status=excluded.shipment_status,tracking_id=excluded.tracking_id",
+                (
+                    order["code"], order["item"], order["status"],
+                    order["shipment"], "KURGU-" + order["code"],
+                ),
+            )
 
 
 def _utc_now():
