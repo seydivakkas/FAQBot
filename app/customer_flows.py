@@ -66,7 +66,23 @@ def initialize():
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS ticket_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ticket_id INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(ticket_id) REFERENCES support_tickets(id)
+        );
+        CREATE TABLE IF NOT EXISTS demo_return_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            return_id INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(return_id) REFERENCES demo_returns(id)
+        );
         CREATE INDEX IF NOT EXISTS ix_tickets_status ON support_tickets(status, id);
+        CREATE INDEX IF NOT EXISTS ix_ticket_history ON ticket_history(ticket_id, id);
+        CREATE INDEX IF NOT EXISTS ix_return_history ON demo_return_history(return_id, id);
         """)
 
 
@@ -78,6 +94,19 @@ def _row(row):
     return dict(row) if row is not None else None
 
 
+def _with_history(conn, row, *, table, owner_column):
+    if row is None:
+        return None
+    result = dict(row)
+    result["history"] = [
+        dict(item) for item in conn.execute(
+            f"SELECT status,created_at FROM {table} WHERE {owner_column}=? ORDER BY id",
+            (result["id"],),
+        )
+    ]
+    return result
+
+
 def create_ticket(subject, detail):
     now = _utc_now()
     with _connect() as conn:
@@ -86,10 +115,14 @@ def create_ticket(subject, detail):
             "VALUES(?,?,'open',?,?)",
             (subject, detail, now, now),
         )
+        conn.execute(
+            "INSERT INTO ticket_history(ticket_id,status,created_at) VALUES(?, 'open', ?)",
+            (cur.lastrowid, now),
+        )
         ticket = conn.execute(
             "SELECT * FROM support_tickets WHERE id=?", (cur.lastrowid,)
         ).fetchone()
-    return _row(ticket)
+        return _with_history(conn, ticket, table="ticket_history", owner_column="ticket_id")
 
 
 def list_tickets(limit=100):
@@ -97,28 +130,37 @@ def list_tickets(limit=100):
         rows = conn.execute(
             "SELECT * FROM support_tickets ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()
-    return [_row(row) for row in rows]
+        return [_with_history(conn, row, table="ticket_history", owner_column="ticket_id") for row in rows]
 
 
 def get_ticket(ticket_id):
     with _connect() as conn:
         row = conn.execute("SELECT * FROM support_tickets WHERE id=?", (ticket_id,)).fetchone()
-    return _row(row)
+        return _with_history(conn, row, table="ticket_history", owner_column="ticket_id")
 
 
 def set_ticket_status(ticket_id, state):
     if state not in TICKET_STATES:
         raise ValueError("Geçersiz talep durumu.")
     with _connect() as conn:
-        cur = conn.execute(
-            "UPDATE support_tickets SET status=?,updated_at=? WHERE id=?",
-            (state, _utc_now(), ticket_id),
-        )
-        if cur.rowcount == 0:
-            return None
-        return _row(conn.execute(
+        conn.execute("BEGIN IMMEDIATE")
+        current = conn.execute(
             "SELECT * FROM support_tickets WHERE id=?", (ticket_id,)
-        ).fetchone())
+        ).fetchone()
+        if current is None:
+            return None
+        if current["status"] != state:
+            now = _utc_now()
+            conn.execute(
+                "UPDATE support_tickets SET status=?,updated_at=? WHERE id=?",
+                (state, now, ticket_id),
+            )
+            conn.execute(
+                "INSERT INTO ticket_history(ticket_id,status,created_at) VALUES(?,?,?)",
+                (ticket_id, state, now),
+            )
+        row = conn.execute("SELECT * FROM support_tickets WHERE id=?", (ticket_id,)).fetchone()
+        return _with_history(conn, row, table="ticket_history", owner_column="ticket_id")
 
 
 def record_feedback(faq_id, helpful):
@@ -172,10 +214,15 @@ def create_demo_return(order_code, reason):
                 "INSERT INTO demo_returns(order_code,reason,status,created_at,updated_at) "
                 "VALUES(?,?,'requested',?,?)", (order_code, reason, now, now),
             )
+            conn.execute(
+                "INSERT INTO demo_return_history(return_id,status,created_at) "
+                "VALUES(?, 'requested', ?)", (cur.lastrowid, now),
+            )
             result = conn.execute(
                 "SELECT * FROM demo_returns WHERE id=?", (cur.lastrowid,)
             ).fetchone()
-        return _row(result)
+            return _with_history(conn, result,
+                table="demo_return_history", owner_column="return_id")
     except sqlite3.IntegrityError as error:
         raise ValueError("Bu demo sipariş için zaten bir iade talebi var.") from error
 
@@ -183,25 +230,37 @@ def create_demo_return(order_code, reason):
 def get_demo_return(return_id):
     with _connect() as conn:
         row = conn.execute("SELECT * FROM demo_returns WHERE id=?", (return_id,)).fetchone()
-    return _row(row)
+        return _with_history(conn, row,
+            table="demo_return_history", owner_column="return_id")
 
 
 def list_demo_returns():
     with _connect() as conn:
         rows = conn.execute("SELECT * FROM demo_returns ORDER BY id DESC LIMIT 100").fetchall()
-    return [_row(row) for row in rows]
+        return [_with_history(conn, row,
+            table="demo_return_history", owner_column="return_id") for row in rows]
 
 
 def set_demo_return_status(return_id, state):
     if state not in RETURN_STATES:
         raise ValueError("Geçersiz iade durumu.")
     with _connect() as conn:
-        cur = conn.execute(
-            "UPDATE demo_returns SET status=?,updated_at=? WHERE id=?",
-            (state, _utc_now(), return_id),
-        )
-        if not cur.rowcount:
-            return None
-        return _row(conn.execute(
+        conn.execute("BEGIN IMMEDIATE")
+        current = conn.execute(
             "SELECT * FROM demo_returns WHERE id=?", (return_id,)
-        ).fetchone())
+        ).fetchone()
+        if current is None:
+            return None
+        if current["status"] != state:
+            now = _utc_now()
+            conn.execute(
+                "UPDATE demo_returns SET status=?,updated_at=? WHERE id=?",
+                (state, now, return_id),
+            )
+            conn.execute(
+                "INSERT INTO demo_return_history(return_id,status,created_at) VALUES(?,?,?)",
+                (return_id, state, now),
+            )
+        row = conn.execute("SELECT * FROM demo_returns WHERE id=?", (return_id,)).fetchone()
+        return _with_history(conn, row,
+            table="demo_return_history", owner_column="return_id")
