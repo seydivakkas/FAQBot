@@ -106,7 +106,7 @@ def main():
                     "BİLET_KARGO_GECIKMESI_000001"
                 )
                 page.locator("#supportTickets select").first.select_option("in_progress")
-                expect(page.locator("#supportTickets")).to_contain_text("İnceleniyor")
+                expect(page.locator("#supportTickets .customer-history li")).to_have_count(2)
                 ticket = page.request.get(base + "/support/tickets/1").json()
                 assert ticket["ticket_code"] == "BİLET_KARGO_GECIKMESI_000001"
                 assert [row["status"] for row in ticket["history"]] == [
@@ -142,7 +142,7 @@ def main():
                     "Bu siparişe bağlı iade talebi #1"
                 )
                 page.locator("#demoReturns select").first.select_option("reviewing")
-                expect(page.locator("#demoReturns")).to_contain_text("İnceleniyor")
+                expect(page.locator("#demoReturns .customer-history li")).to_have_count(2)
                 linked = page.request.get(base + "/demo/returns/1").json()
                 assert linked["order_code"] == "DEMO-1003"
                 assert linked["order_ref"]["tracking_id"] == "KURGU-DEMO-1003"
