@@ -51,9 +51,12 @@ def download_model(name, destination=None):
         if name == "bge-m3" else None
     )
     info=model_info(repo,revision=pinned_revision,files_metadata=False)
-    license_id=getattr(getattr(info,"card_data",None),"license",None)
+    # Eski BGE safetensors revizyonunda lisans kartı alanı yok.
+    # Aynı resmî repo'nun güncel model kartındaki MIT beyanını ayrı kontrol et.
+    license_record = model_info(repo,files_metadata=False) if pinned_revision else info
+    license_id=getattr(getattr(license_record,"card_data",None),"license",None)
     if not license_id or str(license_id).lower()!=expected.lower():
-        raise ValueError("Açık lisans kartı doğrulanmadı: "+repo)
+        raise ValueError("Resmî model kartında açık lisans doğrulanmadı: "+repo)
     commit=info.sha
     if not commit or len(commit)!=40:
         raise ValueError("Sabit model commit SHA alınamadı.")
@@ -76,6 +79,8 @@ def download_model(name, destination=None):
     metadata={
         "repo":repo, "resolved_revision":commit,
         "source_revision_selection":"pinned_bge_safetensors" if pinned_revision else "model_card_resolved_commit",
+        "license_card_revision":license_record.sha,
+        "license_card_source_repo":repo,
         "declared_license":expected,
         "weights":[{"path":str(p.relative_to(folder)).replace("\\","/"),
                     "bytes":p.stat().st_size,"sha256":sha256_file(p)}
