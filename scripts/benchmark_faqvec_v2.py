@@ -145,7 +145,9 @@ def main():
                         help="isim=/mutlak/yerel/model/yolu; e5-base, faqvec-v2, bge-m3, minilm")
     parser.add_argument("--output", default="reports/faqvec_v2_benchmark.json")
     args = parser.parse_args()
-    rows = load_bundled_demo() if args.demo else load_approved_sources(args.manifest)[0]
+    if args.demo:
+        parser.error("Önceki demo korpusu yeni veri politikasına göre kıyaslamaya kapalı. OWNED/CC0 manifest kullanın.")
+    rows = load_approved_sources(args.manifest)[0]
     models = [("tfidf", None, False)]
     for option in args.model:
         if "=" not in option:

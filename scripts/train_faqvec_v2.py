@@ -53,6 +53,8 @@ def train():
     args = parser.parse_args()
     if args.demo == bool(args.manifest):
         parser.error("Tam olarak biri seçilmeli: --demo veya --manifest.")
+    if args.demo:
+        parser.error("Önceki 110 SSS demosu OWNED/CC0 koşulunu karşılamıyor; eğitim için insan onaylı özgün manifest gerekli.")
     if args.commercial and args.demo:
         parser.error("Demo veriler ticari eğitim için onaylı değildir.")
     if args.epochs < 1 or args.epochs > 20 or not 1 <= args.batch_size <= 64:

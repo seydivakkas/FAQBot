@@ -57,6 +57,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output", type=str, default=str(DEFAULT_OWN_DIR))
     args = parser.parse_args()
+    raise SystemExit("Eski SSS demo modeli yeni OWNED/CC0 kullanıcı politikası gereği eğitilemez; özgün ve hakları onaylı manifest gereklidir.")
     groups = _source()
     if len(groups) < 10:
         raise SystemExit("Eğitim için yeterli SSS niyeti yok.")

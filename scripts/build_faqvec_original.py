@@ -17,6 +17,7 @@ from app.matching import normalize
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "seed" / "faqvec_tr_ozgun_taslak_v01.json"
+OOS_CATALOG = ROOT / "seed" / "faqvec_tr_yanitsiz_taslak_v01.json"
 SOURCE_ID = "faqvec-original-project-draft"
 FAMILY_SEED = "faqvec-owned-families-v01"
 SENSITIVE = re.compile(r"[\w.+-]+@[\w.-]+\.[a-z]{2,}|https?://|www\.|\b\d{9,}\b",re.I)
@@ -130,6 +131,37 @@ def build_draft(records):
     reviews.sort(key=lambda x:x["intent_id"])
     return intent_rows,negative,reviews,train_candidates
 
+def load_no_answer_draft(path=OOS_CATALOG, intent_records=None):
+    catalog=json.loads(Path(path).read_text(encoding="utf-8"))
+    if catalog.get("origin_kind") != "project_authored_draft" or catalog.get("commercial_training_approved") is not False:
+        raise DatasetError("Yanıtsız örnekler özgün ve onaysız TASLAK olmalı.")
+    rows=catalog.get("records",[])
+    if not isinstance(rows,list) or len(rows)<4:
+        raise DatasetError("Yanıtsız örnek kaydı eksik.")
+    known={normalize(q) for r in (intent_records or []) for q in [r["question"],*r["alternatives"]]}
+    seen_ids=set()
+    seen_queries=set()
+    output=[]
+    for row in rows:
+        ident=row.get("candidate_id")
+        question=row.get("query")
+        if not ident or ident in seen_ids or not isinstance(question,str) or not question.strip():
+            raise DatasetError("Yanıtsız örnek kimliği/ifadesi geçersiz.")
+        seen_ids.add(ident)
+        token=normalize(question)
+        if token in known or token in seen_queries or SENSITIVE.search(question):
+            raise DatasetError("Yanıtsız örnekte tekrarlı veya özel ifade var.")
+        seen_queries.add(token)
+        if (row.get("expected_id","INVALID") is not None
+                or row.get("review_status") != "needs_human_review"
+                or row.get("reviewed_by") is not None
+                or row.get("source_id") != SOURCE_ID
+                or row.get("rights_verified") is not False):
+            raise DatasetError("Yanıtsız taslak onaylı olarak gösterilemez.")
+        output.append({**row, "split":split_intent("owned-oos:"+row["domain"], FAMILY_SEED)})
+    return output
+
+
 def _save_new(path,content):
     path=Path(path)
     path.parent.mkdir(parents=True,exist_ok=True)
@@ -141,6 +173,7 @@ def _save_new(path,content):
 def build_package(*,catalog=CATALOG,output_dir="datasets/faqvec_original_v01"):
     originals=load_original_draft(catalog)
     records,negatives,reviews,train_negatives=build_draft(originals)
+    no_answer=load_no_answer_draft(intent_records=records)
     output=Path(output_dir).resolve()
     if output.exists() and any(output.iterdir()):
         raise FileExistsError("Mevcut veri paketi korunur; yeni dizin adı seçin.")
@@ -151,6 +184,7 @@ def build_package(*,catalog=CATALOG,output_dir="datasets/faqvec_original_v01"):
     neg_hash=_save_new(output/"hard_negative_review.DRAFT.jsonl",_jsonl(negatives))
     _save_new(output/"intent_review.DRAFT.jsonl",_jsonl(reviews))
     _save_new(output/"hard_negatives_train_candidate.DRAFT.jsonl",_jsonl(train_negatives))
+    _save_new(output/"no_answer_review.DRAFT.jsonl",_jsonl(no_answer))
     proof={
         "created_at_utc":datetime.now(timezone.utc).isoformat(),
         "source_type":"original_project_authored_synthetic_draft",
@@ -199,6 +233,7 @@ def build_package(*,catalog=CATALOG,output_dir="datasets/faqvec_original_v01"):
         "domains":len({row["domain"] for row in records}),
         "positive_paraphrase_pairs":sum(len(r["alternatives"]) for r in records),
         "candidate_hard_negative_pairs":len(negatives),
+        "no_answer_review_candidates":len(no_answer),
         "train_only_negative_candidates":len(train_negatives),
         "human_approved_intents":0,
         "human_approved_hard_negatives":0,
@@ -219,10 +254,12 @@ def main():
     if args.check_only:
         recs=load_original_draft(args.catalog)
         intents,negative,_,train=build_draft(recs)
+        oos=load_no_answer_draft(intent_records=intents)
         stats={
             "intents":len(intents),"domains":len(set(r["domain"] for r in intents)),
             "paraphrases":sum(len(r["alternatives"]) for r in intents),
             "candidate_negatives":len(negative),
+            "no_answer_review_candidates":len(oos),
             "train_negative_candidates":len(train),
             "split_intents":validate_intents(intents),
             "commercial_acceptance":"HOLD",
