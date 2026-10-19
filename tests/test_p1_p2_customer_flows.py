@@ -164,6 +164,41 @@ def test_demo_return_is_only_for_delivered_order_and_trackable(client):
     assert client.get("/demo/orders/DEMO-1003").json()["return_request"]["status"] == "approved"
 
 
+def test_demo_return_sql_relationship_rejects_nonexistent_and_unshipped(client):
+    import sqlite3
+    from app.database import _connect
+    with _connect() as conn:
+        catalog = conn.execute(
+            "SELECT code, status, tracking_id FROM demo_order_catalog ORDER BY code"
+        ).fetchall()
+        assert [(row["code"], row["status"]) for row in catalog] == [
+            ("DEMO-1001", "preparing"),
+            ("DEMO-1002", "shipped"),
+            ("DEMO-1003", "delivered"),
+        ]
+        for code in ("DEMO-9999", "DEMO-1001", "DEMO-1002"):
+            with __import__("pytest").raises(sqlite3.IntegrityError):
+                conn.execute(
+                    "INSERT INTO demo_returns(order_code,reason,status,created_at,updated_at)"
+                    " VALUES(?,'other','requested','2026-10-01','2026-10-01')",
+                    (code,),
+                )
+        assert conn.execute("SELECT COUNT(*) FROM demo_returns").fetchone()[0] == 0
+
+
+def test_ticket_codes_keep_subject_and_sequence_unique(client):
+    for topic in ("Kargo Takibi", "Kargo Takibi", "İade Sorunu"):
+        result = client.post("/support/tickets",json={"subject":topic})
+        assert result.status_code == 201
+    tickets = client.get("/support/tickets").json()["tickets"]
+    assert len(tickets) == 3
+    assert {x["ticket_code"] for x in tickets} == {
+        "BİLET_KARGO_TAKIBI_000001",
+        "BİLET_KARGO_TAKIBI_000002",
+        "BİLET_IADE_SORUNU_000003",
+    }
+
+
 def test_untrusted_web_origin_cannot_mutate_local_tickets_returns_feedback(client):
     cross_origin={"Origin":"https://malicious.example"}
     assert client.post("/support/tickets",headers=cross_origin,
