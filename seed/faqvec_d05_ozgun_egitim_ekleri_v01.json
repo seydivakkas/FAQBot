@@ -1,0 +1,469 @@
+{
+  "schema_version": 1,
+  "source_id": "faqvec-d05-project-authored",
+  "origin_kind": "project_authored_ai_draft",
+  "created_for": "FAQBot D05 own synthetic training augmentation",
+  "third_party_dataset_used": false,
+  "commercial_training_approved": false,
+  "rights_review_complete": false,
+  "independent_human_review": false,
+  "role": "train_only_auxiliary_never_validation_or_test",
+  "records": [
+    {
+      "intent_id": "d05-garanti-01",
+      "family_id": "d05-garanti-family-1",
+      "domain": "garanti",
+      "question": "Ürünün garanti belgesini nereden bulabilirim?",
+      "alternatives": [
+        "Garanti belgesi hesabımda nerede yer alır?",
+        "Satın aldığım ürünün garanti dokümanına nasıl ulaşırım?"
+      ],
+      "answer": "Ürün sayfasındaki veya satın alma belgelerindeki garanti bilgilerini inceleyin; belge sağlanmıyorsa destek ekibine ürün kimliğiyle başvurun.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-garanti-02",
+      "family_id": "d05-garanti-family-1",
+      "domain": "garanti",
+      "question": "Garanti kapsamında arıza bildirimi nasıl yapılır?",
+      "alternatives": [
+        "Garantiden servis talebi açmak için nereye yazmalıyım?",
+        "Garanti süresinde cihaz arızalandı; başvuru kanalı nedir?"
+      ],
+      "answer": "Garanti kapsamında inceleme için destek veya yetkili servis başvuru kanalını kullanın; kapsam kararı inceleme sonrasında verilir.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-garanti-03",
+      "family_id": "d05-garanti-family-2",
+      "domain": "garanti",
+      "question": "Garanti başlangıç tarihini nasıl kontrol ederim?",
+      "alternatives": [
+        "Garantim hangi tarihten itibaren geçerli?",
+        "Garanti süresinin başladığı gün nerede yazar?"
+      ],
+      "answer": "Ürünün fatura, teslim ve garanti belgelerindeki tarihleri kontrol edin; geçerli başlangıç esasını satıcı veya yetkili servisten teyit edin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-garanti-04",
+      "family_id": "d05-garanti-family-2",
+      "domain": "garanti",
+      "question": "Garanti dışı onarım için ücret bilgisi alabilir miyim?",
+      "alternatives": [
+        "Garanti kapsamına girmeyen tamirin fiyatı nasıl öğrenilir?",
+        "Ücretli servis için ön tahmin talep etmek istiyorum."
+      ],
+      "answer": "Ücretli onarım öncesi arıza tespiti ve fiyat teklifi isteyin; inceleme yapılmadan kesin maliyet sözü verilmemelidir.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-teknik_servis-01",
+      "family_id": "d05-teknik_servis-family-1",
+      "domain": "teknik_servis",
+      "question": "Servise gönderdiğim cihazın durumunu nereden izlerim?",
+      "alternatives": [
+        "Tamirdeki ürünümün servis sürecini nasıl kontrol ederim?",
+        "Onarım başvurum şu an hangi aşamada görülebilir?"
+      ],
+      "answer": "Servis takip numaranız varsa ilgili takip ekranından veya yetkili servis iletişim kanalından durumu sorgulayın.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-teknik_servis-02",
+      "family_id": "d05-teknik_servis-family-1",
+      "domain": "teknik_servis",
+      "question": "Servise ürün göndermeden önce hangi bilgileri hazırlamalıyım?",
+      "alternatives": [
+        "Tamire yollarken ürünle beraber hangi kayıtlar gerekir?",
+        "Servis başvurusu için gerekli bilgi ve belgeler nelerdir?"
+      ],
+      "answer": "Ürün kimliği, satın alma bilgisi, arıza açıklaması ve servis yönergesinde istenen belgeleri hazırlayın; kişisel verileri yalnız yetkili kanallarla paylaşın.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-teknik_servis-03",
+      "family_id": "d05-teknik_servis-family-2",
+      "domain": "teknik_servis",
+      "question": "Servisten gelen cihaz aynı arızayı tekrar yapıyor, ne yapmalıyım?",
+      "alternatives": [
+        "Onarılan ürün yeniden bozuldu; nasıl yeniden inceleme isterim?",
+        "Tekrarlayan arızayı servis kaydıma nasıl eklerim?"
+      ],
+      "answer": "Önceki servis kayıt numarası ve tekrarlayan sorunun belirtileriyle yeniden destek başvurusu oluşturun; haklar ve çözüm seçenekleri koşullara bağlıdır.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-teknik_servis-04",
+      "family_id": "d05-teknik_servis-family-2",
+      "domain": "teknik_servis",
+      "question": "Servise gönderdiğim ürünü geri istemek için nasıl başvururum?",
+      "alternatives": [
+        "Onarım sürecindeki cihazın iadesini talep edebilir miyim?",
+        "Serviste duran cihazın tarafıma geri gönderilmesini istiyorum."
+      ],
+      "answer": "Servisle iletişime geçerek mevcut işlem aşamasına göre geri gönderim talebi iletin; işlem ve varsa ücret koşulları yazılı teyit edilmelidir.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-kurulum-01",
+      "family_id": "d05-kurulum-family-1",
+      "domain": "kurulum",
+      "question": "Ürünün kurulum kılavuzuna nereden ulaşırım?",
+      "alternatives": [
+        "Montaj yönergesi ürün sayfasında nerede?",
+        "Cihazı kurmak için anlatım dosyasını nasıl bulurum?"
+      ],
+      "answer": "Ürün sayfası veya üreticinin resmî destek bölümündeki doğru model kılavuzunu kontrol edin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-kurulum-02",
+      "family_id": "d05-kurulum-family-1",
+      "domain": "kurulum",
+      "question": "Kurulum sırasında eksik parça çıkarsa ne yapmalıyım?",
+      "alternatives": [
+        "Montaj için gerekli vida paketi eksik geldi; ne yapayım?",
+        "Kutudan kurulum parçası çıkmadı; destek nasıl alınır?"
+      ],
+      "answer": "Eksik parçayı ve ürün modelini açıklayarak satış sonrası destek kanalı üzerinden talep oluşturun; gönderim koşullarını teyit edin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-kurulum-03",
+      "family_id": "d05-kurulum-family-2",
+      "domain": "kurulum",
+      "question": "Kurulum için yetkili servis randevusu gerekiyor mu?",
+      "alternatives": [
+        "Cihazı taktırmak için servis çağırmalı mıyım?",
+        "Bu modelin montajı profesyonel servis gerektiriyor mu?"
+      ],
+      "answer": "Modelin kurulum ve garanti yönergesini kontrol edin; zorunlu servis gereksinimi ürün türüne göre değişebilir.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-kurulum-04",
+      "family_id": "d05-kurulum-family-2",
+      "domain": "kurulum",
+      "question": "Kurulumdan sonra cihaz açılmıyorsa ne yapabilirim?",
+      "alternatives": [
+        "Montajı bitirdim ama ürün çalışmıyor; nasıl destek alırım?",
+        "Kurulum tamamlandıktan sonra açılmayan cihaz için ilk adım nedir?"
+      ],
+      "answer": "Güvenli kullanım kılavuzundaki temel bağlantı kontrollerini yapın; elektrik veya güvenlik riski varsa cihazı kullanmayın ve yetkili servise başvurun.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-magaza_teslim-01",
+      "family_id": "d05-magaza_teslim-family-1",
+      "domain": "magaza_teslim",
+      "question": "Mağazadan teslim alacağım siparişi nereden seçebilirim?",
+      "alternatives": [
+        "Kargo yerine şubeden teslim seçeneği nerede görünür?",
+        "Siparişi mağazadan alma yöntemi seçilebilir mi?"
+      ],
+      "answer": "Ödeme veya teslimat adımında varsa mağazadan teslim seçeneğini ve ilgili şubeyi görüntüleyin; her ürün ve mağazada sunulmayabilir.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-magaza_teslim-02",
+      "family_id": "d05-magaza_teslim-family-1",
+      "domain": "magaza_teslim",
+      "question": "Mağazadan teslim için ürün hazır bildirimi nasıl gelir?",
+      "alternatives": [
+        "Şubeye gelen siparişimi almaya hazır olduğunu nasıl anlarım?",
+        "Mağazadan alım zamanı belli olduğunda haber alır mıyım?"
+      ],
+      "answer": "Sipariş durum ekranını ve izin verdiğiniz bildirim kanallarını kontrol edin; hazır bilgisi doğrulanmadan mağazaya gitmeyin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-magaza_teslim-03",
+      "family_id": "d05-magaza_teslim-family-2",
+      "domain": "magaza_teslim",
+      "question": "Mağazadan teslim alırken hangi doğrulama gerekir?",
+      "alternatives": [
+        "Şubeden ürünü almak için hangi sipariş bilgisi istenir?",
+        "Teslim sırasında sipariş kodunu göstermem gerekir mi?"
+      ],
+      "answer": "Teslim noktasının bildirdiği sipariş kodu ve gerekli kimlik doğrulama koşullarını resmî teslim bilgilendirmesinden kontrol edin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-magaza_teslim-04",
+      "family_id": "d05-magaza_teslim-family-2",
+      "domain": "magaza_teslim",
+      "question": "Mağazadan teslim siparişini başkası alabilir mi?",
+      "alternatives": [
+        "Şubeye benim yerime başka biri gidebilir mi?",
+        "Mağazadan alım için bir yakınımı yetkilendirebilir miyim?"
+      ],
+      "answer": "Üçüncü kişiye teslim yetkisi ve gerekli belgeler işletmenin güvenlik politikasına bağlıdır; mağazadan teyit alın.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-bildirim-01",
+      "family_id": "d05-bildirim-family-1",
+      "domain": "bildirim",
+      "question": "Sipariş bildirimlerini nereden açabilirim?",
+      "alternatives": [
+        "Sipariş durumu değiştiğinde uyarı almak istiyorum.",
+        "Kargoya çıkış mesajlarını açmak için hangi ayara gireyim?"
+      ],
+      "answer": "Hesap bildirim tercihlerini kontrol ederek varsa sipariş durum bildirimlerini etkinleştirin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-bildirim-02",
+      "family_id": "d05-bildirim-family-1",
+      "domain": "bildirim",
+      "question": "Reklam amaçlı mesajları nasıl kapatabilirim?",
+      "alternatives": [
+        "Kampanya SMS'lerini almak istemiyorum.",
+        "Pazarlama mesajlarını durdurmak için hangi seçeneği kullanmalıyım?"
+      ],
+      "answer": "Pazarlama ileti tercihlerinden izinleri yönetin veya ilgili resmî iptal kanalını kullanın; zorunlu işlem bildirimleri ayrı değerlendirilebilir.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-bildirim-03",
+      "family_id": "d05-bildirim-family-2",
+      "domain": "bildirim",
+      "question": "Sipariş bildirimim gelmiyorsa neleri kontrol etmeliyim?",
+      "alternatives": [
+        "Kargo durum mesajı gelmedi; hangi ayarları gözden geçireyim?",
+        "Bildirimlerim kapalı mı nasıl kontrol ederim?"
+      ],
+      "answer": "Hesapta kayıtlı iletişim kanalını ve cihaz bildirim izinlerini kontrol edin; sorun sürerse destek kaydı açın.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-bildirim-04",
+      "family_id": "d05-bildirim-family-2",
+      "domain": "bildirim",
+      "question": "Bildirimler hangi iletişim adresime gönderiliyor?",
+      "alternatives": [
+        "Sipariş mesajı kayıtlı hangi numaraya gider?",
+        "Uyarıların yönlendirildiği e-postayı nereden görürüm?"
+      ],
+      "answer": "Hesap iletişim bilgileriniz ve bildirim tercihleri bölümünü kontrol edin; güvenli doğrulama yapılmadan başkasının iletişim bilgisini paylaşmayın.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-erisilebilirlik-01",
+      "family_id": "d05-erisilebilirlik-family-1",
+      "domain": "erisilebilirlik",
+      "question": "Sipariş ekranını klavyeyle kullanabilir miyim?",
+      "alternatives": [
+        "Fare olmadan ödeme adımlarında gezinebilir miyim?",
+        "Sipariş işlemlerinde klavye erişimini nasıl kontrol ederim?"
+      ],
+      "answer": "Klavye ile sekme sırasını ve odak durumunu deneyin; erişilebilirlik engeli yaşarsanız destek kanalına ayrıntı iletin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-erisilebilirlik-02",
+      "family_id": "d05-erisilebilirlik-family-1",
+      "domain": "erisilebilirlik",
+      "question": "Ürün açıklamasını ekran okuyucuyla dinleyebilir miyim?",
+      "alternatives": [
+        "Ürün sayfasında ekran okuyucu uyumu var mı?",
+        "Ürün özellikleri yardımcı okuma yazılımınca okunabiliyor mu?"
+      ],
+      "answer": "Ekran okuyucu ile başlık ve açıklama alanlarını kontrol edin; erişilemeyen içerikleri erişilebilirlik geri bildirimiyle bildirin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-erisilebilirlik-03",
+      "family_id": "d05-erisilebilirlik-family-2",
+      "domain": "erisilebilirlik",
+      "question": "Metinleri daha büyük görüntülemek için ne yapabilirim?",
+      "alternatives": [
+        "Sitedeki yazılar çok küçük; nasıl büyütürüm?",
+        "Ürün bilgilerinin yazı boyutunu nasıl artırırım?"
+      ],
+      "answer": "Tarayıcı veya işletim sistemi yakınlaştırma ayarlarını kullanın; sayfa düzeni bozulursa erişilebilirlik sorunu bildirin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    },
+    {
+      "intent_id": "d05-erisilebilirlik-04",
+      "family_id": "d05-erisilebilirlik-family-2",
+      "domain": "erisilebilirlik",
+      "question": "Görseller için alternatif açıklama eksikse nasıl bildiririm?",
+      "alternatives": [
+        "Ürün fotoğrafında alt metin yok; nereye bildireyim?",
+        "Ekran okuyucu görseli anlatmıyor, nasıl geri bildirim veririm?"
+      ],
+      "answer": "Eksik görsel açıklamasını sayfa ve ürün bağlantısıyla erişilebilirlik veya destek kanalına bildirin; bilgi sağlanması gerekiyorsa alternatif format isteyin.",
+      "split": "train",
+      "source_id": "faqvec-d05-project-authored",
+      "origin_kind": "project_authored_ai_draft",
+      "reviewer_kind": "AI",
+      "human_review": "not_performed",
+      "rights_verified": false,
+      "commercial_training_approved": false,
+      "train_only_auxiliary": true
+    }
+  ]
+}
