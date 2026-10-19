@@ -39,7 +39,9 @@ EXCLUDE_OOS={"oos-kampanya-2","oos-teslimat-2"}
 
 
 def blob_sha(path):
-    b=Path(path).read_bytes()
+    # GitHub Actions Windows checkout can change LF to CRLF. Git blob identity
+    # describes the normalized repository contents, not OS-specific line ends.
+    b=Path(path).read_bytes().replace(b"\r\n",b"\n")
     return hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
 
 
