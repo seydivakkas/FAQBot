@@ -1,3 +1,5 @@
+> **ARŞİV — BU YOL ARTIK KULLANILMAYACAK.** Kullanıcının kesin veri politikası gereği üçüncü taraf `dogukanvzr/ml-paraphrase-tr` veri kümesi indirilmeyecek, işlenmeyecek, eğitimde veya karşılaştırmada kullanılmayacak. Önceki kaynak sayımları yalnız geçmiş teknik kayıtlarıdır. Yeni çalışma: [yalnız OWNED / doğrulanmış CC0](VERI_KAYNAGI_KESIN_POLITIKA.md). Kaynak yayıncısından izin isteme planı iptal edilmiştir.
+
 # FAQVec-TR-V2-D01 — Özgün 60K Dosya Denetimi (18 Ekim 2026)
 
 ## Kaynak ve hash kanıtı

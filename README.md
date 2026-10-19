@@ -25,6 +25,10 @@
 
 **Not:** Sohbet hâlâ TF-IDF kullanır; embedding yöntemi isteğe bağlı yalnızca tekrar soru taramasına uygulanır. Hiçbir yöntem aynı anlamı kesin kanıtlamaz.
 
+## ARŞİV — D01/D02 üçüncü taraf kaynak işlemleri
+
+**Aşağıdaki D01/D02 bölümleri yalnızca geçmiş teknik çalışmaların raporudur.** Bu süreçte kullanılan üçüncü taraf veri kümesinin yeniden indirilmesi, işlenmesi veya eğitimde kullanılması artık yasaktır. Eski komutlar devre dışı bırakılmıştır. [Yalnız özgün OWNED / doğrulanmış CC0 veri politikası](docs/VERI_KAYNAGI_KESIN_POLITIKA.md).
+
 ## FAQVec-TR-V2-D02 — Çift bağımsız insan incelemesi
 
 - **Gerçek D02 hazırlama PASS:** 60.000 satırlı SHA-doğrulanmış özgün JSONL'den 396 ayrı inceleme görevi üretildi: 134 karantina pozitif çifti, 1 doğrudan etiket çelişkisi, 1 geçişli çelişki, 60 kontrol pozitif çifti ve 200 yüksek öncelikli negatif aday.
