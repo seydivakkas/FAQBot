@@ -19,6 +19,17 @@
 
 **Kritik:** Bu metinler özgün bir *model destekli proje taslağıdır*. Henüz insan tarafından semantik ve özgünlük kontrolü yapılmadı. Negatifler ve yanıtsızlık örnekleri onaylı sayılmaz; oluşturulan manifestte `commercial_training_approved=false`, `rights_review_complete=false`. Önceki demo modelleriyle otomatik eğitim kaldırıldı; gerçek model yarışması ve ticari kabul **HOLD**.
 
+## D06 — 72 yeni özgün zor soruda gerçek model değerlendirmesi
+
+[Gerçek altılı D06 model yarışının kanıtı](https://github.com/seydivakkas/FAQBot/actions/runs/39219421149) · [Özgün 72 zor test](seed/faqvec_d06_yeni_ozgun_zor_test_v01.json) · [D06 mühendislik sonuçları](docs/FAQVEC_D06_MUHURLU_ZOR_TEST.md) · [Windows yerel testi](run_faqvec_d06_windows.ps1)
+
+- Galeri ve önceki validation sabit tutuldu; yeni **48 doğru niyetli + 24 yakın OOS** soru yalnız testte değerlendirildi. Kaynak SHA sabitlendi; harici korpus yok.
+- FAQVec-D05, yeni testte **Recall@1 %75**, FAQVec-D04 **%66,67**; ancak bu fark küçük AI-yazımı test için bağımsız üstünlük kanıtı değildir.
+- FAQVec-D05'te tek güvenlik eşiği **36/72** doğru karar, çift eşik **35/72** doğru karar verdi. İki kapı da **1 yanlış niyet + 1 OOS yanlış cevap** üretti. Çift skor-farkı kapısı FAQVec'in varsayılanına **terfi ettirilmedi**.
+- BGE-M3 çift kapıyla **49/72** doğru karar verdi, ancak 24 yakın OOS sorunun **6'sına yanlış cevap** verdi; güvenlik sınırında FAIL.
+- **Asıl kalan problem:** FAQVec-D05 çift kapıda 48 cevaplanabilir sorudan **35'ini cevapsız bıraktı**. Üretim doğruluk/güvenlik kabulü **HOLD**.
+- Parametreler yalnız önceki validation ile seçildi. Artık görülen D06 testini yeniden eğitim veya eşik ayarı için kullanmayacağız; sonraki deney yeni eğitim/validation + yeni görülmemiş test gerektirir.
+
 ## D05 — 196 kendi özgün soru çiftiyle güvenlik kalibrasyonu ve altılı gerçek model yarışı
 
 - [D05 tam mühendislik raporu ve gerçek ölçümler](docs/FAQVEC_D05_OZGUN_VERI_RISK_KALIBRASYON.md)
