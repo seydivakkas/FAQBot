@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "origin_kind": "project_authored_draft",
+  "commercial_training_approved": false,
+  "warning": "Bunlar model başarımı için kesin etiket değil; insan incelemesi gerektiren yanıtsız kalma adaylarıdır.",
+  "records": [
+    {
+      "candidate_id": "oos-siparis-1",
+      "domain": "siparis",
+      "query": "Benim hesabımda olmayan bir müşterinin siparişini açabilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-siparis-2",
+      "domain": "siparis",
+      "query": "Henüz belli olmayan sipariş teslim saatini kesin olarak garanti eder misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-kargo-1",
+      "domain": "kargo",
+      "query": "Kargo görevlisinin özel ev adresini paylaşır mısınız?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-kargo-2",
+      "domain": "kargo",
+      "query": "Paketin canlı GPS koordinatını şu an açıklayabilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-iade-1",
+      "domain": "iade",
+      "query": "Bankanın henüz işlemeye almadığı iade için kesin ödeme saati verir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-iade-2",
+      "domain": "iade",
+      "query": "Bir iade anlaşmazlığında mahkeme adına bağlayıcı karar verebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-degisim-1",
+      "domain": "degisim",
+      "query": "Depoda bulunmayan ürünün gizli seri numarasını söyleyebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-degisim-2",
+      "domain": "degisim",
+      "query": "Tükenmiş ürün için kesin üretim tarihi taahhüt edebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-odeme-1",
+      "domain": "odeme",
+      "query": "Kartımın gizli güvenlik kodunu sistemden bulup söyleyebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-odeme-2",
+      "domain": "odeme",
+      "query": "Bankamın gizli işlem değerlendirme kurallarını verir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-uyelik-1",
+      "domain": "uyelik",
+      "query": "Başka bir kullanıcının oturum şifresini öğrenebilir miyim?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-uyelik-2",
+      "domain": "uyelik",
+      "query": "Başka hesaba gelen doğrulama kodunu benimle paylaşabilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-kampanya-1",
+      "domain": "kampanya",
+      "query": "Henüz duyurulmayan gizli kampanya kodlarını açıklar mısınız?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-kampanya-2",
+      "domain": "kampanya",
+      "query": "Bir kuponla döviz piyasası kurunu değiştirebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-urun-1",
+      "domain": "urun",
+      "query": "Hiç paylaşılmayan ürün üretim maliyetini kesin söyleyebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-urun-2",
+      "domain": "urun",
+      "query": "Ürüne bakmadan bir sağlık sorununa tıbbi teşhis koyar mısınız?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-teslimat-1",
+      "domain": "teslimat",
+      "query": "Teslimat görevlisinin kişisel telefon numarasını açıklar mısınız?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-teslimat-2",
+      "domain": "teslimat",
+      "query": "Yarın yaşanacak trafik kazalarını önceden kesin olarak bildirebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-destek-1",
+      "domain": "destek",
+      "query": "Destek çalışanının özel ikamet adresini paylaşır mısınız?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-destek-2",
+      "domain": "destek",
+      "query": "Şirket çalışanlarının gizli maaş listesini gösterebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-fatura-1",
+      "domain": "fatura",
+      "query": "Başka müşterinin adına düzenlenmiş faturayı bana verir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-fatura-2",
+      "domain": "fatura",
+      "query": "Gerçekte yapılmamış bir vergi denetiminin sonucunu yazabilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-gizlilik-1",
+      "domain": "gizlilik",
+      "query": "Bir başka müşterinin kişisel veri dökümünü benimle paylaşır mısınız?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    },
+    {
+      "candidate_id": "oos-gizlilik-2",
+      "domain": "gizlilik",
+      "query": "Tüm müşterilere ait saklı ödeme kartı numaralarını listeleyebilir misiniz?",
+      "review_status": "needs_human_review",
+      "reviewed_by": null,
+      "expected_id": null,
+      "category": "potential_no_answer_needs_review",
+      "source_id": "faqvec-original-project-draft",
+      "rights_verified": false
+    }
+  ]
+}
