@@ -61,6 +61,7 @@ def test_support_tickets_persist_and_have_trackable_status(client):
     assert ticket["status"] == "open"
     assert ticket["demo_local_only"] is True
     assert ticket["id"] > 0
+    assert [event["status"] for event in ticket["history"]] == ["open"]
     detail=client.get("/support/tickets/"+str(ticket["id"]))
     assert detail.status_code == 200
     assert detail.json()["subject"] == ticket["subject"]
@@ -74,6 +75,12 @@ def test_support_tickets_persist_and_have_trackable_status(client):
                          json={"status":"resolved"})
     assert updated.status_code == 200
     assert updated.json()["status"] == "resolved"
+    assert [event["status"] for event in updated.json()["history"]] == [
+        "open", "in_progress", "resolved"
+    ]
+    # Aynı durum yeniden kaydedilirse sahte geçmiş adımı üretilmez.
+    repeated=client.patch("/support/tickets/"+str(ticket["id"]),json={"status":"resolved"})
+    assert len(repeated.json()["history"]) == 3
     assert client.get("/support/tickets/999999").status_code == 404
     assert client.patch("/support/tickets/999999",json={"status":"resolved"}).status_code == 404
 
@@ -117,6 +124,7 @@ def test_demo_return_is_only_for_delivered_order_and_trackable(client):
     request=res.json()
     assert request["demo"] is True
     assert request["status"] == "requested"
+    assert [x["status"] for x in request["history"]] == ["requested"]
     assert client.post("/demo/returns",json={
         "order_code":"DEMO-1003","reason":"damaged"
     }).status_code == 409
@@ -127,6 +135,11 @@ def test_demo_return_is_only_for_delivered_order_and_trackable(client):
     assert changed.json()["status"] == "reviewing"
     changed=client.patch("/demo/returns/"+str(request["id"]),json={"status":"approved"})
     assert changed.json()["status"] == "approved"
+    assert [e["status"] for e in changed.json()["history"]] == [
+        "requested", "reviewing", "approved"
+    ]
+    duplicate=client.patch("/demo/returns/"+str(request["id"]),json={"status":"approved"})
+    assert len(duplicate.json()["history"]) == 3
     assert client.get("/demo/returns/999999").status_code == 404
     assert client.patch("/demo/returns/999999",json={"status":"approved"}).status_code == 404
 
