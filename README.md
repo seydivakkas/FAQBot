@@ -27,7 +27,7 @@
 - [Gerçek TF-IDF ve yerel E5/FAQVec/MiniLM/BGE-M3 ölçüm aracı](scripts/faqvec_d04_real_benchmark.py)
 - [Windows RTX için toplu PowerShell](run_faqvec_d04_windows.ps1)
 
-**Gerçek araştırma kaydı:** MIT E5-base model ağırlıkları indirilerek 74 özgün train niyeti üzerinde **1 epoch / 37 eğitim adımı**, 29,89 sn gerçek fine-tune çalıştırıldı. Bu eğitim sonucu ticari kabul değildir. TF-IDF ilk testinde 96 soruluk galeri, 24 test pozitif ve 11 OOS kullanıldı; Recall@1 (eşik öncesi) **%20,83** olarak ölçüldü. Diğer embedding modellerinin tam kıyaslaması yalnız biten gerçek koşunun sayılarıyla yayımlanır.
+**Gerçek araştırma kaydı:** MIT E5-base model ağırlıkları indirilerek 74 özgün train niyeti üzerinde **1 epoch / 37 eğitim adımı**, 29,89 sn gerçek fine-tune çalıştırıldı. Bu eğitim sonucu ticari kabul değildir. TF-IDF ilk testinde 96 soruluk galeri, 24 test pozitif ve 11 OOS kullanıldı; Recall@1 (eşik öncesi) **%20,83** olarak ölçüldü. **Gerçek beş model ölçümü tamamlandı:** FAQVec-TR Recall@1 %70,83 / yanlış eşleşme %4,17 / genel doğruluk %45,71; BGE-M3 Recall@1 %87,50 / yanlış eşleşme %8,33 / genel doğruluk %80,00. Bu değerler 24 pozitif + 11 AI-etiketli yanıtsızlık testinde ve yalnız GitHub Actions Linux CPU üzerinde ölçüldü. İlk model yarışının pratik lideri BGE-M3'tür; bağımsız müşteri ve gerçek Windows GPU kabulü HOLD. [Tam sonuç tablosu](docs/FAQVEC_D04_GERCEK_MODEL_YARISI.md).
 
 **Veri politikası:** Üçüncü taraf soru korpusu yok; yalnız kendi özgün proje metinleri. Model ağırlıklarının ilk indirmesi açık onayla, model çıkarımı ve eğitim çevrimdışı. AI etiketi ile bağımsız insan etiketi aynı değildir. TİCARİ_YAYIN_HOLD.
 
