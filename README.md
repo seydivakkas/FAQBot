@@ -19,6 +19,24 @@
 
 **Kritik:** Bu metinler özgün bir *model destekli proje taslağıdır*. Henüz insan tarafından semantik ve özgünlük kontrolü yapılmadı. Negatifler ve yanıtsızlık örnekleri onaylı sayılmaz; oluşturulan manifestte `commercial_training_approved=false`, `rights_review_complete=false`. Önceki demo modelleriyle otomatik eğitim kaldırıldı; gerçek model yarışması ve ticari kabul **HOLD**.
 
+## D05 — 196 kendi özgün soru çiftiyle güvenlik kalibrasyonu ve altılı gerçek model yarışı
+
+- [D05 tam mühendislik raporu ve gerçek ölçümler](docs/FAQVEC_D05_OZGUN_VERI_RISK_KALIBRASYON.md)
+- [D05 Issue #4 — gelişim ve kabul takibi](https://github.com/seydivakkas/FAQBot/issues/4)
+- [24 yeni train-only Türkçe niyet / 48 yeni alternatif](seed/faqvec_d05_ozgun_egitim_ekleri_v01.json)
+- [Validation-only güvenlik eşiği ve coverage-risk](app/faqvec_d05_policy.py)
+- [6 model gerçek araştırma benchmark kodu](scripts/faqvec_d05_real_benchmark.py)
+- [Windows RTX / tamamen yerel D05 çalıştırma](run_faqvec_d05_windows.ps1)
+- [Tamamlanan gerçek model yarışı](https://github.com/seydivakkas/FAQBot/actions/runs/39212163090)
+
+**Veri genişletmesi:** 6 yeni destek alanında 24 özgün niyet ve 48 alternatif oluşturuldu. Sadece eğitim için kullanıldı: mevcut 74 train niyetinin ikişer alternatifiyle birlikte **196 pozitif eğitim çifti**; D04'ün 96 kayıtlı galerisi ve 20+11 validation, 24+11 test sorgusu değiştirilmedi. Yalnız train bölmesindeki AI zor negatif adayları araştırma fine-tune aşamasına katıldı.
+
+**Gerçek test (Ubuntu CPU, 24 pozitif + 11 OOS):** FAQVec-D04 Recall@1 **%70,83**, pozitif abstention **%70,83**, yanlış eşleşme **%4,17**, genel doğruluk **%45,71**. FAQVec-D05 Recall@1 **%70,83** (değişmedi), pozitif abstention **%54,17**, yanlış eşleşme **%8,33**, genel doğruluk **%54,29**. Kapsam dışı soruya yanlış cevap iki sürümde de **%9,09**. D05 validation-only güvenlik politikasının testte gözlenen %10 hata kapısı FAQVec için sağlandı; gerçek dünya garantisi değildir.
+
+**BGE-M3 karşılaştırması:** D05 eşiğinde genel doğruluk **%82,86**, fakat test yanlış eşleşme **%12,50** ve OOS yanlış cevap **%18,18** olduğu için D05 güvenlik kapısını **aştı**. Daha sıkı D04 eşiğinde BGE-M3 genel doğruluk **%80**, yanlış eşleşme **%8,33**, OOS yanlış cevap **%9,09** ile aynı küçük testte daha iyi genel sonuç gösteriyor. Bu nedenle bağımsız müşteri testine kadar BGE-M3 daha güçlü karşılaştırma referansıdır.
+
+**D05 karar:** EĞİTİM_ve_6_MODEL_ÖLÇÜM_PASS / CEVAPSIZLIK_AZALDI / RECALL@1_DEĞİŞMEDİ / BAĞIMSIZ_MÜŞTERİ_TESTİ_HOLD / WINDOWS_GPU_KABUL_HOLD / TİCARİ_YAYIN_HOLD.
+
 ## D04 — Gerçek E5 ince ayarı ve rakip modellerle araştırma ölçümü
 
 - [Gerçek model yarışının iş akışı](https://github.com/seydivakkas/FAQBot/actions/workflows/faqvec-d04-real-models.yml)
