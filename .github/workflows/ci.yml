@@ -58,6 +58,10 @@ jobs:
         run: python -m scripts.faqvec_d05_safety_slices
       - name: D05 güvenlik politikası TF-IDF canlı raporu (model indirme yok)
         run: python -m scripts.faqvec_d05_real_benchmark --ai-owned-research --latency-samples 4 --output "${{ runner.temp }}/faqvec_d05_tfidf.json"
+      - name: D06 mühürlü 72 yeni zor soru ve sızıntı denetimi
+        run: python -m scripts.faqvec_d06_frozen_challenge
+      - name: D06 gerçek TF-IDF yeni zor test (yalnız eski validation eşiği)
+        run: python -m scripts.faqvec_d06_hard_benchmark --ai-owned-research --latency-samples 2 --output "${{ runner.temp }}/faqvec_d06_tfidf.json"
       - name: Comparison demo
         run: python -m scripts.compare
 
@@ -86,3 +90,16 @@ jobs:
         run: python -m scripts.build_faqvec_original --check-only
       - name: D03-02 yapay zekâ inceleme kayıtlarının kaynak doğrulaması
         run: python -m scripts.faqvec_d03_ai_review --check-only
+      - name: D06 donmuş yeni zor soru mühür ve sızıntı kontrolü
+        run: python -m scripts.faqvec_d06_frozen_challenge
+      - name: D06 Windows PowerShell sözdizimi kontrolü
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile((Join-Path $pwd 'run_faqvec_d06_windows.ps1'),[ref]$tokens,[ref]$parseErrors) | Out-Null
+          if ($parseErrors.Count -gt 0) {
+            $parseErrors | ForEach-Object { Write-Error $_.Message }
+            exit 1
+          }
+
