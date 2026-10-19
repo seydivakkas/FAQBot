@@ -39,6 +39,10 @@ def train():
     parser = argparse.ArgumentParser()
     parser.add_argument("--backbone", default="models/e5-base-original")
     parser.add_argument("--manifest", help="Ticari incelemesi yapılmış JSONL veri kaynak manifesti")
+    parser.add_argument("--ai-owned-research", action="store_true",
+                        help="Sıfırdan yazılan ve AI tarafından incelenmiş D03 v02 ile yalnız araştırma eğitimi")
+    parser.add_argument("--include-ai-negatives", action="store_true",
+                        help="Sadece araştırmada, AI seçimi 28 hard adayın train bölümündekilerini kullan")
     parser.add_argument("--demo", action="store_true",
                         help="Yalnızca kurgusal 110 SSS ile deney. Ticari izin değildir.")
     parser.add_argument("--commercial", action="store_true",
@@ -51,8 +55,14 @@ def train():
     parser.add_argument("--suggest-negatives", help="Taslak hard-negative adayları JSONL dosyası")
     parser.add_argument("--output", default="models/faqvec-tr-v0.2-e5")
     args = parser.parse_args()
-    if args.demo == bool(args.manifest):
-        parser.error("Tam olarak biri seçilmeli: --demo veya --manifest.")
+    if sum((bool(args.demo), bool(args.manifest), bool(args.ai_owned_research))) != 1:
+        parser.error("Tam olarak biri seçilmeli: --ai-owned-research, --manifest veya --demo.")
+    if args.ai_owned_research and args.commercial:
+        parser.error("AI değerlendirmesi bağımsız insan/hukuki onay değildir; ticari eğitim yasak.")
+    if args.include_ai_negatives and not args.ai_owned_research:
+        parser.error("AI negatifleri yalnız --ai-owned-research modunda kullanılabilir.")
+    if args.ai_owned_research and args.hard_negatives:
+        parser.error("Bu modda dış/human-approved negatif dosyası yerine yalnız sabit AI adayları kullanılabilir.")
     if args.demo:
         parser.error("Önceki 110 SSS demosu OWNED/CC0 koşulunu karşılamıyor; eğitim için insan onaylı özgün manifest gerekli.")
     if args.commercial and args.demo:
@@ -61,7 +71,21 @@ def train():
         parser.error("Epoch 1–20 ve batch-size 1–64 olmalı.")
     if args.gradient_accumulation < 1:
         parser.error("Gradient accumulation 1 veya daha büyük olmalı.")
-    if args.manifest:
+    ai_negatives = []
+    if args.ai_owned_research:
+        from scripts.faqvec_d03_ai_review import evaluate
+        rows, _reviewed, ai_negatives, _oos, ai_counts = evaluate()
+        manifest = {
+            "schema_version": 2,
+            "source_type": "original_project_authored_ai_reviewed",
+            "reviewer_type": "AI",
+            "human_review_performed": False,
+            "commercial_training_approved": False,
+            "rights_review_complete": False,
+            "metrics": ai_counts,
+        }
+        source_mode = "ai_reviewed_project_owned_research_only"
+    elif args.manifest:
         rows, manifest = load_approved_sources(args.manifest,
                                                for_commercial=args.commercial)
         source_mode = "approved_manifest" if args.commercial else "research_manifest"
@@ -75,7 +99,25 @@ def train():
     pairs = positive_pairs(rows)
     if len(pairs) < 8:
         raise RuntimeError("En az 8 farklı niyetten pozitif eğitim çifti gerekli.")
-    triplets = approved_triplets(args.hard_negatives, rows)
+    if args.ai_owned_research:
+        triplets = []
+        if args.include_ai_negatives:
+            train_intents = {
+                item["intent_id"]: item for item in rows if item["split"] == "train"
+            }
+            for item in ai_negatives:
+                if (item["ai_decision"] != "hard_negative_candidate"
+                        or item["split"] != "train"):
+                    continue
+                a = train_intents[item["anchor_intent"]]
+                b = train_intents[item["negative_intent"]]
+                triplets.append({
+                    "anchor": a["question"],
+                    "positive": a["alternatives"][0],
+                    "negative": b["question"],
+                })
+    else:
+        triplets = approved_triplets(args.hard_negatives, rows)
     if args.suggest_negatives:
         count = write_candidate_negatives(rows, args.suggest_negatives)
         print("Human-review candidate hard negatives:", count)
@@ -145,6 +187,10 @@ def train():
         "backbone": origin,
         "trained_at": datetime.now(timezone.utc).isoformat(),
         "source_mode": source_mode,
+        "reviewer_type": "AI" if args.ai_owned_research else None,
+        "independent_human_review": False if args.ai_owned_research else None,
+        "research_only": bool(args.ai_owned_research),
+        "ai_negative_candidates_used": len(triplets) if args.ai_owned_research else 0,
         "commercial_training_approved": bool(args.commercial),
         "commercial_acceptance": "HOLD",
         "train_pairs": len(pairs), "approved_triplets": len(triplets),
